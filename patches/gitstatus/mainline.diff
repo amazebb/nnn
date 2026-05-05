@@ -69,13 +69,20 @@ index 936e9c02..22032dcd 100644
 
  /* Configuration, contexts */
  static settings cfg = {
-@@ -3950,6 +3981,47 @@ static int get_kv_key(kv *kvarr, char *val, uchar_t max, uchar_t id)
+@@ -3950,6 +3981,54 @@ static int get_kv_key(kv *kvarr, char *val, uchar_t max, uchar_t id)
  	return -1;
  }
 
 +static size_t get_git_statuses(const char *path)
 +{
-+	static char gst[] = "~/.local/share/zsh/site-functions/dotfiles/dotfiles -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null";
++	static char gst[PATH_MAX + 256];
++	const char *home = getenv("HOME");
++	if (home && !xstrcmp(path, home))
++		snprintf(gst, sizeof gst,
++			"git --git-dir=%s/.dotfiles --work-tree=%s -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null",
++			home, home);
++	else
++		xstrsncpy(gst, "git -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null", sizeof gst);
 +	FILE *fp = popen(gst, "r");
 +	char status[PATH_MAX];
 +	size_t pathindex, i = -1;
