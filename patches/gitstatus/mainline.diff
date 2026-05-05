@@ -15,12 +15,12 @@ index 936e9c02..22032dcd 100644
 
 +/* Git icons */
 +#ifdef NERD
-+#define GIT_ADD ""
-+#define GIT_DEL ""
-+#define GIT_IGN ""
-+#define GIT_MOD ""
-+#define GIT_NEW ""
-+#define GIT_NON "-"
++#define GIT_ADD "+"
++#define GIT_DEL "✗"
++#define GIT_IGN "!"
++#define GIT_MOD "Δ"
++#define GIT_NEW "?"
++#define GIT_NON " "
 +#define GIT_UPD "󰚰"
 +#else
 +#define GIT_ADD "A"
@@ -75,7 +75,7 @@ index 936e9c02..22032dcd 100644
 
 +static size_t get_git_statuses(const char *path)
 +{
-+	static char gst[] = "git -c core.quotePath= status -s --no-renames --ignored=matching -unormal . 2>/dev/null";
++	static char gst[] = "~/.local/share/zsh/site-functions/dotfiles/dotfiles -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null";
 +	FILE *fp = popen(gst, "r");
 +	char status[PATH_MAX];
 +	size_t pathindex, i = -1;
@@ -99,7 +99,7 @@ index 936e9c02..22032dcd 100644
 +static void set_git_status(char status[][5], uint_t nr)
 +{
 +	for (int j = 0; j < 2; j++) {
-+		if (status[j][0] == '-')
++		if (status[j][0] == ' ')
 +			switch (git_statuses.statuses[nr].status[j]) {
 +				case ' ': xstrsncpy(status[j], GIT_NON, 4); break;
 +				case 'M': xstrsncpy(status[j], GIT_MOD, 4); break;
@@ -147,7 +147,7 @@ index 936e9c02..22032dcd 100644
 +		if (git_statuses.len) {
 +			char dentpath[PATH_MAX];
 +			size_t pathlen = mkpath(linkpath, dentp->name, dentpath);
-+			dentp->git_status[0][0] = dentp->git_status[1][0] = '-';
++			dentp->git_status[0][0] = dentp->git_status[1][0] = ' ';
 +			dentp->git_status[0][1] = dentp->git_status[1][1] = '\0';
 +
 +			if (dentp->flags & DIR_OR_DIRLNK) {
