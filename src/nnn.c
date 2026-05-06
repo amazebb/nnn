@@ -5694,7 +5694,9 @@ static bool show_stats(char *pathbuf, char *dir)
 		("file " FILE_MIME_OPTS),
 #endif
 		"file -b",
-#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__APPLE__) || defined(__DragonFly__)
+#if defined(__APPLE__)
+		"/usr/bin/stat -x",
+#elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 		"stat -x",
 #else
 		"stat",
