@@ -5695,7 +5695,9 @@ static bool show_stats(char *pathbuf, char *dir)
 #endif
 		"file -b",
 #if defined(__APPLE__)
-		"/usr/bin/stat -x",
+		(access("/opt/homebrew/opt/coreutils/libexec/gnubin/stat", X_OK) == 0)
+			? "/opt/homebrew/opt/coreutils/libexec/gnubin/stat"
+			: "/usr/bin/stat -x",
 #elif defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 		"stat -x",
 #else
