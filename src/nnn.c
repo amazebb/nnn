@@ -244,6 +244,11 @@
 #endif
 
 #define MIN_DISPLAY_COL (CTX_MAX * 2)
+/* Detail-mode timestamp widths (must match print_time / print_time_compact) */
+#define TIME_COLS_ISO     16 /* YYYY-MM-DD HH:MM */
+#define TIME_COLS_COMPACT 12 /* eza: "DD MMM HH:MM" / "DD MMM  YYYY" */
+/* Detail prefix besides timestamp: leading space + perms(5) + size(9) + trailing space */
+#define DETAIL_COLS_REST  16
 #define ARCHIVE_CMD_LEN 16
 #define BLK_SHIFT_512   9
 
@@ -363,7 +368,7 @@ typedef struct {
 	uint_t ctxactive  : 1;  /* Context active or not */
 	uint_t reverse    : 1;  /* Reverse sort */
 	uint_t version    : 1;  /* Version sort */
-	uint_t reserved1  : 1;
+	uint_t compacttime : 1; /* eza-style timestamps */
 	/* The following settings are global */
 	uint_t curctx     : 3;  /* Current context number */
 	uint_t prefersel  : 1;  /* Prefer selection over current, if exists */
@@ -4777,6 +4782,31 @@ static void print_icon(const struct entry *ent, const int attrs)
 }
 #endif
 
+/*
+ * eza default time style, fixed 12 columns:
+ *   this year:  "19 Aug 14:32" / " 3 Jan 09:15"
+ *   other year: "19 Aug  2024" / " 3 Jan  2023"
+ * English month abbreviations keep the width stable across locales.
+ */
+static void print_time_compact(const struct tm *t)
+{
+	static const char mon[][4] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	struct tm now;
+	time_t nowsecs = gtimesecs ? gtimesecs : time(NULL);
+
+	localtime_r(&nowsecs, &now);
+
+	if (t->tm_year == now.tm_year)
+		printw("%2d %s %02d:%02d", t->tm_mday, mon[t->tm_mon],
+		       t->tm_hour, t->tm_min);
+	else
+		printw("%2d %s  %4d", t->tm_mday, mon[t->tm_mon],
+		       t->tm_year + 1900);
+}
+
 static void print_time(const time_t *timep, const uchar_t flags)
 {
 	struct tm t;
@@ -4786,8 +4816,11 @@ static void print_time(const time_t *timep, const uchar_t flags)
 		attron(A_REVERSE);
 
 	localtime_r(timep, &t);
-	printw("%s-%02d-%02d %02d:%02d",
-		xitoa(t.tm_year + 1900), t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min);
+	if (cfg.compacttime)
+		print_time_compact(&t);
+	else
+		printw("%s-%02d-%02d %02d:%02d",
+			xitoa(t.tm_year + 1900), t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min);
 
 	if (flags & FILE_YOUNG)
 		attroff(A_REVERSE);
@@ -8192,11 +8225,14 @@ static int adjust_cols(int n)
 	n -= (g_state.oldcolor ? 0 : ICON_SIZE + ICON_PADDING_LEFT_LEN + ICON_PADDING_RIGHT_LEN);
 #endif
 	if (cfg.showdetail) {
-		/* Fallback to light mode if less than 35 columns */
-		if (n < 36)
+		int detailcols = (cfg.compacttime ? TIME_COLS_COMPACT : TIME_COLS_ISO)
+				 + DETAIL_COLS_REST;
+
+		/* Fallback to light mode if the name column would be too narrow */
+		if (n < detailcols + 4)
 			cfg.showdetail ^= 1;
 		else /* 2 more accounted for below */
-			n -= 32;
+			n -= detailcols;
 	}
 
 	/* 2 columns for preceding space and indicator */
@@ -10086,6 +10122,7 @@ static void usage(void)
 #ifndef NOX11
 		" -x      notis, selection sync, xterm title\n"
 #endif
+		" -y      compact eza-style timestamps\n"
 		" -z      in order fuzzy filters\n"
 		" -0      null separator in picker mode\n"
 		" -h      show help\n\n"
@@ -10253,7 +10290,7 @@ int main(int argc, char *argv[])
 
 	while ((opt = (env_opts_id > 0
 		       ? env_opts[--env_opts_id]
-		       : getopt(argc, argv, "aAb:BcCdDeEfF:gHiJKl:nNop:P:QrRs:St:T:uUVxz0h"))) != -1) {
+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gHiJKl:nNop:P:QrRs:St:T:uUVxyz0h"))) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -10402,6 +10439,9 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		case 'x':
 			cfg.x11 = 1;
+			break;
+		case 'y':
+			cfg.compacttime = 1;
 			break;
 		case 'z':
 			if (cfg.regex)

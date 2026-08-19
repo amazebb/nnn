@@ -69,14 +69,13 @@ index 936e9c02..22032dcd 100644
 
  /* Configuration, contexts */
  static settings cfg = {
-@@ -3950,6 +3981,54 @@ static int get_kv_key(kv *kvarr, char *val, uchar_t max, uchar_t id)
+@@ -3950,6 +3981,53 @@ static int get_kv_key(kv *kvarr, char *val, uchar_t max, uchar_t id)
  	return -1;
  }
 
 +static size_t get_git_statuses(const char *path)
 +{
 +	static char gst[PATH_MAX + 256];
-+	const char *home = getenv("HOME");
 +	if (home && !xstrcmp(path, home))
 +		snprintf(gst, sizeof gst,
 +			"git --git-dir=%s/.dotfiles --work-tree=%s -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null",
@@ -177,20 +176,18 @@ index 936e9c02..22032dcd 100644
  		++ndents;
  	} while ((dp = readdir(dirp)));
 
-@@ -6569,11 +6673,12 @@ static int adjust_cols(int n)
- #endif
- 	if (cfg.showdetail) {
- 		/* Fallback to light mode if less than 35 columns */
--		if (n < 36)
-+		if (n < 38)
+@@ -6569,9 +6673,10 @@ static int adjust_cols(int n)
+ 		/* Fallback to light mode if the name column would be too narrow */
+-		if (n < detailcols + 4)
++		if (n < detailcols + (git_statuses.show ? 6 : 4))
  			cfg.showdetail ^= 1;
  		else /* 2 more accounted for below */
--			n -= 32;
+-			n -= detailcols;
 -	}
-+			n -= (git_statuses.show ? 34 : 32);
++			n -= detailcols + (git_statuses.show ? 2 : 0);
 +	} else if (cfg.normalgit && git_statuses.show)
 +		n -= 3;
-
+ 
  	/* 2 columns for preceding space and indicator */
  	return (n - 2);
 @@ -8401,6 +8506,7 @@ static void usage(void)
@@ -213,8 +210,8 @@ index 936e9c02..22032dcd 100644
 
  	while ((opt = (env_opts_id > 0
  		       ? env_opts[--env_opts_id]
--		       : getopt(argc, argv, "aAb:BcCdDeEfF:gHiJKl:nNop:P:QrRs:St:T:uUVxz0h"))) != -1) {
-+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiJKl:nNop:P:QrRs:St:T:uUVxz0h"))) != -1) {
+-		       : getopt(argc, argv, "aAb:BcCdDeEfF:gHiJKl:nNop:P:QrRs:St:T:uUVxyz0h"))) != -1) {
++		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiJKl:nNop:P:QrRs:St:T:uUVxyz0h"))) != -1) {
  		switch (opt) {
  #ifndef NOFIFO
  		case 'a':
