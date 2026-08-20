@@ -2,8 +2,10 @@ VERSION = $(shell grep -m1 VERSION $(SRC) | cut -f 2 -d'"')
 
 PREFIX ?= /usr/local
 MANPREFIX ?= $(PREFIX)/share/man
+ZSHCOMPDIR ?= $(PREFIX)/share/zsh/site-functions
 DESKTOPPREFIX ?= $(PREFIX)/share/applications
 DESKTOPICONPREFIX ?= $(PREFIX)/share/icons/hicolor
+DEPLOY_PREFIX ?= $(HOME)/.local
 STRIP ?= strip
 PKG_CONFIG ?= pkg-config
 INSTALL ?= install
@@ -243,13 +245,24 @@ uninstall-desktop:
 
 install: all
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(PREFIX)/bin
+	@if [ -e "$(DESTDIR)$(PREFIX)/bin/$(BIN)" ]; then \
+		$(CP) -p "$(DESTDIR)$(PREFIX)/bin/$(BIN)" "$(DESTDIR)$(PREFIX)/bin/$(BIN).bak"; \
+		echo "backed up existing $(BIN) to $(DESTDIR)$(PREFIX)/bin/$(BIN).bak"; \
+	fi
 	$(INSTALL) -m 0755 $(BIN) $(DESTDIR)$(PREFIX)/bin
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(MANPREFIX)/man1
 	$(INSTALL) -m 0644 $(BIN).1 $(DESTDIR)$(MANPREFIX)/man1
+	$(INSTALL) -m 0755 -d $(DESTDIR)$(ZSHCOMPDIR)
+	$(INSTALL) -m 0644 misc/auto-completion/zsh/_nnn $(DESTDIR)$(ZSHCOMPDIR)/_nnn
+
+# Personal install: ~/.local/bin, man page, zsh completion (nerd + gitstatus)
+deploy:
+	$(MAKE) PREFIX=$(DEPLOY_PREFIX) O_NERD=1 O_GITSTATUS=1 install
 
 uninstall:
 	$(RM) $(DESTDIR)$(PREFIX)/bin/$(BIN)
 	$(RM) $(DESTDIR)$(MANPREFIX)/man1/$(BIN).1
+	$(RM) $(DESTDIR)$(ZSHCOMPDIR)/_nnn
 
 strip: $(BIN)
 	$(STRIP) $^
@@ -390,4 +403,4 @@ endif
 
 skip: ;
 
-.PHONY: all install uninstall strip static dist sign upload-local clean install-desktop uninstall-desktop
+.PHONY: all install deploy uninstall strip static dist sign upload-local clean install-desktop uninstall-desktop
