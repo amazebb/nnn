@@ -151,7 +151,7 @@
 #endif
 
 /* Macro definitions */
-#define VERSION      "5.2"
+#define VERSION      "5.2-amazebb"
 #define GENERAL_INFO "BSD 2-Clause\nhttps://github.com/jarun/nnn"
 
 #ifndef NOSSN
@@ -305,6 +305,25 @@
 #define VFS_USED  1
 #define VFS_SIZE  2
 
+/* Git icons */
+#ifdef NERD
+#define GIT_ADD "+"
+#define GIT_DEL "✗"
+#define GIT_IGN "!"
+#define GIT_MOD "Δ"
+#define GIT_NEW "?"
+#define GIT_NON " "
+#define GIT_UPD "󰚰"
+#else
+#define GIT_ADD "A"
+#define GIT_DEL "D"
+#define GIT_IGN "!"
+#define GIT_MOD "M"
+#define GIT_NEW "?"
+#define GIT_NON "-"
+#define GIT_UPD "U"
+#endif
+
 /* TYPE DEFINITIONS */
 typedef unsigned int uint_t;
 typedef unsigned char uchar_t;
@@ -329,6 +348,7 @@ typedef struct entry {
 	uid_t uid; /* 4 bytes */
 	gid_t gid; /* 4 bytes */
 #endif
+	char git_status[2][5];
 } *pEntry;
 
 /* Selection marker */
@@ -385,6 +405,7 @@ typedef struct {
 	uint_t cliopener  : 1;  /* All-CLI app opener */
 	uint_t waitedit   : 1;  /* For ops that can't be detached, used EDITOR */
 	uint_t rollover   : 1;  /* Roll over at edges */
+	uint_t normalgit  : 1;  /* Show git status in normal mode */
 } settings;
 
 /* Non-persistent program-internal states (alphabeical order) */
@@ -438,7 +459,17 @@ typedef struct {
 } session_header_t;
 #endif
 
+typedef struct {
+	char status[2];
+	char path[PATH_MAX];
+} git_status_t;
+
 /* GLOBALS */
+struct {
+	bool show;
+	size_t len;
+	git_status_t *statuses;
+} git_statuses;
 
 /* Configuration, contexts */
 static settings cfg = {
@@ -4571,6 +4602,53 @@ static int get_kv_key(kv *kvarr, char *val, uchar_t max, uchar_t id)
 	return -1;
 }
 
+static size_t get_git_statuses(const char *path)
+{
+	static char gst[PATH_MAX + 256];
+	if (home && !xstrcmp(path, home))
+		snprintf(gst, sizeof gst,
+			"git --git-dir=%s/.dotfiles --work-tree=%s -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null",
+			home, home);
+	else
+		xstrsncpy(gst, "git -c core.quotePath= status -s --no-renames --ignored=matching -uall . 2>/dev/null", sizeof gst);
+	FILE *fp = popen(gst, "r");
+	char status[PATH_MAX];
+	size_t pathindex, i = -1;
+	git_statuses.show = FALSE;
+
+	while (fgets(status, PATH_MAX, fp)) {
+		pathindex = (status[3] == '"') ? 4 : 3;
+		if (!cfg.showhidden && status[pathindex] == '.')
+			continue;
+		status[xstrlen(status) - pathindex + 2] = '\0';
+		git_statuses.statuses = xrealloc(git_statuses.statuses, sizeof(git_status_t) * (++i + 1));
+		git_statuses.statuses[i].status[0] = status[0];
+		git_statuses.statuses[i].status[1] = status[1];
+		mkpath(path, status + pathindex, git_statuses.statuses[i].path);
+	}
+
+	pclose(fp);
+	return (i + 1);
+}
+
+static void set_git_status(char status[][5], uint_t nr)
+{
+	for (int j = 0; j < 2; j++) {
+		if (status[j][0] == ' ')
+			switch (git_statuses.statuses[nr].status[j]) {
+				case ' ': xstrsncpy(status[j], GIT_NON, 4); break;
+				case 'M': xstrsncpy(status[j], GIT_MOD, 4); break;
+				case 'A': xstrsncpy(status[j], GIT_ADD, 4); break;
+				case '?': xstrsncpy(status[j], GIT_NEW, 4); break;
+				case '!': xstrsncpy(status[j], GIT_IGN, 4); break;
+				case 'D': xstrsncpy(status[j], GIT_DEL, 4); break;
+				case 'U': xstrsncpy(status[j], GIT_UPD, 4); break;
+			}
+	}
+	if (git_statuses.statuses[nr].status[1] != '!')
+		git_statuses.show = TRUE;
+}
+
 static void resetdircolor(int flags)
 {
 	/* Directories are always shown on top, clear the color when moving to first file */
@@ -5027,6 +5105,10 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 	attrs = 0;
 
 	uchar_t color_pair = get_color_pair_name_ind(ent, &ind, &attrs);
+
+	if (git_statuses.show && (cfg.showdetail || cfg.normalgit))
+		printw("%*s%s%s", (cfg.normalgit && !cfg.showdetail) ? 1 : 0, "",
+				ent->git_status[0], ent->git_status[1]);
 
 	addch((ent->flags & FILE_SELECTED) ? '+' | A_REVERSE | A_BOLD : ' ');
 
@@ -7173,6 +7255,11 @@ static int dentfill(char *path, struct entry **ppdents)
 		attron(COLOR_PAIR(cfg.curctx + 1));
 	}
 
+	char linkpath[PATH_MAX];
+	if ((git_statuses.len = get_git_statuses(path)))
+		if (!realpath(path, linkpath))
+			printwarn(NULL);
+
 #if _POSIX_C_SOURCE >= 200112L
 	posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
 #endif
@@ -7383,6 +7470,29 @@ static int dentfill(char *path, struct entry **ppdents)
 			   || dp->d_type == DT_UNKNOWN) && S_ISDIR(sb.st_mode))) {
 			dentp->flags |= DIR_OR_DIRLNK;
 #endif
+		}
+
+		if (git_statuses.len) {
+			char dentpath[PATH_MAX];
+			size_t pathlen = mkpath(linkpath, dentp->name, dentpath);
+			dentp->git_status[0][0] = dentp->git_status[1][0] = ' ';
+			dentp->git_status[0][1] = dentp->git_status[1][1] = '\0';
+
+			if (dentp->flags & DIR_OR_DIRLNK) {
+				char prefix[PATH_MAX];
+				memccpy(prefix, dentpath, '\0', PATH_MAX);
+				prefix[pathlen - 1] = '/';
+
+				for (size_t i = 0; i < git_statuses.len; ++i)
+					if (is_prefix(git_statuses.statuses[i].path, prefix, pathlen))
+						set_git_status(dentp->git_status, i);
+			} else {
+				for (size_t i = 0; i < git_statuses.len; ++i)
+					if (!xstrcmp(git_statuses.statuses[i].path, dentpath)) {
+						set_git_status(dentp->git_status, i);
+						break;
+					}
+			}
 		}
 
 		++ndents;
@@ -8229,11 +8339,12 @@ static int adjust_cols(int n)
 				 + DETAIL_COLS_REST;
 
 		/* Fallback to light mode if the name column would be too narrow */
-		if (n < detailcols + 4)
+		if (n < detailcols + (git_statuses.show ? 6 : 4))
 			cfg.showdetail ^= 1;
 		else /* 2 more accounted for below */
-			n -= detailcols;
-	}
+			n -= detailcols + (git_statuses.show ? 2 : 0);
+	} else if (cfg.normalgit && git_statuses.show)
+		n -= 3;
 
 	/* 2 columns for preceding space and indicator */
 	return (n - 2);
@@ -10093,6 +10204,7 @@ static void usage(void)
 		" -F val  fifo mode [0:preview 1:explore]\n"
 #endif
 		" -g      regex filters\n"
+		" -G      always show git status\n"
 		" -H      show hidden files\n"
 		" -i      show current file info\n"
 		" -J      no auto-advance on selection\n"
@@ -10244,6 +10356,7 @@ static void cleanup(void)
 		fflush(stdout);
 	}
 #endif
+	free(git_statuses.statuses);
 	free(selpath);
 	free(plgpath);
 	free(cfgpath);
@@ -10290,7 +10403,7 @@ int main(int argc, char *argv[])
 
 	while ((opt = (env_opts_id > 0
 		       ? env_opts[--env_opts_id]
-		       : getopt(argc, argv, "aAb:BcCdDeEfF:gHiJKl:nNop:P:QrRs:St:T:uUVxyz0h"))) != -1) {
+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiJKl:nNop:P:QrRs:St:T:uUVxyz0h"))) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -10343,6 +10456,9 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			cfg.regex = 1;
 			filterfn = &visible_re;
+			break;
+		case 'G':
+			cfg.normalgit = 1;
 			break;
 		case 'H':
 			cfg.showhidden = 1;

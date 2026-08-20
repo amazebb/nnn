@@ -33,7 +33,7 @@ O_DIMFILTERED := 1  # dim characters matching filter (default: enabled)
 
 # User patches
 O_COLEMAK := 0 # change key bindings to colemak compatible layout
-O_GITSTATUS := 0 # add git status to detail view
+O_GITSTATUS := 0 # ignored: git status is built into src/nnn.c
 O_NAMEFIRST := 0 # print file name first, add uid and guid to detail view
 O_RESTOREPREVIEW := 0 # add preview pipe to close and restore preview pane
 
@@ -255,9 +255,9 @@ install: all
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(ZSHCOMPDIR)
 	$(INSTALL) -m 0644 misc/auto-completion/zsh/_nnn $(DESTDIR)$(ZSHCOMPDIR)/_nnn
 
-# Personal install: ~/.local/bin, man page, zsh completion (nerd + gitstatus)
+# Personal install: ~/.local/bin, man page, zsh completion (nerd fonts)
 deploy:
-	$(MAKE) PREFIX=$(DEPLOY_PREFIX) O_NERD=1 O_GITSTATUS=1 install
+	$(MAKE) PREFIX=$(DEPLOY_PREFIX) O_NERD=1 install
 
 uninstall:
 	$(RM) $(DESTDIR)$(PREFIX)/bin/$(BIN)
@@ -372,11 +372,6 @@ checkpatches:
 prepatch:
 ifeq ($(strip $(O_NAMEFIRST)),1)
 	patch --forward $(PATCH_OPTS) --strip=1 --input=$(NAMEFIRST)/mainline.diff
-ifeq ($(strip $(O_GITSTATUS)),1)
-	patch --forward $(PATCH_OPTS) --strip=1 --input=$(GITSTATUS)/namefirst.diff
-endif
-else ifeq ($(strip $(O_GITSTATUS)),1)
-	patch --forward $(PATCH_OPTS) --strip=1 --input=$(GITSTATUS)/mainline.diff
 endif
 ifeq ($(strip $(O_RESTOREPREVIEW)),1)
 	patch --forward $(PATCH_OPTS) --strip=1 --input=$(RESTOREPREVIEW)/mainline.diff
@@ -387,12 +382,7 @@ endif
 
 postpatch:
 ifeq ($(strip $(O_NAMEFIRST)),1)
-ifeq ($(strip $(O_GITSTATUS)),1)
-	patch --reverse $(PATCH_OPTS) --strip=1 --input=$(GITSTATUS)/namefirst.diff
-endif
 	patch --reverse $(PATCH_OPTS) --strip=1 --input=$(NAMEFIRST)/mainline.diff
-else ifeq ($(strip $(O_GITSTATUS)),1)
-	patch --reverse $(PATCH_OPTS) --strip=1 --input=$(GITSTATUS)/mainline.diff
 endif
 ifeq ($(strip $(O_RESTOREPREVIEW)),1)
 	patch --reverse $(PATCH_OPTS) --strip=1 --input=$(RESTOREPREVIEW)/mainline.diff

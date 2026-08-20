@@ -6,7 +6,7 @@
 .Nd The unorthodox terminal file manager.
 .Sh SYNOPSIS
 .Nm
-.Op Ar -aAcCdDeEfgHJKnQrRSuUVxyz0h
+.Op Ar -aAcCdDeEfgGHJKnQrRSuUVxyz0h
 .Op Ar -b key
 .Op Ar -F val
 .Op Ar -l val
@@ -97,6 +97,9 @@ supports the following options:
 .Pp
 .Fl g
         use regex filters instead of substring match
+.Pp
+.Fl G
+        always show the git status column (also shown in detail mode)
 .Pp
 .Fl H
         show hidden files
