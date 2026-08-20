@@ -7265,9 +7265,15 @@ static int dentfill(char *path, struct entry **ppdents)
 	}
 
 	char linkpath[PATH_MAX];
-	if ((git_statuses.len = get_git_statuses(path)))
-		if (!realpath(path, linkpath))
-			printwarn(NULL);
+
+	if (cfg.normalgit) {
+		if ((git_statuses.len = get_git_statuses(path)))
+			if (!realpath(path, linkpath))
+				printwarn(NULL);
+	} else {
+		git_statuses.len = 0;
+		git_statuses.show = FALSE;
+	}
 
 #if _POSIX_C_SOURCE >= 200112L
 	posix_fadvise(fd, 0, 0, POSIX_FADV_SEQUENTIAL);
@@ -10213,7 +10219,7 @@ static void usage(void)
 		" -F val  fifo mode [0:preview 1:explore]\n"
 #endif
 		" -g      regex filters\n"
-		" -G      always show git status\n"
+		" -G      git status column (runs git)\n"
 		" -H      show hidden files\n"
 		" -i      show current file info\n"
 		" -J      no auto-advance on selection\n"

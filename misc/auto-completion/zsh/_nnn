@@ -22,7 +22,7 @@ args=(
     '(-f)-f[use history file]'
     '(-F)-F[fifo notification mode]:mode:(( 0\:"notify as previewer" 1\:"notify as explorer" ))'
     '(-g)-g[regex filters]'
-    '(-G)-G[always show git status]'
+    '(-G)-G[git status column (runs git)]'
     '(-H)-H[show hidden files]'
     '(-i)-i[show current file info]'
     '(-J)-J[no auto-advance on selection]'
