@@ -81,6 +81,7 @@ enum action {
 	SEL_MFLTR,
 	SEL_HIDDEN,
 	SEL_DETAIL,
+	SEL_GITSTATUS,
 	SEL_STATS,
 	SEL_CHMODX,
 	SEL_ARCHIVE,
@@ -205,6 +206,8 @@ static struct key bindings[] = {
 	{ '.',            SEL_HIDDEN },
 	/* Detailed listing */
 	{ 'd',            SEL_DETAIL },
+	/* Toggle git status column */
+	{ 'i',            SEL_GITSTATUS },
 	/* File details */
 	{ 'f',            SEL_STATS },
 	{ CONTROL('F'),   SEL_STATS },

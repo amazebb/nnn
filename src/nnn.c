@@ -6407,7 +6407,7 @@ static void show_help(const char *path)
 	"1FILTER & PROMPT\n"
 		  "c/  Filter%17^N  Toggle type-to-nav\n"
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
-		  "c.  Toggle hidden\n"
+		  "c.  Toggle hidden%11i  Toggle git status\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  Create new/link\n"
@@ -9234,6 +9234,7 @@ nochange:
 		case SEL_MFLTR: // fallthrough
 		case SEL_HIDDEN: // fallthrough
 		case SEL_DETAIL: // fallthrough
+		case SEL_GITSTATUS: // fallthrough
 		case SEL_PREVIEW: // fallthrough
 		case SEL_SORT:
 			switch (sel) {
@@ -9253,6 +9254,11 @@ nochange:
 						presel = FILTER;
 					clearfilter();
 				}
+				copycurname();
+				cd = FALSE;
+				goto begin;
+			case SEL_GITSTATUS:
+				cfg.normalgit ^= 1;
 				copycurname();
 				cd = FALSE;
 				goto begin;
