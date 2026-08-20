@@ -17,6 +17,8 @@ href="https://github.com/jarun/nnn#quickstart">Quickstart</a>] [<a
 href="https://github.com/jarun/nnn/tree/master/plugins#nnn-plugins">Plugins</a>] [<a
 href="https://github.com/jarun/nnn/wiki">Wiki</a>]</h3>
 
+> **amazebb fork** of [jarun/nnn](https://github.com/jarun/nnn). Differences from `master` are in [FORK.md](FORK.md). `nnn -V` prints `5.2-amazebb`.
+
 `nnn` (_n³_) is a full-featured terminal file manager. It's tiny, nearly 0-config and [incredibly fast](https://github.com/jarun/nnn/wiki/Performance).
 
 It is designed to be unobtrusive with smart workflows to match the trains of thought.
