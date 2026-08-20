@@ -35,6 +35,22 @@ Built into `nnn.c` (not applied as a compile-time patch).
 File stats (`f`) use Homebrew GNU `stat` when
 `/opt/homebrew/opt/coreutils/libexec/gnubin/stat` is present, otherwise `/usr/bin/stat -x`.
 
+### Preview (Ghostty)
+
+`preview-tui` can open a **native Ghostty split** (same idea as Cmd+D / `new_split:right`) instead of wrapping nnn in tmux. Requires Ghostty 1.3+ AppleScript and macOS Automation permission for Ghostty.
+
+Checked-in helpers (copy into `~/.config/nnn/plugins/` with `preview-tui`; nnn does not load the git tree):
+
+- `preview-ghostty-split.applescript` — create the split and record its terminal id
+- `preview-ghostty-run.sh` — command run in that surface
+- `preview-ghostty-close.applescript` — close the surface on `;p` or nnn quit
+
+The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`n3 -t`** / **`N3_TMUX=1`** keeps the old tmux wrap.
+
+- Toggle preview: `;` then `p` (closes the Ghostty pane).
+- Images: **chafa** first (viu has a placement/size bug), then viu, then `kitty icat`. Fits the pane after the split size settles.
+- Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
+
 ### Copy / move with nothing selected
 
 `p` (copy) and `v` (move) still open the editor so you can paste a path list. A floating help window (same style as `f`) explains that first.
