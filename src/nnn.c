@@ -2882,12 +2882,27 @@ finish:
 	return ret;
 }
 
+static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile);
+
 static bool cpmvrm_selection(enum action sel, char *path)
 {
 	int r;
 
-	if ((sel == SEL_CP || sel == SEL_MV) && isselfileempty())
+	if ((sel == SEL_CP || sel == SEL_MV) && isselfileempty()) {
+		static const char empty_sel_help[] =
+			"Nothing selected\n"
+			"\n"
+			"Space selects files, then p copies (v moves) them here.\n"
+			"\n"
+			"With no selection, the editor opens a path list.\n"
+			"Add paths, one per line, save, and the copy/move runs.\n"
+			"Leave the file empty (or don't save) to cancel.\n"
+			"E edits an existing selection the same way.\n";
+
+		show_content_in_floating_window((char *)empty_sel_help,
+					       xstrlen(empty_sel_help), NULL, FALSE);
 		editselection(TRUE);
+	}
 
 	if (isselfileempty()) {
 		if (nselected)
@@ -5798,7 +5813,10 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 	}
 
 	delwin(win);
-	refresh(); /* Refresh main screen */
+	/* Force stdscr back onto the terminal so a later endwin/refresh
+	 * (e.g. spawning the editor) does not restore this popup. */
+	redrawwin(stdscr);
+	refresh();
 	return TRUE;
 }
 
