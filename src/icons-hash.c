@@ -157,7 +157,6 @@ main(void)
 	}
 
 	/* sanity check */
-	double nitems = 0;
 	unsigned int total_probe = 0;
 	for (size_t i = 0; i < ARRLEN(icons_ext); ++i) {
 		if (icons_ext[i].icon[0] == 0)
@@ -172,7 +171,6 @@ main(void)
 			}
 		}
 		ENSURE(found);
-		++nitems;
 	}
 	ENSURE(total_probe == best_total_probe);
 
