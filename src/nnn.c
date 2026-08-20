@@ -246,7 +246,7 @@
 #define MIN_DISPLAY_COL (CTX_MAX * 2)
 /* Detail-mode timestamp widths (must match print_time / print_time_compact) */
 #define TIME_COLS_ISO     16 /* YYYY-MM-DD HH:MM */
-#define TIME_COLS_COMPACT 12 /* eza: "DD MMM HH:MM" / "DD MMM  YYYY" */
+#define TIME_COLS_COMPACT 12 /* "DD MMM HH:MM" or "MMM DD HH:MM" */
 /* Detail prefix besides timestamp: leading space + perms(5) + size(9) + trailing space */
 #define DETAIL_COLS_REST  16
 #define ARCHIVE_CMD_LEN 16
@@ -388,14 +388,14 @@ typedef struct {
 	uint_t ctxactive  : 1;  /* Context active or not */
 	uint_t reverse    : 1;  /* Reverse sort */
 	uint_t version    : 1;  /* Version sort */
-	uint_t compacttime : 1; /* eza-style timestamps */
+	uint_t compacttime : 1; /* compact timestamps (-y / -Y) */
 	/* The following settings are global */
 	uint_t curctx     : 3;  /* Current context number */
 	uint_t prefersel  : 1;  /* Prefer selection over current, if exists */
 	uint_t fileinfo   : 1;  /* Show file information on hover */
 	uint_t nonavopen  : 1;  /* Open file on right arrow or `l` */
 	uint_t autoenter  : 1;  /* auto-enter dir in type-to-nav mode */
-	uint_t reserved2  : 1;
+	uint_t ustime     : 1;  /* US compact timestamps: MMM DD */
 	uint_t useeditor  : 1;  /* Use VISUAL to open text files */
 	uint_t reserved3  : 2;
 	uint_t fuzzy      : 1;  /* Use fuzzy filters */
@@ -4861,9 +4861,9 @@ static void print_icon(const struct entry *ent, const int attrs)
 #endif
 
 /*
- * eza default time style, fixed 12 columns:
- *   this year:  "19 Aug 14:32" / " 3 Jan 09:15"
- *   other year: "19 Aug  2024" / " 3 Jan  2023"
+ * Compact time styles, fixed 12 columns.
+ *   -y (eza):  "19 Aug 14:32" / " 3 Jan  2023"
+ *   -Y (US):   "Aug 19 14:32" / "Jan  3  2023"
  * English month abbreviations keep the width stable across locales.
  */
 static void print_time_compact(const struct tm *t)
@@ -4874,10 +4874,19 @@ static void print_time_compact(const struct tm *t)
 	};
 	struct tm now;
 	time_t nowsecs = gtimesecs ? gtimesecs : time(NULL);
+	int thisyear;
 
 	localtime_r(&nowsecs, &now);
+	thisyear = (t->tm_year == now.tm_year);
 
-	if (t->tm_year == now.tm_year)
+	if (cfg.ustime) {
+		if (thisyear)
+			printw("%s %2d %02d:%02d", mon[t->tm_mon], t->tm_mday,
+			       t->tm_hour, t->tm_min);
+		else
+			printw("%s %2d  %4d", mon[t->tm_mon], t->tm_mday,
+			       t->tm_year + 1900);
+	} else if (thisyear)
 		printw("%2d %s %02d:%02d", t->tm_mday, mon[t->tm_mon],
 		       t->tm_hour, t->tm_min);
 	else
@@ -10235,6 +10244,7 @@ static void usage(void)
 		" -x      notis, selection sync, xterm title\n"
 #endif
 		" -y      compact eza-style timestamps\n"
+		" -Y      compact US timestamps (MMM DD)\n"
 		" -z      in order fuzzy filters\n"
 		" -0      null separator in picker mode\n"
 		" -h      show help\n\n"
@@ -10403,7 +10413,7 @@ int main(int argc, char *argv[])
 
 	while ((opt = (env_opts_id > 0
 		       ? env_opts[--env_opts_id]
-		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiJKl:nNop:P:QrRs:St:T:uUVxyz0h"))) != -1) {
+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiJKl:nNop:P:QrRs:St:T:uUVxyYz0h"))) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -10558,6 +10568,11 @@ int main(int argc, char *argv[])
 			break;
 		case 'y':
 			cfg.compacttime = 1;
+			cfg.ustime = 0;
+			break;
+		case 'Y':
+			cfg.compacttime = 1;
+			cfg.ustime = 1;
 			break;
 		case 'z':
 			if (cfg.regex)
