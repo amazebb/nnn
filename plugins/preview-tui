@@ -275,7 +275,6 @@ toggle_preview() {
     if [ -f "${GHOSTTY_TERMID:-}" ]; then
         plugdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
         osascript "$plugdir/preview-ghostty-close.applescript" "$(tr -d '\n' < "$GHOSTTY_TERMID")" >/dev/null 2>&1
-        osascript "$plugdir/preview-ghostty-close.applescript" >/dev/null 2>&1
         rm -f "$GHOSTTY_TERMID"
     fi
     if pidkill "$FIFOPID"; then
