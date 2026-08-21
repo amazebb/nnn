@@ -21,6 +21,12 @@ make deploy
 
 Use with detail mode (`-d` / `d`). `-y` and `-Y` are exclusive; the last one wins.
 
+### Directory sizes
+
+| Flag | `NNN_OPTS` | Detail listing |
+| --- | --- | --- |
+| `-I` | `I` | Size column for files only; directories left blank (du/`d` sort still shows totals) |
+
 ### Git status
 
 Built into `nnn.c` (not applied as a compile-time patch).

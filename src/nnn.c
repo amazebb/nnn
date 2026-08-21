@@ -397,7 +397,8 @@ typedef struct {
 	uint_t autoenter  : 1;  /* auto-enter dir in type-to-nav mode */
 	uint_t ustime     : 1;  /* US compact timestamps: MMM DD */
 	uint_t useeditor  : 1;  /* Use VISUAL to open text files */
-	uint_t reserved3  : 2;
+	uint_t nodirsize  : 1;  /* Hide directory sizes in detail mode */
+	uint_t reserved3  : 1;
 	uint_t fuzzy      : 1;  /* Use fuzzy filters */
 	uint_t regex      : 1;  /* Use regex filters */
 	uint_t x11        : 1;  /* Copy to system clipboard, show notis, xterm title */
@@ -5113,9 +5114,18 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		/* Print details */
 		print_time(&ent->sec, ent->flags);
 
-		printw("%s%9s ", perms, (type == S_IFREG || type == S_IFDIR)
-			? coolsize(cfg.blkorder ? (blkcnt_t)ent->blocks << blk_shift : ent->size)
-			: (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type));
+		{
+			const char *sz;
+
+			if (type == S_IFDIR && cfg.nodirsize && !cfg.blkorder)
+				sz = "";
+			else if (type == S_IFREG || type == S_IFDIR)
+				sz = coolsize(cfg.blkorder ? (blkcnt_t)ent->blocks << blk_shift
+							   : ent->size);
+			else
+				sz = (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type);
+			printw("%s%9s ", perms, sz);
+		}
 
 		if (attrs)
 			attroff(attrs);
@@ -10246,6 +10256,7 @@ static void usage(void)
 		" -G      git status column (runs git)\n"
 		" -H      show hidden files\n"
 		" -i      show current file info\n"
+		" -I      no directory sizes in detail\n"
 		" -J      no auto-advance on selection\n"
 		" -K      detect key collision and exit\n"
 		" -l val  set scroll lines\n"
@@ -10443,7 +10454,7 @@ int main(int argc, char *argv[])
 
 	while ((opt = (env_opts_id > 0
 		       ? env_opts[--env_opts_id]
-		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiJKl:nNop:P:QrRs:St:T:uUVxyYz0h"))) != -1) {
+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiIJKl:nNop:P:QrRs:St:T:uUVxyYz0h"))) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -10505,6 +10516,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			cfg.fileinfo = 1;
+			break;
+		case 'I':
+			cfg.nodirsize = 1;
 			break;
 		case 'J':
 			g_state.stayonsel = 1;

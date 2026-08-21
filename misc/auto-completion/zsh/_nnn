@@ -25,6 +25,7 @@ args=(
     '(-G)-G[git status column (runs git)]'
     '(-H)-H[show hidden files]'
     '(-i)-i[show current file info]'
+    '(-I)-I[no directory sizes in detail]'
     '(-J)-J[no auto-advance on selection]'
     '(-K)-K[detect key collision and exit]'
     '(-l)-l[lines to move per scroll]:val'

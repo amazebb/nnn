@@ -6,7 +6,7 @@
 .Nd The unorthodox terminal file manager.
 .Sh SYNOPSIS
 .Nm
-.Op Ar -aAcCdDeEfgGHJKnQrRSuUVxyYz0h
+.Op Ar -aAcCdDeEfgGHIJKnQrRSuUVxyYz0h
 .Op Ar -b key
 .Op Ar -F val
 .Op Ar -l val
@@ -107,6 +107,10 @@ supports the following options:
 .Pp
 .Fl i
         show current file information in info bar (may be slow)
+.Pp
+.Fl I
+        hide directory sizes in detail mode (files still show size;
+        disk-usage sort still shows directory totals)
 .Pp
 .Fl J
         disable auto-advance on selection
