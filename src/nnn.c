@@ -471,6 +471,7 @@ struct {
 	size_t len;
 	git_status_t *statuses;
 } git_statuses;
+static const char *gitstat_notice;
 
 /* Configuration, contexts */
 static settings cfg = {
@@ -8763,6 +8764,10 @@ begin:
 			redraw(path);
 			statusbar(path);
 		}
+		if (gitstat_notice) {
+			printwait(gitstat_notice, &presel);
+			gitstat_notice = NULL;
+		}
 
 #ifdef BENCH
 		/* Lod and exit for performance profiling e.g. to run 'time nnn -T d /' */
@@ -9287,6 +9292,7 @@ nochange:
 				goto begin;
 			case SEL_GITSTATUS:
 				cfg.normalgit ^= 1;
+				gitstat_notice = cfg.normalgit ? "git status on" : "git status off";
 				copycurname();
 				cd = FALSE;
 				goto begin;
