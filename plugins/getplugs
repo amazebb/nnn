@@ -35,6 +35,8 @@ if [ "$1" = "master" ] ; then
     ARCHIVE_URL=https://github.com/jarun/nnn/archive/master.tar.gz
 elif type nnn >/dev/null 2>&1; then
     VER=$(nnn -V)
+    # Fork tags like 5.2-amazebb are not GitHub releases; use the upstream version.
+    VER=${VER%%-*}
     ARCHIVE_URL=https://github.com/jarun/nnn/releases/download/v"$VER"/nnn-v"$VER".tar.gz
 else
     echo "nnn is not installed"

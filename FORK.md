@@ -71,6 +71,19 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
+### Plugin updates (`getplugs`)
+
+`nnn -V` is `5.2-amazebb`, which is not a jarun/nnn release tag. This fork’s `plugins/getplugs` strips the `-amazebb` suffix and fetches **v5.2**.
+
+The wiki one-liner always downloads **upstream** `getplugs`, which does not strip. Use either:
+
+```bash
+# latest plugins from jarun master
+sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)" master
+```
+
+or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.2). Custom files (`preview-tui`, `preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
+
 ## Tracking upstream
 
 Keep fork features as normal commits on this branch. When jarun/nnn moves:
