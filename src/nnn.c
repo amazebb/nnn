@@ -5407,6 +5407,14 @@ static bool handle_cur_move(enum action sel)
 	} else
 		ret = FALSE;
 
+	/* Browse loop is paused under the popup; FIFO already follows cur */
+	if (ret) {
+		g_state.move = 1;
+		redraw(g_ctx[cfg.curctx].c_path);
+		statusbar(g_ctx[cfg.curctx].c_path);
+		refresh();
+	}
+
 	return ret;
 }
 
