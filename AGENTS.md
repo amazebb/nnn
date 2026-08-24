@@ -1,6 +1,6 @@
 # amazebb nnn
 
-Personal fork of [jarun/nnn](https://github.com/jarun/nnn) on branch **`amazebb`**. `nnn -V` is **`5.2-amazebb`**. License stays BSD 2-Clause (do not invent another). Human-facing delta: `FORK.md`.
+Personal fork of [jarun/nnn](https://github.com/jarun/nnn) on branch **`amazebb`**. `nnn -V` is **`5.3-amazebb`**. License stays BSD 2-Clause (do not invent another). Human-facing delta: `FORK.md`.
 
 This file is the session brief. Keep it current: when a durable project fact changes, add or edit a **markdown bullet** here.
 

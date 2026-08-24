@@ -1,7 +1,7 @@
 # amazebb fork
 
-This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn 5.2).
-`nnn -V` reports **5.2-amazebb**. License is unchanged (BSD 2-Clause).
+This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn 5.3).
+`nnn -V` reports **5.3-amazebb**. License is unchanged (BSD 2-Clause).
 
 Build and install to `~/.local` (nerd fonts, man page, zsh completion; backs up an existing binary to `nnn.bak`):
 
@@ -73,7 +73,7 @@ Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
 ### Plugin updates (`getplugs`)
 
-`nnn -V` is `5.2-amazebb`, which is not a jarun/nnn release tag. This fork’s `plugins/getplugs` strips the `-amazebb` suffix and fetches **v5.2**.
+`nnn -V` is `5.3-amazebb`, which is not a jarun/nnn release tag. This fork’s `plugins/getplugs` strips the `-amazebb` suffix and fetches **v5.3**.
 
 The wiki one-liner always downloads **upstream** `getplugs`, which does not strip. Use either:
 
@@ -82,7 +82,7 @@ The wiki one-liner always downloads **upstream** `getplugs`, which does not stri
 sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)" master
 ```
 
-or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.2). Custom files (`preview-tui`, `preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
+or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.3). Custom files (`preview-tui`, `preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
 
 ## Tracking upstream
 

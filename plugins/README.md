@@ -13,6 +13,10 @@ Plugins extend the capabilities of `nnn`. They are _executable_ scripts (or bina
 
 | Plugin (a-z) | Description [Clears selection<sup>1</sup>] | Lang | Dependencies |
 | --- | --- | --- | --- |
+| [.cbcp](.cbcp) | **Internal**: Copy selection to system clipboard | sh | _see in-file docs_ |
+| [.nmv](.nmv) | **Internal**: Feature-rich batch renamer | bash | _see in-file docs_ |
+| [.npreview](.npreview) | **Internal**: Text-based preview handler | sh | _see in-file docs_ |
+| [.ntfy](.ntfy) | **Internal**: Notify on copy, move, remove completion | sh | _see in-file docs_ |
 | [autojump](autojump) | Navigate to dir/path | sh | [jump](https://github.com/gsamokovarov/jump)/autojump/<br>zoxide/z/[z.lua](https://github.com/skywind3000/z.lua) |
 | [boom](boom) | Play random music from dir | sh | [moc](http://moc.daper.net/) |
 | [bulknew](bulknew) | Create multiple files/dirs at once | bash | sed, xargs, mktemp |
@@ -49,7 +53,7 @@ Plugins extend the capabilities of `nnn`. They are _executable_ scripts (or bina
 | [mp3conv](mp3conv) | Extract audio from multimedia as mp3 | sh | ffmpeg |
 | [mtpmount](mtpmount) | Toggle mount of MTP device (eg. Android) | sh | gvfs-mtp |
 | [nbak](nbak) | Backs up `nnn` config | sh | tar, awk, mktemp |
-| [nmount](nmount) | Toggle mount status of a device as normal user | sh | pmount (optional), udisks2 |
+| [nmount](nmount) | Toggle mount status of a device as normal user | bash | pmount (optional), udisks2 |
 | [nuke](nuke) | Sample file opener (CLI-only by default) | sh | _see in-file docs_ |
 | [oldbigfile](oldbigfile) | List large files by access time | sh | find, sort |
 | [openall](openall) | Open selected files together or one by one [✓] | bash | - |
@@ -62,6 +66,7 @@ Plugins extend the capabilities of `nnn`. They are _executable_ scripts (or bina
 | [ringtone](ringtone) | Create a variable bitrate mp3 ringtone from file | sh | date, ffmpeg |
 | [rsynccp](rsynccp) | Gives copy-paste verbose progress percentage [✓] | sh | rsync |
 | [splitjoin](splitjoin) | Split file or join selection [✓] | sh | split, cat |
+| [stats](stats) | Show file stats in a pager | sh | file, stat, pager |
 | [suedit](suedit) | Edit file using superuser permissions | sh | sudoedit/sudo/doas |
 | [tnp](tnp) | Opens files in a Tmux Neovim pane (Tmux session only) | sh | tmux, nvim |
 | [togglex](togglex) | Toggle executable mode for selection [✓] | sh | chmod |
@@ -74,7 +79,7 @@ Plugins extend the capabilities of `nnn`. They are _executable_ scripts (or bina
 Notes:
 
 1. A plugin has to explicitly request `nnn` to clear the selection e.g. after operating on the selected files.
-2. Files starting with a dot in the `plugins` directory are internal files and should not be used as plugins.
+2. Files starting with a dot in the `plugins` directory are internal files, listed at the top of the table, and should not be used as plugins directly.
 
 ### Table of contents
 
@@ -125,7 +130,7 @@ If the plugins list gets too long, try breaking them up into sections:
 NNN_PLUG_PERSONAL='g:personal/convert2zoom;p:personal/echo'
 NNN_PLUG_WORK='j:work/prettyjson;d:work/foobar'
 NNN_PLUG_INLINE='e:!go run "$nnn"*'
-NNN_PLUG_DEFAULT='1:ipinfo;p:preview-tui;o:fzz;b:nbak'
+NNN_PLUG_DEFAULT='1:ipinfo;p:preview-tui;o:fzz;r:!ratio | sort -nr > ratio*;b:nbak'
 NNN_PLUG="$NNN_PLUG_PERSONAL;$NNN_PLUG_WORK;$NNN_PLUG_DEFAULT;$NNN_PLUG_INLINE"
 export NNN_PLUG
 ```

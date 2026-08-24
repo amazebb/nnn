@@ -151,7 +151,7 @@
 #endif
 
 /* Macro definitions */
-#define VERSION      "5.2-amazebb"
+#define VERSION      "5.3-amazebb"
 #define GENERAL_INFO "BSD 2-Clause\nhttps://github.com/jarun/nnn"
 
 #ifndef NOSSN
@@ -529,7 +529,8 @@ static blkcnt_t dir_blocks;
 static kv *bookmark;
 static kv *plug;
 static kv *order;
-static uchar_t tmpfplen, homelen;
+static ushort_t homelen;
+static uchar_t tmpfplen;
 static uchar_t blk_shift = BLK_SHIFT_512;
 #ifndef NOMOUSE
 static int middle_click_key;
@@ -2474,6 +2475,7 @@ static bool initcurses(void *oldmask)
 	mouseinterval(0);
 #endif
 	curs_set(FALSE); /* Hide cursor */
+	leaveok(stdscr, TRUE); /* Skip precise cursor placement during normal redraws */
 
 	char *colors = getenv(env_cfg[NNN_COLORS]);
 
@@ -2835,10 +2837,14 @@ static void xrmfromsel(char *path, char *fpath)
 static bool cpmv_rename(int choice, const char *path)
 {
 	int fd;
+	ssize_t path_esc_ret;
 	uint_t count = 0, lines = 0;
 	bool ret = FALSE;
+	char *path_escp;
 	char *cmd = (choice == 'c' ? cp : mv);
-	char buf[sizeof(patterns[P_CPMVRNM]) + (MAX(sizeof(cp), sizeof(mv))) + (PATH_MAX << 1)];
+	char path_esc[(PATH_MAX << 2) + 3];
+	char buf[sizeof(patterns[P_CPMVRNM]) + (MAX(sizeof(cp), sizeof(mv))) + (PATH_MAX * 5)];
+	size_t path_esc_size = sizeof(path_esc);
 
 	fd = create_tmp_file();
 	if (fd == -1)
@@ -2874,7 +2880,17 @@ static bool cpmv_rename(int choice, const char *path)
 		goto finish;
 	}
 
-	snprintf(buf, sizeof(buf), patterns[P_CPMVRNM], path, g_tmpfpath, cmd);
+	/* Escape for insertion inside an existing single-quoted shell string. */
+	path_escp = path_esc;
+	path_esc_ret = shell_escape(&path_escp, &path_esc_size, path);
+	if (path_esc_ret < 2)
+		goto finish;
+
+	/* Strip outer quotes from shell_escape(), keep interior quote breaks (e.g. '\'''). */
+	path_esc[path_esc_ret - 1] = '\0';
+	memmove(path_esc, path_esc + 1, path_esc_ret - 1);
+
+	snprintf(buf, sizeof(buf), patterns[P_CPMVRNM], path_esc, g_tmpfpath, cmd);
 	if (!spawn(utils[UTIL_SH_EXEC], buf, NULL, NULL, F_CLI | F_CHKRTN))
 		ret = TRUE;
 finish:
@@ -3881,6 +3897,7 @@ static int filterentries(char *path, char *lastname)
 
 	cleartimeout();
 	curs_set(TRUE);
+	leaveok(stdscr, FALSE);
 	showfilter(ln);
 
 	while ((r = get_wch(ch)) != ERR) {
@@ -4087,6 +4104,7 @@ end:
 	copycurname();
 
 	curs_set(FALSE);
+	leaveok(stdscr, TRUE);
 	settimeout();
 
 	/* Return keys for navigation etc. */
@@ -4205,6 +4223,7 @@ static char *xreadline(const char *prefill, const char *prompt)
 
 	x = getcurx(stdscr);
 	curs_set(TRUE);
+	leaveok(stdscr, FALSE);
 
 	while (1) {
 		buf[len] = ' ';
@@ -4428,6 +4447,7 @@ static char *xreadline(const char *prefill, const char *prompt)
 
 END:
 	curs_set(FALSE);
+	leaveok(stdscr, TRUE);
 	settimeout();
 	printmsg("");
 
@@ -5327,16 +5347,16 @@ static bool load_session(const char *sname, char **path, char **lastdir, char **
 		= g_ctx[cfg.curctx].c_fltr[0] = g_ctx[cfg.curctx].c_fltr[1] = '\0';
 
 	for (; i < CTX_MAX; ++i)
-		if ((read(fd, &g_ctx[i].c_cfg, sizeof(settings)) != (ssize_t)sizeof(settings))
+		if ((header.nameln[i] > (NAME_MAX + 1))
+			|| (header.lastln[i] > PATH_MAX)
+			|| (header.fltrln[i] > REGEX_MAX)
+			|| (header.pathln[i] > PATH_MAX)
+			|| (read(fd, &g_ctx[i].c_cfg, sizeof(settings)) != (ssize_t)sizeof(settings))
 			|| (read(fd, &g_ctx[i].color, sizeof(uint_t)) != (ssize_t)sizeof(uint_t))
-			|| (header.nameln[i] > 0
-			    && read(fd, g_ctx[i].c_name, header.nameln[i]) != (ssize_t)header.nameln[i])
-			|| (header.lastln[i] > 0
-			    && read(fd, g_ctx[i].c_last, header.lastln[i]) != (ssize_t)header.lastln[i])
-			|| (header.fltrln[i] > 0
-			    && read(fd, g_ctx[i].c_fltr, header.fltrln[i]) != (ssize_t)header.fltrln[i])
-			|| (header.pathln[i] > 0
-			    && read(fd, g_ctx[i].c_path, header.pathln[i]) != (ssize_t)header.pathln[i]))
+			|| (read(fd, g_ctx[i].c_name, header.nameln[i]) != (ssize_t)header.nameln[i])
+			|| (read(fd, g_ctx[i].c_last, header.lastln[i]) != (ssize_t)header.lastln[i])
+			|| (read(fd, g_ctx[i].c_fltr, header.fltrln[i]) != (ssize_t)header.fltrln[i])
+			|| (read(fd, g_ctx[i].c_path, header.pathln[i]) != (ssize_t)header.pathln[i]))
 			goto END;
 
 	*path = g_ctx[cfg.curctx].c_path;
@@ -6436,7 +6456,7 @@ static void show_help(const char *path)
 	       "9g ^A  Top%21J  Jump to entry/offset\n"
 	       "9G ^E  End%20^J  Toggle auto-advance on open\n"
 	      "8B (,)  Book(mark)%11b ^/  Select bookmark\n"
-		"a1-4  Context%11(Sh)Tab  Cycle/new context\n"
+		"a1-8  Context%11(Sh)Tab  Cycle/new context\n"
 	    "62Esc ^Q  Quit%19^y  Next young\n"
 		 "b^G  QuitCD%18Q  Pick/err, quit\n"
 	  "4q Alt+Esc  Quit context%12d  Detail mode toggle\n"
@@ -6721,7 +6741,7 @@ static bool run_plugin(char **path, const char *file, char *runfile, char **last
 		} else if (*file == '>') { /* Check if floating window should be used */
 			flags |= F_WINDOW;
 			++file;
-			*action = SEL_REDRAW;
+			//*action = SEL_REDRAW;
 		} else if (*file == '&') { /* Check if GUI flags are to be used */
 			flags = F_MULTI | F_NOTRACE | F_NOWAIT;
 			++file;
@@ -7095,6 +7115,7 @@ static void *du_worker_loop(void *p_data)
 	du_task task = {0};
 
 #ifdef __linux__
+#ifndef __TERMUX__
 	/* Pin thread to specific CPU core for better cache locality and parallelism */
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset);
@@ -7102,6 +7123,7 @@ static void *du_worker_loop(void *p_data)
 	if (num_cpus > 0)
 		CPU_SET(core % num_cpus, &cpuset);
 	pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+#endif
 #endif
 
 	for (;;) {
@@ -8181,7 +8203,11 @@ static bool is_text_file(const char *fpath)
 	return TRUE;
 }
 
-/* Draw the preview pane for the currently hovered file */
+/*
+ * Draw the preview pane for the currently hovered file
+ * If the plugin .npreview is found, it is used.
+ * Otherwise, the built-in previewer is used.
+ */
 static void preview_pane(const char *path)
 {
 	if (!ndents || !cfg.preview)
@@ -8205,10 +8231,12 @@ static void preview_pane(const char *path)
 	/* Auto-detect .npreview plugin */
 	if (!previewer) {
 		previewer = malloc(xstrlen(plgpath) + xstrlen(utils[UTIL_NPREVIEW]) + 1);
-		mkpath(plgpath, utils[UTIL_NPREVIEW], previewer);
-		if (access(previewer, X_OK)) {
-			free(previewer);
-			previewer = NULL;
+		if (previewer) {
+			mkpath(plgpath, utils[UTIL_NPREVIEW], previewer);
+			if (access(previewer, X_OK)) {
+				free(previewer);
+				previewer = NULL;
+			}
 		}
 	}
 
@@ -8274,9 +8302,8 @@ static void preview_pane(const char *path)
 				close(pipefd[0]);
 			}
 			waitpid(pid, NULL, 0);
-		} else {
+		} else
 			close(pipefd[0]);
-		}
 		return;
 	}
 
@@ -9835,9 +9862,7 @@ nochange:
 
 				if (!r) {
 					cfg.filtermode ? presel = FILTER : statusbar(path);
-
-					if (action != SEL_REDRAW)
-						goto nochange;
+					break;
 				}
 			} else { /* 'Return/Enter' enters the plugin directory */
 				g_state.runplugin ^= 1;
@@ -10698,7 +10723,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 	DPRINTF_S(home);
-	homelen = (uchar_t)xstrlen(home);
+	homelen = (ushort_t)xstrlen(home);
 
 	if (!setup_config())
 		return EXIT_FAILURE;

@@ -17,9 +17,9 @@ href="https://github.com/jarun/nnn#quickstart">Quickstart</a>] [<a
 href="https://github.com/jarun/nnn/tree/master/plugins#nnn-plugins">Plugins</a>] [<a
 href="https://github.com/jarun/nnn/wiki">Wiki</a>]</h3>
 
-> **amazebb fork** of [jarun/nnn](https://github.com/jarun/nnn). Differences from `master` are in [FORK.md](FORK.md). `nnn -V` prints `5.2-amazebb`.
+> **amazebb fork** of [jarun/nnn](https://github.com/jarun/nnn). Differences from `master` are in [FORK.md](FORK.md). `nnn -V` prints `5.3-amazebb`.
 
-`nnn` (_n³_) is a full-featured terminal file manager. It's tiny, nearly 0-config and [incredibly fast](https://github.com/jarun/nnn/wiki/Performance).
+`nnn` (_n³_) is a full-featured terminal file manager. It's tiny (~150 KiB), [nearly 0-config](https://github.com/jarun/nnn#quickstart) and [incredibly fast](https://github.com/jarun/nnn/wiki/Performance).
 
 It is designed to be unobtrusive with smart workflows to match the trains of thought.
 
@@ -80,7 +80,8 @@ Runs on the Pi, [Termux](https://www.youtube.com/embed/AbaauM7gUJw) (Android), L
   - Reverse sort
   - Directory-specific ordering
 - Mimes
-  - Preview hovered files in FIFO-based previewer
+  - Built-in previewer for directory and text files
+  - FIFO-based previewer plugins with extensive mime support
   - Open with desktop opener or specify a custom opener
   - File-specific colors (or minimal _dirs in context color_)
   - Icons and Emojis support (customize and compile-in)
@@ -108,10 +109,22 @@ Runs on the Pi, [Termux](https://www.youtube.com/embed/AbaauM7gUJw) (Android), L
 
 ## Quickstart
 
+### Beginners
+
+1. [Install](https://github.com/jarun/nnn/wiki/Usage#installation) `nnn`, preferbly using the package manager.
+2. Run the following command to generate (and optionally add to your rc file) a shell function to start with.
+   ```sh
+   sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/misc/quickstart.sh)"
+   ```
+
+Use the shell function name you chose to run `nnn` with your preferred configuration.
+
+### Power users
+
 1. [Install](https://github.com/jarun/nnn/wiki/Usage) `nnn` and the dependencies you need.
 2. The desktop opener is default. Use `-e` to open text files in the terminal. Optionally [open detached](https://github.com/jarun/nnn/wiki/Basic-use-cases#detached-text).
-3. Configure [`cd` on quit](https://github.com/jarun/nnn/wiki/Basic-use-cases#configure-cd-on-quit).
-4. [Sync subshell `$PWD`](https://github.com/jarun/nnn/wiki/Basic-use-cases#sync-subshell-pwd) to `nnn`.
+3. Configure [cd on quit](https://github.com/jarun/nnn/wiki/Basic-use-cases#configure-cd-on-quit).
+4. [Sync subshell](https://github.com/jarun/nnn/wiki/Basic-use-cases#sync-subshell-pwd) `$PWD` to `nnn`.
 5. [Install plugins](https://github.com/jarun/nnn/tree/master/plugins#installation).
 6. Use `-x` to sync selection to clipboard, show notis on `cp`, `mv`, `rm` and set xterm title.
 7. For a CLI-only environment, set [`NNN_OPENER`](https://github.com/jarun/nnn/wiki/Usage#configuration) to [`nuke`](https://github.com/jarun/nnn/blob/master/plugins/nuke). Use option `-c`.
@@ -122,7 +135,7 @@ Don't memorize! Arrows, <kbd>/</kbd>, <kbd>q</kbd> suffice. <kbd>Tab</kbd> creat
 
 [![](https://github.com/user-attachments/assets/e93f7571-8b8d-4703-bef1-93fc804adf7d)](https://www.youtube.com/embed/-knZwdd1ScU)
 
-[![Wiki](https://img.shields.io/badge/RTFM-nnn%20Wiki-important?maxAge=2592000)](https://github.com/jarun/nnn/wiki)
+[![Wiki](https://img.shields.io/badge/RTFM-nnn%20Wiki-crimson?maxAge=2592000)](https://github.com/jarun/nnn/wiki)
 
 ## Videos
 
