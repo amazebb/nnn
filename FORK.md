@@ -45,11 +45,11 @@ File stats (`f`) use Homebrew GNU `stat` when
 
 `preview-tui` can open a **native Ghostty split** (same idea as Cmd+D / `new_split:right`) instead of wrapping nnn in tmux. Requires Ghostty 1.3+ AppleScript and macOS Automation permission for Ghostty.
 
-Checked-in helpers (copy into `~/.config/nnn/plugins/` with `preview-tui`; nnn does not load the git tree):
+Checked-in helpers live in `plugins/ghostty/` (copy that folder and `preview-tui` into `~/.config/nnn/plugins/`; nnn does not load the git tree):
 
-- `preview-ghostty-split.applescript` — create the split and record its terminal id
-- `preview-ghostty-run.sh` — command run in that surface
-- `preview-ghostty-close.applescript` — close the surface on `;p` or nnn quit
+- `plugins/ghostty/preview-ghostty-split.applescript` — create the split and record its terminal id
+- `plugins/ghostty/preview-ghostty-run.sh` — command run in that surface
+- `plugins/ghostty/preview-ghostty-close.applescript` — close the surface on `;p` or nnn quit
 
 The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`n3 -t`** / **`N3_TMUX=1`** keeps the old tmux wrap.
 
@@ -82,7 +82,7 @@ The wiki one-liner always downloads **upstream** `getplugs`, which does not stri
 sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)" master
 ```
 
-or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.3). Custom files (`preview-tui`, `preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
+or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.3). Custom files (`preview-tui`, `ghostty/preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
 
 ## Tracking upstream
 

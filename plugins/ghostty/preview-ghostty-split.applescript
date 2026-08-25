@@ -29,15 +29,7 @@ on run argv
 		set wait after command of cfg to false
 		if (count of envList) > 0 then set environment variables of cfg to envList
 		set orig to focused terminal of selected tab of front window
-		if gdir is "down" then
-			set newTerm to split orig direction down with configuration cfg
-		else if gdir is "left" then
-			set newTerm to split orig direction left with configuration cfg
-		else if gdir is "up" then
-			set newTerm to split orig direction up with configuration cfg
-		else
-			set newTerm to split orig direction right with configuration cfg
-		end if
+		set newTerm to split orig direction gdir with configuration cfg
 		focus orig
 		set tid to id of newTerm
 	end tell

@@ -8,14 +8,14 @@ This file is the session brief. Keep it current: when a durable project fact cha
 
 - Source of truth is this git tree (`src/nnn.c`, `src/nnn.h`, `plugins/`, `Makefile`).
 - Install: `make deploy` → `PREFIX=$HOME/.local`, `O_NERD=1`. Binary `~/.local/bin/nnn` (previous copy `nnn.bak`), man + zsh completion under `~/.local/share/`.
-- nnn does **not** load plugins from this tree. After editing `plugins/preview-tui` or `plugins/preview-ghostty-*`, copy them to `~/.config/nnn/plugins/`.
+- nnn does **not** load plugins from this tree. After editing `plugins/preview-tui` or `plugins/ghostty/preview-ghostty-*`, copy them to `~/.config/nnn/plugins/` (keep the `ghostty/` subdir).
 - Launcher **`n3` is not in this repo.** Edit only `/Users/boris/.local/share/scripts/bin/n3` (symlink `~/.local/bin/n3`). Alias `n='source …/n3'` so zsh `NOMATCH` applies — never unmatched globs in sourced `n3`.
 - `n3` default: `nnn -dIYGaPp`. **`n3 -t`** / **`N3_TMUX=1`** wraps tmux; otherwise Ghostty native split.
 
 ## Constraints
 
 - Fold features into `src/nnn.c` / `src/nnn.h`. Do not re-apply compile-time user patches (gitstatus is already in-tree).
-- Ghostty preview uses **checked-in** helpers only: `preview-ghostty-split.applescript`, `preview-ghostty-run.sh`, `preview-ghostty-close.applescript`. Never generate AppleScript or shell on the fly.
+- Ghostty preview uses **checked-in** helpers only, under `plugins/ghostty/`: `preview-ghostty-split.applescript`, `preview-ghostty-run.sh`, `preview-ghostty-close.applescript`. Never generate AppleScript or shell on the fly.
 - Close Ghostty preview **by terminal id only**. Never close other splits in the tab (that kills unrelated panes).
 - Images: **chafa** first, then viu, then `kitty icat`. Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
 - `getplugs`: strip the `-amazebb` suffix from `nnn -V` before fetching a jarun tag.
