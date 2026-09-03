@@ -3,12 +3,28 @@
 This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn 5.3).
 `nnn -V` reports **5.3-amazebb**. License is unchanged (BSD 2-Clause).
 
-Build and install to `~/.local` (nerd fonts, man page, zsh completion; backs up an existing binary to `nnn.bak`):
+## Tracking upstream
+
+Keep fork features as normal commits on this branch. When jarun/nnn moves:
 
 ```bash
-make deploy
+git fetch origin   # or an upstream remote
+git merge master   # resolve conflicts in src/nnn.c, then make deploy
 ```
 
+## Build and Install
+
+### Install
+
+`make deploy` installs to `PREFIX=$(HOME)/.local`:
+
+- `~/.local/bin/nnn` (previous binary saved as `nnn.bak`)
+- `~/.local/share/man/man1/nnn.1`
+- `~/.local/share/zsh/site-functions/_nnn`
+
+Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
+
+---
 ## Changes from master
 
 ### Timestamps
@@ -61,16 +77,6 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 `p` (copy) and `v` (move) still open the editor so you can paste a path list. A floating help window (same style as `f`) explains that first.
 
-### Install
-
-`make deploy` installs to `PREFIX=$(HOME)/.local`:
-
-- `~/.local/bin/nnn` (previous binary saved as `nnn.bak`)
-- `~/.local/share/man/man1/nnn.1`
-- `~/.local/share/zsh/site-functions/_nnn`
-
-Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
-
 ### Plugin updates (`getplugs`)
 
 `nnn -V` is `5.3-amazebb`, which is not a jarun/nnn release tag. This fork’s `plugins/getplugs` strips the `-amazebb` suffix and fetches **v5.3**.
@@ -84,11 +90,4 @@ sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/get
 
 or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.3). Custom files (`preview-tui`, `ghostty/preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
 
-## Tracking upstream
 
-Keep fork features as normal commits on this branch. When jarun/nnn moves:
-
-```bash
-git fetch origin   # or an upstream remote
-git merge master   # resolve conflicts in src/nnn.c, then make deploy
-```
