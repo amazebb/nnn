@@ -248,6 +248,7 @@
 #define TIME_COLS_ISO     16 /* YYYY-MM-DD HH:MM */
 #define TIME_COLS_COMPACT 12 /* "DD MMM HH:MM" or "MMM DD HH:MM" */
 /* Detail prefix besides timestamp: leading space + perms(5) + size(9) + trailing space */
+#define PERM_COLS         5  /* two spaces + 3 octal digits */
 #define DETAIL_COLS_REST  16
 #define ARCHIVE_CMD_LEN 16
 #define BLK_SHIFT_512   9
@@ -398,7 +399,7 @@ typedef struct {
 	uint_t ustime     : 1;  /* US compact timestamps: MMM DD */
 	uint_t useeditor  : 1;  /* Use VISUAL to open text files */
 	uint_t nodirsize  : 1;  /* Hide directory sizes in detail mode */
-	uint_t reserved3  : 1;
+	uint_t noperms    : 1;  /* Hide octal permissions in detail mode */
 	uint_t fuzzy      : 1;  /* Use fuzzy filters */
 	uint_t regex      : 1;  /* Use regex filters */
 	uint_t x11        : 1;  /* Copy to system clipboard, show notis, xterm title */
@@ -5122,9 +5123,7 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 
 	if (cfg.showdetail) {
 		int type = ent->mode & S_IFMT;
-		char perms[6] = {' ', ' ', (char)('0' + ((ent->mode >> 6) & 7)),
-				(char)('0' + ((ent->mode >> 3) & 7)),
-				(char)('0' + (ent->mode & 7)), '\0'};
+		const char *sz;
 
 		addch(' ');
 		attrs = g_state.oldcolor ? (resetdircolor(ent->flags), A_DIM)
@@ -5135,16 +5134,20 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		/* Print details */
 		print_time(&ent->sec, ent->flags);
 
-		{
-			const char *sz;
+		if (type == S_IFDIR && cfg.nodirsize && !cfg.blkorder)
+			sz = "";
+		else if (type == S_IFREG || type == S_IFDIR)
+			sz = coolsize(cfg.blkorder ? (blkcnt_t)ent->blocks << blk_shift
+						   : ent->size);
+		else
+			sz = (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type);
+		if (cfg.noperms)
+			printw("%9s ", sz);
+		else {
+			char perms[6] = {' ', ' ', (char)('0' + ((ent->mode >> 6) & 7)),
+					(char)('0' + ((ent->mode >> 3) & 7)),
+					(char)('0' + (ent->mode & 7)), '\0'};
 
-			if (type == S_IFDIR && cfg.nodirsize && !cfg.blkorder)
-				sz = "";
-			else if (type == S_IFREG || type == S_IFDIR)
-				sz = coolsize(cfg.blkorder ? (blkcnt_t)ent->blocks << blk_shift
-							   : ent->size);
-			else
-				sz = (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type);
 			printw("%s%9s ", perms, sz);
 		}
 
@@ -6465,6 +6468,7 @@ static void show_help(const char *path)
 		  "c/  Filter%17^N  Toggle type-to-nav\n"
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
 		  "c.  Toggle hidden%11i  Toggle git status\n"
+		  "cM  Toggle perms\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  Create new/link\n"
@@ -7940,34 +7944,28 @@ static int set_sort_flags(int r)
 		entrycmpfn = &entrycmp;
 		namecmpfn = &xstricmp;
 		break;
-	case 'e': /* File extension */ {
-		bool val = cfg.extnorder ^ 1;
+	case 'e': /* File extension */
 		reset_sort_flags();
-		cfg.extnorder = val;
+		cfg.extnorder = 1;
 		cfg.reverse = 0;
 		entrycmpfn = &entrycmp;
 		break;
-	}
 	case 'r': /* Reverse sort */
 		cfg.reverse ^= 1;
 		entrycmpfn = cfg.reverse ? &reventrycmp : &entrycmp;
 		break;
-	case 's': /* File size */ {
-		bool val = cfg.sizeorder ^ 1;
+	case 's': /* File size */
 		reset_sort_flags();
-		cfg.sizeorder = val;
+		cfg.sizeorder = 1;
 		cfg.reverse = 0;
 		entrycmpfn = &entrycmp;
 		break;
-	}
-	case 't': /* Time */ {
-		bool val = cfg.timeorder ^ 1;
+	case 't': /* Time */
 		reset_sort_flags();
-		cfg.timeorder = val;
+		cfg.timeorder = 1;
 		cfg.reverse = 0;
 		entrycmpfn = &entrycmp;
 		break;
-	}
 	case 'v': /* Version */
 		cfg.version ^= 1;
 		namecmpfn = cfg.version ? &xstrverscasecmp : &xstricmp;
@@ -8415,7 +8413,7 @@ static int adjust_cols(int n)
 #endif
 	if (cfg.showdetail) {
 		int detailcols = (cfg.compacttime ? TIME_COLS_COMPACT : TIME_COLS_ISO)
-				 + DETAIL_COLS_REST;
+				 + DETAIL_COLS_REST - (cfg.noperms ? PERM_COLS : 0);
 
 		/* Fallback to light mode if the name column would be too narrow */
 		if (n < detailcols + (git_statuses.show ? 6 : 4))
@@ -9303,6 +9301,7 @@ nochange:
 		case SEL_HIDDEN: // fallthrough
 		case SEL_DETAIL: // fallthrough
 		case SEL_GITSTATUS: // fallthrough
+		case SEL_NOPERMS: // fallthrough
 		case SEL_PREVIEW: // fallthrough
 		case SEL_SORT:
 			switch (sel) {
@@ -9334,6 +9333,10 @@ nochange:
 			case SEL_DETAIL:
 				cfg.showdetail ^= 1;
 				cfg.blkorder = 0;
+				continue;
+			case SEL_NOPERMS:
+				cfg.noperms ^= 1;
+				gitstat_notice = cfg.noperms ? "perms off" : "perms on";
 				continue;
 			case SEL_PREVIEW:
 				cfg.preview ^= 1;
@@ -10299,6 +10302,7 @@ static void usage(void)
 		" -J      no auto-advance on selection\n"
 		" -K      detect key collision and exit\n"
 		" -l val  set scroll lines\n"
+		" -m      no permissions in detail\n"
 		" -n      type-to-nav mode\n"
 #ifndef NORL
 		" -N      use native prompt\n"
@@ -10493,7 +10497,7 @@ int main(int argc, char *argv[])
 
 	while ((opt = (env_opts_id > 0
 		       ? env_opts[--env_opts_id]
-		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiIJKl:nNop:P:QrRs:St:T:uUVxyYz0h"))) != -1) {
+		       : getopt(argc, argv, "aAb:BcCdDeEfF:gGHiIJKl:mnNop:P:QrRs:St:T:uUVxyYz0h"))) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -10568,6 +10572,9 @@ int main(int argc, char *argv[])
 		case 'l':
 			if (env_opts_id < 0)
 				scroll_lines = atoi(optarg);
+			break;
+		case 'm':
+			cfg.noperms = 1;
 			break;
 		case 'n':
 			cfg.filtermode = 1;

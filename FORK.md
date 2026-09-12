@@ -42,6 +42,7 @@ Use with detail mode (`-d` / `d`). `-y` and `-Y` are exclusive; the last one win
 | Flag | `NNN_OPTS` | Detail listing |
 | --- | --- | --- |
 | `-I` | `I` | Size column for files only; directories left blank (du/`d` sort still shows totals) |
+| `-m` | `m` | Hide octal permissions (`644`). Status bar still shows `rw-r--r--`. Toggle with `M`. |
 
 ### Git status
 
@@ -72,6 +73,10 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 - Toggle preview: `;` then `p` (closes the Ghostty pane).
 - Images: **chafa** first (viu has a placement/size bug), then viu, then `kitty icat`. Fits the pane after the split size settles.
 - Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
+
+### Sort keys (`t` / `s` / `e`)
+
+`t` then `t` / `s` / `e` **sets** that key (does not toggle it off). Uppercase keeps the key and reverses: `t` then `T` is oldest first. Clear with `t` then `c`.
 
 ### Copy / move with nothing selected
 

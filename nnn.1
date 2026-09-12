@@ -6,7 +6,7 @@
 .Nd The unorthodox terminal file manager.
 .Sh SYNOPSIS
 .Nm
-.Op Ar -aAcCdDeEfgGHIJKnQrRSuUVxyYz0h
+.Op Ar -aAcCdDeEfgGHIJKmnQrRSuUVxyYz0h
 .Op Ar -b key
 .Op Ar -F val
 .Op Ar -l val
@@ -121,6 +121,10 @@ supports the following options:
 .Pp
 .Fl "l val"
         number of lines to move per mouse wheel scroll
+.Pp
+.Fl m
+        hide octal permissions in detail mode (status bar still shows
+        \fBls\fR-style perms). Toggle with \fBM\fR.
 .Pp
 .Fl n
         start in type-to-nav mode

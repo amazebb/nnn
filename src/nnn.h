@@ -82,6 +82,7 @@ enum action {
 	SEL_HIDDEN,
 	SEL_DETAIL,
 	SEL_GITSTATUS,
+	SEL_NOPERMS,
 	SEL_STATS,
 	SEL_CHMODX,
 	SEL_ARCHIVE,
@@ -208,6 +209,8 @@ static struct key bindings[] = {
 	{ 'd',            SEL_DETAIL },
 	/* Toggle git status column */
 	{ 'i',            SEL_GITSTATUS },
+	/* Toggle octal permissions in detail mode */
+	{ 'M',            SEL_NOPERMS },
 	/* File details */
 	{ 'f',            SEL_STATS },
 	{ CONTROL('F'),   SEL_STATS },

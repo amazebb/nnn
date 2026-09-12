@@ -29,6 +29,7 @@ args=(
     '(-J)-J[no auto-advance on selection]'
     '(-K)-K[detect key collision and exit]'
     '(-l)-l[lines to move per scroll]:val'
+    '(-m)-m[no permissions in detail]'
     '(-n)-n[start in type-to-nav mode]'
     '(-o)-o[open files only on Enter]'
     '(-p)-p[copy selection to file]:file name'
