@@ -897,9 +897,11 @@ static const char * const patterns[] = {
 #define C_PIP (C_ORP + 1)   /* Named pipe (FIFO): Orange1 */
 #define C_SOC (C_PIP + 1)   /* Socket: MediumOrchid1 */
 #define C_UND (C_SOC + 1)   /* Unknown OR 0B regular/exe file: Red1 */
+#define C_TIM (C_UND + 1)   /* Detail time (falls back to C_MIS): Blue */
+#define C_SIZ (C_TIM + 1)   /* Detail size (falls back to C_MIS): LightGoldenrod3 */
 
-static char gcolors[] = "c1e2272e006033f7c6d6abc4";
-static uint_t fcolors[C_UND + 1] = {0};
+static char gcolors[] = "c1e2272e006033f7c6d6abc404b3";
+static uint_t fcolors[C_SIZ + 1] = {0};
 
 /* Event handling */
 #ifdef LINUX_INOTIFY
@@ -2428,7 +2430,7 @@ static bool init_fcolors(void)
 	if (!f_colors || !*f_colors)
 		f_colors = gcolors;
 
-	for (uchar_t id = C_BLK; *f_colors && id <= C_UND; ++id) {
+	for (uchar_t id = C_BLK; *f_colors && id <= C_SIZ; ++id) {
 		fcolors[id] = xchartohex(*f_colors) << 4;
 		if (*++f_colors) {
 			fcolors[id] += xchartohex(*f_colors);
@@ -2549,7 +2551,7 @@ static bool initcurses(void *oldmask)
 #ifdef ICONS_ENABLED
 	if (!g_state.oldcolor) {
 		for (uint_t i = 0; i < ELEMENTS(init_colors); ++i)
-			init_pair(C_UND + 1 + init_colors[i], init_colors[i], -1);
+			init_pair(C_SIZ + 1 + init_colors[i], init_colors[i], -1);
 	}
 #endif
 
@@ -4886,12 +4888,12 @@ static void print_icon(const struct entry *ent, const int attrs)
 	const struct icon icon = get_icon(ent);
 	addstr(ICON_PADDING_LEFT);
 	if (icon.color)
-		attron(COLOR_PAIR(C_UND + 1 + icon.color));
+		attron(COLOR_PAIR(C_SIZ + 1 + icon.color));
 	else if (attrs)
 		attron(attrs);
 	addstr(icon.icon);
 	if (icon.color)
-		attroff(COLOR_PAIR(C_UND + 1 + icon.color));
+		attroff(COLOR_PAIR(C_SIZ + 1 + icon.color));
 	else if (attrs)
 		attroff(attrs);
 	addstr(ICON_PADDING_RIGHT);
@@ -5128,11 +5130,16 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		addch(' ');
 		attrs = g_state.oldcolor ? (resetdircolor(ent->flags), A_DIM)
 					 : (fcolors[C_MIS] ? COLOR_PAIR(C_MIS) : 0);
-		if (attrs)
-			attron(attrs);
+		/* Time and size colors fall back to the details color */
+		int tattrs = (!g_state.oldcolor && fcolors[C_TIM]) ? COLOR_PAIR(C_TIM) : attrs;
+		int sattrs = (!g_state.oldcolor && fcolors[C_SIZ]) ? COLOR_PAIR(C_SIZ) : attrs;
 
 		/* Print details */
+		if (tattrs)
+			attron(tattrs);
 		print_time(&ent->sec, ent->flags);
+		if (tattrs)
+			attroff(tattrs);
 
 		if (type == S_IFDIR && cfg.nodirsize && !cfg.blkorder)
 			sz = "";
@@ -5141,18 +5148,24 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 						   : ent->size);
 		else
 			sz = (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type);
-		if (cfg.noperms)
-			printw("%9s ", sz);
-		else {
+		if (!cfg.noperms) {
 			char perms[6] = {' ', ' ', (char)('0' + ((ent->mode >> 6) & 7)),
 					(char)('0' + ((ent->mode >> 3) & 7)),
 					(char)('0' + (ent->mode & 7)), '\0'};
 
-			printw("%s%9s ", perms, sz);
+			if (attrs)
+				attron(attrs);
+			addstr(perms);
+			if (attrs)
+				attroff(attrs);
 		}
 
-		if (attrs)
-			attroff(attrs);
+		if (sattrs)
+			attron(sattrs);
+		printw("%9s", sz);
+		if (sattrs)
+			attroff(sattrs);
+		addch(' ');
 	}
 
 	if (g_state.showlines) {

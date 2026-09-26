@@ -44,6 +44,14 @@ Use with detail mode (`-d` / `d`). `-y` and `-Y` are exclusive; the last one win
 | `-I` | `I` | Size column for files only; directories left blank (du/`d` sort still shows totals) |
 | `-m` | `m` | Hide octal permissions (`644`). Status bar still shows `rw-r--r--`. Toggle with `M`. |
 
+### Detail colors
+
+`NNN_FCOLORS` takes two optional extra slots after the 12 upstream ones: **13 = time**, **14 = size**. Default `04b3` (eza-like blue time, #d7af5f size). Missing or `00` falls back to slot 8 (file details), so 24-char strings behave as upstream.
+
+```sh
+export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
+```
+
 ### Git status
 
 Built into `nnn.c` (not applied as a compile-time patch).

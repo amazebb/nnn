@@ -29,6 +29,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - `-Y` / `NNN_OPTS=Y`: US compact timestamps (`Aug 19 14:32`). Last of `-y`/`-Y` wins.
 - `-I` / `NNN_OPTS=I`: hide directory sizes in the detail listing (file sizes stay; `d` du sort still works).
 - `-m` / `NNN_OPTS=m`: hide octal permissions in the detail listing; `M` toggles. Status bar perms stay.
+- `NNN_FCOLORS` slots 13/14: detail time/size colors (default `04`/`b3`); unset or `00` falls back to slot 8. Icon pairs start at `C_SIZ + 1`.
 - `-G`: run git and show the status column. Without `-G`, git is not queried.
 - `i`: toggle that git column; short on/off notice. Column is omitted when the repo is clean. In `$HOME`, git uses the bare `~/.dotfiles` repo.
 - macOS `f` stats: Homebrew GNU `stat` if `…/coreutils/libexec/gnubin/stat` exists, else `/usr/bin/stat -x`.

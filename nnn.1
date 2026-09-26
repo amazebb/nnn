@@ -587,7 +587,7 @@ separated by \fB;\fR:
 .Pp
 \fBNNN_FCOLORS:\fR specify file-type specific colors:
 .Bd -literal
-    export NNN_FCOLORS='c1e2272e006033f7c6d6abc4'
+    export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
     Specify file-specific colors in xterm 256 color hex numbers (2 symbols per color).
     Order is strict, use 00 to omit/use default terminal color. Defaults:
@@ -607,7 +607,11 @@ separated by \fB;\fR:
     FIFO                      | d6  | Orange1
     Socket                    | ab  | MediumOrchid1
     Unknown OR 0B regular/exe | c4  | Red1
+    Detail time               | 04  | Blue
+    Detail size               | b3  | LightGoldenrod3
     ------------------------- + --- + -------------
+
+    The last two are optional; if omitted or 00, they use the file details color.
 
     If the terminal supports xterm 256 colors or more, file-specific colors will be rendered.
     To force the 8-color scheme use option -C.
