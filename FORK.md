@@ -150,10 +150,8 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 ### Plugin updates
 
-nnn does not load plugins from the git tree. After merging upstream (see Tracking upstream), copy them from the repo:
+Once the fork is in sync with upstream, just copy the plugins folder:
 
 ```bash
 rsync -a plugins/ ~/.config/nnn/plugins/
 ```
-
-This installs jarun's current plugins plus ours (`preview-tui`, `ghostty/`).
