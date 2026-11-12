@@ -140,6 +140,10 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 - Images: **chafa** first (viu has a placement/size bug), then viu, then `kitty icat`. Fits the pane after the split size settles.
 - Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
 
+#### Rex
+
+When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` on `;p`. No helper scripts are needed. Images use `chafa -f kitty` (chafa does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
+
 ### Sort keys (`t` / `s` / `e`)
 
 `t` then `t` / `s` / `e` **sets** that key (does not toggle it off). Uppercase keeps the key and reverses: `t` then `T` is oldest first. Clear with `t` then `c`: it drops every sort key (time, size, extension, disk usage), reverse and version sort, so the listing is back to the default name order.

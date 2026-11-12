@@ -133,6 +133,7 @@ ENVVARS+=(
     "FIFO_UEBERZUG=$TMPDIR/nnn-preview-tui-ueberzug-fifo.$NNN_PARENT"
     "POSOFFSET=$TMPDIR/nnn-preview-tui-posoffset"
     "GHOSTTY_TERMID=$TMPDIR/nnn-preview-tui-ghosttyid.$NNN_PARENT"
+    "REX_PREVIEW_BLOCKID=$TMPDIR/nnn-preview-tui-rexid.$NNN_PARENT"
 )
 
 trap '' PIPE
@@ -176,6 +177,9 @@ start_preview() {
         NNN_TERMINAL=zellij
     elif [ -z "$NNN_TERMINAL" ] && [ "$TERM_PROGRAM" = "ghostty" ]; then
         NNN_TERMINAL=ghostty
+        exists mpv && ENVVARS+=("NNN_PREVIEWVIDEO=kitty")
+    elif [ -z "$NNN_TERMINAL" ] && [ "$TERM_PROGRAM" = "rex" ] && [ -n "$REX_BLOCK" ] && exists rex; then
+        NNN_TERMINAL=rex
         exists mpv && ENVVARS+=("NNN_PREVIEWVIDEO=kitty")
     else
         NNN_TERMINAL="${NNN_TERMINAL:-xterm}"
@@ -259,6 +263,21 @@ EOF
         osascript "$splitas" "$gdir" "$(pwd)" "$runsh" "$gttyid" "${envargs[@]}" ||
             prompt "Ghostty split failed (need 1.3+ AppleScript and Automation permission).\\nUse n3 -t for a tmux split instead."
         ;;
+    rex)
+        # Native Rex split next to nnn's block; closed later by block id only.
+        if [ "$NNN_SPLIT" = "h" ]; then rdir="below"; else rdir="right"; fi
+        previewer=$0
+        case $previewer in /*) ;; *) previewer="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/preview-tui" ;; esac
+        rexid="${REX_PREVIEW_BLOCKID:-$TMPDIR/nnn-preview-tui-rexid.$NNN_PARENT}"
+        rex split ${REX_SESSION:+-s "$REX_SESSION"} -b "$REX_BLOCK" --split="$rdir" \
+            --ratio="$NNN_SPLITSIZE" --focus=false --shell=none --json -c "$PWD" \
+            -- env "${ENVVARS[@]}" "$previewer" "$1" 2>/dev/null |
+            awk '/block_ids/{f=1;next} f&&/block:/{gsub(/[ ",]/,"");print;exit}' >"$rexid"
+        if [ ! -s "$rexid" ]; then
+            rm -f "$rexid"
+            prompt "Rex split failed.\nUse n3 -t for a tmux split instead."
+        fi
+        ;;
     *) if [ -n "$2" ]; then
         env "${ENVVARS[@]}" QUICKLOOK=1 "$0" "$1" &
     else
@@ -279,6 +298,10 @@ toggle_preview() {
         plugdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
         osascript "$plugdir/ghostty/preview-ghostty-close.applescript" "$(tr -d '\n' <"$GHOSTTY_TERMID")" >/dev/null 2>&1
         rm -f "$GHOSTTY_TERMID"
+    fi
+    if [ -s "${REX_PREVIEW_BLOCKID:-}" ]; then
+        rex block close ${REX_SESSION:+-s "$REX_SESSION"} "$(tr -d '\n' <"$REX_PREVIEW_BLOCKID")" >/dev/null 2>&1
+        rm -f "$REX_PREVIEW_BLOCKID"
     fi
     if pidkill "$FIFOPID"; then
         [ -p "$NNN_PPIPE" ] && printf "0" >"$NNN_PPIPE"
@@ -520,8 +543,8 @@ image_preview() {
         wezterm imgcat "$3" &
     elif exists ueberzug && [[ "$NNN_PREVIEWIMGPROG" == +(|ueberzug) ]]; then
         ueberzug_layer "$1" "$2" "$3" && return
-    elif [ "$NNN_TERMINAL" = "ghostty" ]; then
-        # Ghostty speaks the kitty graphics protocol. Prefer chafa over viu
+    elif [ "$NNN_TERMINAL" = "ghostty" ] || [ "$NNN_TERMINAL" = "rex" ]; then
+        # Ghostty and Rex speak the kitty graphics protocol. Prefer chafa over viu
         # (viu mis-places/sizes output: https://github.com/atanunq/viu/issues/148).
         if [ -n "$NNN_PREVIEWIMGPROG" ] && exists "${NNN_PREVIEWIMGPROG%% *}"; then
             $NNN_PREVIEWIMGPROG "$3" &
@@ -532,7 +555,11 @@ $(stty size </dev/tty 2>/dev/null)
 EOF
             [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
             [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
-            chafa -s "${gc}x${gl}" "$3" &
+            if [ "$NNN_TERMINAL" = "rex" ]; then # chafa does not detect Rex
+                chafa -f kitty -s "${gc}x${gl}" "$3" &
+            else
+                chafa -s "${gc}x${gl}" "$3" &
+            fi
         elif exists viu; then
             gl=0 gc=0
             read -r gl gc <<EOF
@@ -575,7 +602,7 @@ EOF
 video_preview() {
     clear
     exec >/dev/tty
-    if [ "$NNN_TERMINAL" = "ghostty" ]; then
+    if [ "$NNN_TERMINAL" = "ghostty" ] || [ "$NNN_TERMINAL" = "rex" ]; then
         mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet "$3" &
     elif [ -n "$NNN_PREVIEWVIDEO" ]; then
         mpv --no-config --really-quiet --vo="$NNN_PREVIEWVIDEO" --profile=sw-fast --loop-file --no-audio "$4" "$3" &
@@ -629,7 +656,7 @@ if [ "$PREVIEW_MODE" -eq 1 ] 2>/dev/null; then
     printf "%s" "$PWD/$1" >"$CURSEL"
     trap 'winch_handler' WINCH
     trap 'rm -- "$PREVIEWPID" "$CURSEL" "$FIFO_UEBERZUG" "$FIFOPID" "$POSOFFSET" 2>/dev/null' INT HUP EXIT
-    if [ "$NNN_TERMINAL" = "ghostty" ]; then
+    if [ "$NNN_TERMINAL" = "ghostty" ] || [ "$NNN_TERMINAL" = "rex" ]; then
         lastsz=""
         n=0
         while [ "$n" -lt 16 ]; do
