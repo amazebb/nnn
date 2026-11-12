@@ -117,7 +117,7 @@ ENVVARS=(
     "NNN_PREVIEWHEIGHT=${NNN_PREVIEWHEIGHT:-1080}"           # height of generated preview images
     "NNN_PREVIEWDIR=${NNN_PREVIEWDIR:-$TMPDIR/nnn/previews}" # location of generated preview images
     "NNN_PREVIEWIMGPROG=${NNN_PREVIEWIMGPROG:-}"             # command used to preview images
-    "NNN_IMGVIEWER=${NNN_IMGVIEWER:-viu}"                    # Ghostty/Rex image viewer: viu (default) or chafa
+    "NNN_IMGVIEWER=${NNN_IMGVIEWER:-chafa}"                  # Ghostty/Rex image viewer: chafa (default) or viu
     "NNN_PREVIEWVIDEO=${NNN_PREVIEWVIDEO:-}"                 # mpv backend used to preview video
 )
 # Non-configurable environment variables
@@ -473,6 +473,14 @@ preview_file() {
     fi
 }
 
+# Camera RAW files: extract the embedded JPEG (instant), else let sips render one (macOS)
+raw_to_jpg() {
+    exiftool -b -PreviewImage "$1" >"$2" 2>/dev/null
+    [ -s "$2" ] || exiftool -b -JpgFromRaw "$1" >"$2" 2>/dev/null
+    [ -s "$2" ] || sips -s format jpeg -Z "$NNN_PREVIEWWIDTH" "$1" --out "$2" >/dev/null 2>&1
+    [ -s "$2" ] || rm -f "$2"
+}
+
 generate_preview() {
     if [ -n "$QLPATH" ] && stat "$3"; then
         f="$(wslpath -w "$3")" && "$QLPATH" "$f" &
@@ -507,7 +515,11 @@ generate_preview() {
         else
             image_preview "$1" "$2" "$3" && return
         fi ;;
-        image) if exists rsvg-convert && [[ "${3##*.}" == "svg" ]]; then
+        image) rawext=$(printf "%s" "${3##*.}" | tr '[:upper:]' '[:lower:]')
+        if [[ "$rawext" == +(arw|cr2|cr3|crw|nef|nrw|dng|orf|raf|rw2|rwl|pef|srw|srf|sr2|3fr|erf|kdc|mrw|raw|x3f|dcr|iiq) ]] &&
+            { exists exiftool || exists sips; }; then
+            raw_to_jpg "$3" "$NNN_PREVIEWDIR/$3.jpg"
+        elif exists rsvg-convert && [[ "${3##*.}" == "svg" ]]; then
             rsvg-convert -a -w "$NNN_PREVIEWWIDTH" -h "$NNN_PREVIEWHEIGHT" -f png -o "$NNN_PREVIEWDIR/$3.png" "$3"
         elif exists convert; then
             convert "$3" -flatten -resize "$NNN_PREVIEWWIDTH"x"$NNN_PREVIEWHEIGHT"\> "$NNN_PREVIEWDIR/$3.jpg"
@@ -590,16 +602,16 @@ image_preview() {
         ueberzug_layer "$1" "$2" "$3" && return
     elif [ "$NNN_TERMINAL" = "ghostty" ] || [ "$NNN_TERMINAL" = "rex" ]; then
         # Ghostty and Rex speak the kitty graphics protocol. NNN_IMGVIEWER picks
-        # viu (default) or chafa; the other one is the fallback.
+        # chafa (default) or viu; the other one is the fallback.
         if [ -n "$NNN_PREVIEWIMGPROG" ] && exists "${NNN_PREVIEWIMGPROG%% *}"; then
             $NNN_PREVIEWIMGPROG "$3" &
-        elif [ "$NNN_IMGVIEWER" = "chafa" ] && exists chafa; then
-            img_chafa "$3"
-        elif exists viu; then
+        elif [ "$NNN_IMGVIEWER" = "viu" ] && exists viu; then
             img_viu "$3"
         elif exists chafa; then
             img_chafa "$3"
-        elif exists kitty; then
+        elif exists viu; then
+            img_viu "$3"
+        elif exists kitty && kitty --version >/dev/null 2>&1; then
             kitty +kitten icat --silent --scale-up --place "$1"x"$2"@0x0 --transfer-mode=stream --stdin=no "$3" &
         else
             fifo_pager print_bin_info "$3" && return

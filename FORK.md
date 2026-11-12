@@ -137,7 +137,8 @@ Checked-in helpers live in `plugins/ghostty/` (copy that folder and `preview-tui
 The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`n3 -t`** / **`N3_TMUX=1`** keeps the old tmux wrap.
 
 - Toggle preview: `;` then `p` (closes the Ghostty pane).
-- Images: **viu** by default; set `NNN_IMGVIEWER=chafa` to use **chafa** instead (the other is the fallback, then `kitty icat`). Switch to chafa if viu leaks escape codes into the terminal (a `viuer` library issue). `NNN_PREVIEWIMGPROG` still overrides both. Fits the pane after the split size settles.
+- Images: **chafa** by default; set `NNN_IMGVIEWER=viu` to use **viu** instead (the other is the fallback, then `kitty icat` only if kitty runs). viu was dropped as the default because the `viuer` library leaks escape codes and decodes few formats. `NNN_PREVIEWIMGPROG` still overrides both. Fits the pane after the split size settles.
+- Camera RAW (ARW, CR2/CR3, NEF, DNG, ORF, RAF, RW2 and more): the embedded JPEG is extracted with `exiftool` (about 0.1 s, cached in `NNN_PREVIEWDIR`), falling back to `sips`, then shown with the viewer above.
 - Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
 
 #### Rex
