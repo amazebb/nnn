@@ -46,6 +46,25 @@ Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
 ## Changes from master
 
+### Keys
+
+New keys (not bound upstream):
+
+| Key | Action |
+| --- | --- |
+| `i` | Toggle the git status column on/off (same as `-G`; reloads the directory) |
+| `M` | Toggle octal permissions in detail mode (same as `-m`) |
+
+Changed behavior of existing keys:
+
+| Key | Change |
+| --- | --- |
+| `t` then `t` / `s` / `e` | Sets that sort key instead of toggling it off |
+| `t` then `T` | Reverse time (oldest first); `t` then `c` clears |
+| `p` / `v` with nothing selected | Floating help, then the editor |
+| `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
+| `;` then `p` | Closes the Ghostty preview split by recorded id |
+
 ### Timestamps
 
 | Flag | `NNN_OPTS` | Listing (12 columns) |
