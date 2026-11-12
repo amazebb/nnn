@@ -35,7 +35,8 @@ if type bat >/dev/null; then
 fi
 
 plugin=$(find -L "$nnnpluginsdir" "$CUSTOMDIR1" "$CUSTOMDIR2" \
--maxdepth 3 -perm -111 -type f 2>/dev/null | fzf --ansi --preview \
+-maxdepth 3 -perm -111 -type f ! -name '.*' ! -path '*/ghostty/*' 2>/dev/null |
+    awk -F/ '{print $NF "\t" $0}' | sort -rf | cut -f2- | fzf --ansi --preview \
     "${BAT:-cat} {}" --preview-window="right:66%:wrap" --delimiter / \
     --with-nth -1 --bind="?:toggle-preview")
 
