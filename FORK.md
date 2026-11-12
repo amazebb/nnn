@@ -70,7 +70,7 @@ New keys (not bound upstream):
 | --- | --- |
 | `i` | Toggle the git status column on/off (same as the `-G` option; reloads the directory) |
 | `M` | Toggle octal permissions in detail mode (same as `-m`) |
-| `y` | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), back to ISO |
+| `y` | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
 | `I` | Toggle directory sizes in detail mode (same as the `-I` option) |
 
 Changed behavior of existing keys:
@@ -90,8 +90,9 @@ Changed behavior of existing keys:
 | (default) | | `YYYY-MM-DD HH:MM` (16 columns) |
 | `-y` | `y` | eza style: `19 Aug 14:32` / older `19 Aug  2024` |
 | `-Y` | `Y` | US style: `Aug 19 14:32` / older `Aug 19  2024` |
+| `-Z` | `Z` | eza style, but files modified today show the weekday and time (`Thu    14:32`) in the normal time color, without the reverse-video highlight for files changed in the last 5 minutes |
 
-Use with detail mode (`-d` / `d`). `-y` and `-Y` are exclusive; the last one wins. In a running instance, `y` cycles ISO, eza, US, ISO.
+Use with detail mode (`-d` / `d`). `-y`, `-Y` and `-Z` are exclusive; the last one wins. In a running instance, `y` cycles ISO, eza, US, eza + today, ISO. A configurable timestamp template is a possible future replacement for these fixed styles.
 
 ### Directory sizes
 

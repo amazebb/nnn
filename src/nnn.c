@@ -398,6 +398,7 @@ typedef struct {
 	uint_t nonavopen  : 1;  /* Open file on right arrow or `l` */
 	uint_t autoenter  : 1;  /* auto-enter dir in type-to-nav mode */
 	uint_t ustime     : 1;  /* US compact timestamps: MMM DD */
+	uint_t todaytime  : 1;  /* Print weekday and time for entries modified today (-Z) */
 	uint_t useeditor  : 1;  /* Use VISUAL to open text files */
 	uint_t nodirsize  : 1;  /* Hide directory sizes in detail mode */
 	uint_t noperms    : 1;  /* Hide octal permissions in detail mode */
@@ -5058,13 +5059,27 @@ static void print_icon(const struct entry *ent, const int attrs)
  * Compact time styles, fixed 12 columns.
  *   -y (eza):  "19 Aug 14:32" / " 3 Jan  2023"
  *   -Y (US):   "Aug 19 14:32" / "Jan  3  2023"
+ *   -Z (eza + today): "Thu    14:32" (weekday, time) for entries modified today
  * English month abbreviations keep the width stable across locales.
  */
+/* True if the local date of tm is today's local date */
+static bool istoday(const struct tm *t)
+{
+	struct tm now;
+	time_t nowsecs = gtimesecs ? gtimesecs : time(NULL);
+
+	localtime_r(&nowsecs, &now);
+	return (t->tm_year == now.tm_year && t->tm_yday == now.tm_yday);
+}
+
 static void print_time_compact(const struct tm *t)
 {
 	static const char mon[][4] = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	static const char wday[][4] = {
+		"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
 	};
 	struct tm now;
 	time_t nowsecs = gtimesecs ? gtimesecs : time(NULL);
@@ -5072,6 +5087,11 @@ static void print_time_compact(const struct tm *t)
 
 	localtime_r(&nowsecs, &now);
 	thisyear = (t->tm_year == now.tm_year);
+
+	if (cfg.todaytime && thisyear && t->tm_yday == now.tm_yday) {
+		printw("%s    %02d:%02d", wday[t->tm_wday], t->tm_hour, t->tm_min);
+		return;
+	}
 
 	if (cfg.ustime) {
 		if (thisyear)
@@ -5092,18 +5112,21 @@ static void print_time(const time_t *timep, const uchar_t flags)
 {
 	struct tm t;
 
-	/* Highlight timestamp for entries 5 minutes young */
-	if (flags & FILE_YOUNG)
+	localtime_r(timep, &t);
+
+	/* Highlight timestamp for entries 5 minutes young (not in -Z mode, where the weekday stands out) */
+	bool young = (flags & FILE_YOUNG) && !(cfg.todaytime && istoday(&t));
+
+	if (young)
 		attron(A_REVERSE);
 
-	localtime_r(timep, &t);
 	if (cfg.compacttime)
 		print_time_compact(&t);
 	else
 		printw("%s-%02d-%02d %02d:%02d",
 			xitoa(t.tm_year + 1900), t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min);
 
-	if (flags & FILE_YOUNG)
+	if (young)
 		attroff(A_REVERSE);
 }
 
@@ -9544,17 +9567,22 @@ nochange:
 				gitstat_notice = cfg.noperms ? "perms off" : "perms on";
 				continue;
 			case SEL_TIMEFMT:
-				/* ISO -> eza -> US -> ISO */
+				/* ISO -> eza -> US -> eza + today -> ISO */
 				if (!cfg.compacttime) {
 					cfg.compacttime = 1;
 					cfg.ustime = 0;
+					cfg.todaytime = 0;
 					gitstat_notice = "time: eza";
-				} else if (!cfg.ustime) {
+				} else if (!cfg.ustime && !cfg.todaytime) {
 					cfg.ustime = 1;
 					gitstat_notice = "time: US";
+				} else if (cfg.ustime) {
+					cfg.ustime = 0;
+					cfg.todaytime = 1;
+					gitstat_notice = "time: eza + today";
 				} else {
 					cfg.compacttime = 0;
-					cfg.ustime = 0;
+					cfg.todaytime = 0;
 					gitstat_notice = "time: ISO";
 				}
 				continue;
@@ -10566,6 +10594,7 @@ static void usage(void)
 #endif
 		" -y      compact eza-style timestamps\n"
 		" -Y      compact US timestamps (MMM DD)\n"
+		" -Z      eza timestamps, weekday + time for today's files\n"
 		" -z      in order fuzzy filters\n"
 		" -0      null separator in picker mode\n"
 		" -h      show help\n\n"
@@ -10735,7 +10764,7 @@ static int parse_opts(int argc, char *argv[], struct optstate *st)
 	optind = 0; /* Full re-initialization (glibc, musl) */
 #endif
 
-	while ((opt = getopt(argc, argv, "aAb:BcCdDeEfF:gGHiIJKl:mnNop:P:QrRs:St:T:uUVxyYz0h")) != -1) {
+	while ((opt = getopt(argc, argv, "aAb:BcCdDeEfF:gGHiIJKl:mnNop:P:QrRs:St:T:uUVxyYzZ0h")) != -1) {
 		switch (opt) {
 #ifndef NOFIFO
 		case 'a':
@@ -10892,10 +10921,17 @@ static int parse_opts(int argc, char *argv[], struct optstate *st)
 		case 'y':
 			cfg.compacttime = 1;
 			cfg.ustime = 0;
+			cfg.todaytime = 0;
 			break;
 		case 'Y':
 			cfg.compacttime = 1;
 			cfg.ustime = 1;
+			cfg.todaytime = 0;
+			break;
+		case 'Z':
+			cfg.compacttime = 1;
+			cfg.ustime = 0;
+			cfg.todaytime = 1;
 			break;
 		case 'z':
 			if (cfg.regex)

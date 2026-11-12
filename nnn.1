@@ -6,7 +6,7 @@
 .Nd The unorthodox terminal file manager.
 .Sh SYNOPSIS
 .Nm
-.Op Ar -aAcCdDeEfgGHIJKmnQrRSuUVxyYz0h
+.Op Ar -aAcCdDeEfgGHIJKmnQrRSuUVxyYzZ0h
 .Op Ar -b key
 .Op Ar -F val
 .Op Ar -l val
@@ -181,11 +181,16 @@ supports the following options:
 .Fl y
         compact timestamps in the eza default style (fixed 12 columns):
         this year as \fBDD MMM HH:MM\fR, earlier years as \fBDD MMM  YYYY\fR.
-        \fBy\fR cycles ISO, eza and US formats.
+        \fBy\fR cycles ISO, eza, US and eza + today formats.
 .Pp
 .Fl Y
         compact timestamps in US style (fixed 12 columns):
         this year as \fBMMM DD HH:MM\fR, earlier years as \fBMMM DD  YYYY\fR
+.Pp
+.Fl Z
+        eza style (see \fB-y\fR), but entries modified today show
+        the weekday and time, e.g. \fBThu    14:32\fR, without the reverse-video highlight used for
+        entries changed in the last 5 minutes (fixed 12 columns)
 .Pp
 .Fl z
         use fuzzy filters (fuzzy match: all characters in filter appear in order)
