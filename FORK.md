@@ -137,12 +137,12 @@ Checked-in helpers live in `plugins/ghostty/` (copy that folder and `preview-tui
 The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`n3 -t`** / **`N3_TMUX=1`** keeps the old tmux wrap.
 
 - Toggle preview: `;` then `p` (closes the Ghostty pane).
-- Images: **chafa** first (viu has a placement/size bug), then viu, then `kitty icat`. Fits the pane after the split size settles.
+- Images: **viu** by default; set `NNN_IMGVIEWER=chafa` to use **chafa** instead (the other is the fallback, then `kitty icat`). Switch to chafa if viu leaks escape codes into the terminal (a `viuer` library issue). `NNN_PREVIEWIMGPROG` still overrides both. Fits the pane after the split size settles.
 - Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
 
 #### Rex
 
-When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` on `;p`. No helper scripts are needed. Images use `chafa -f kitty` (chafa does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
+When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` on `;p`. No helper scripts are needed. Images follow `NNN_IMGVIEWER` (chafa runs as `chafa -f kitty` because it does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
 
 Rex fades unfocused panes, which mutes the image colors. Set Settings > Interface > Active Pane > **Fade inactive panes** to *surface* (not content) so the preview stays at full color. It is a global setting; Rex has no per-pane control.
 

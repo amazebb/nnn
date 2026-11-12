@@ -117,6 +117,7 @@ ENVVARS=(
     "NNN_PREVIEWHEIGHT=${NNN_PREVIEWHEIGHT:-1080}"           # height of generated preview images
     "NNN_PREVIEWDIR=${NNN_PREVIEWDIR:-$TMPDIR/nnn/previews}" # location of generated preview images
     "NNN_PREVIEWIMGPROG=${NNN_PREVIEWIMGPROG:-}"             # command used to preview images
+    "NNN_IMGVIEWER=${NNN_IMGVIEWER:-viu}"                    # Ghostty/Rex image viewer: viu (default) or chafa
     "NNN_PREVIEWVIDEO=${NNN_PREVIEWVIDEO:-}"                 # mpv backend used to preview video
 )
 # Non-configurable environment variables
@@ -532,6 +533,50 @@ generate_preview() {
     fi
 } >/dev/null 2>&1
 
+# Fit the image in the pane with chafa (kitty graphics forced: chafa does not detect Rex)
+img_chafa() {
+    gl=0 gc=0
+    read -r gl gc <<EOF
+$(stty size </dev/tty 2>/dev/null)
+EOF
+    [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
+    [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
+    if [ "$NNN_TERMINAL" = "rex" ]; then
+        chafa -f kitty -s "${gc}x${gl}" "$1" &
+    else
+        chafa -s "${gc}x${gl}" "$1" &
+    fi
+}
+
+# Fit the image in the pane with viu (contain)
+img_viu() {
+    gl=0 gc=0
+    read -r gl gc <<EOF
+$(stty size </dev/tty 2>/dev/null)
+EOF
+    [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
+    [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
+    iw=0 ih=0
+    if exists sips; then
+        iw=$(sips -g pixelWidth "$1" 2>/dev/null | awk '/pixelWidth/{print $2}')
+        ih=$(sips -g pixelHeight "$1" 2>/dev/null | awk '/pixelHeight/{print $2}')
+    fi
+    # Terminal cells are ~2x taller than wide. Fit inside the pane (contain).
+    if [ "${iw:-0}" -gt 0 ] && [ "${ih:-0}" -gt 0 ]; then
+        maxw=$((gl * 2 * iw / ih))
+        [ "$maxw" -lt 1 ] && maxw=1
+        if [ "$gc" -le "$maxw" ]; then
+            viu -w "$gc" "$1" &
+        else
+            viu -h "$gl" "$1" &
+        fi
+    elif [ "$gc" -le "$gl" ]; then
+        viu -w "$gc" "$1" &
+    else
+        viu -h "$gl" "$1" &
+    fi
+}
+
 image_preview() {
     clear
     exec >/dev/tty
@@ -544,48 +589,16 @@ image_preview() {
     elif exists ueberzug && [[ "$NNN_PREVIEWIMGPROG" == +(|ueberzug) ]]; then
         ueberzug_layer "$1" "$2" "$3" && return
     elif [ "$NNN_TERMINAL" = "ghostty" ] || [ "$NNN_TERMINAL" = "rex" ]; then
-        # Ghostty and Rex speak the kitty graphics protocol. Prefer chafa over viu
-        # (viu mis-places/sizes output: https://github.com/atanunq/viu/issues/148).
+        # Ghostty and Rex speak the kitty graphics protocol. NNN_IMGVIEWER picks
+        # viu (default) or chafa; the other one is the fallback.
         if [ -n "$NNN_PREVIEWIMGPROG" ] && exists "${NNN_PREVIEWIMGPROG%% *}"; then
             $NNN_PREVIEWIMGPROG "$3" &
-        elif exists chafa; then
-            gl=0 gc=0
-            read -r gl gc <<EOF
-$(stty size </dev/tty 2>/dev/null)
-EOF
-            [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
-            [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
-            if [ "$NNN_TERMINAL" = "rex" ]; then # chafa does not detect Rex
-                chafa -f kitty -s "${gc}x${gl}" "$3" &
-            else
-                chafa -s "${gc}x${gl}" "$3" &
-            fi
+        elif [ "$NNN_IMGVIEWER" = "chafa" ] && exists chafa; then
+            img_chafa "$3"
         elif exists viu; then
-            gl=0 gc=0
-            read -r gl gc <<EOF
-$(stty size </dev/tty 2>/dev/null)
-EOF
-            [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
-            [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
-            iw=0 ih=0
-            if exists sips; then
-                iw=$(sips -g pixelWidth "$3" 2>/dev/null | awk '/pixelWidth/{print $2}')
-                ih=$(sips -g pixelHeight "$3" 2>/dev/null | awk '/pixelHeight/{print $2}')
-            fi
-            # Terminal cells are ~2x taller than wide. Fit inside the pane (contain).
-            if [ "${iw:-0}" -gt 0 ] && [ "${ih:-0}" -gt 0 ]; then
-                maxw=$((gl * 2 * iw / ih))
-                [ "$maxw" -lt 1 ] && maxw=1
-                if [ "$gc" -le "$maxw" ]; then
-                    viu -w "$gc" "$3" &
-                else
-                    viu -h "$gl" "$3" &
-                fi
-            elif [ "$gc" -le "$gl" ]; then
-                viu -w "$gc" "$3" &
-            else
-                viu -h "$gl" "$3" &
-            fi
+            img_viu "$3"
+        elif exists chafa; then
+            img_chafa "$3"
         elif exists kitty; then
             kitty +kitten icat --silent --scale-up --place "$1"x"$2"@0x0 --transfer-mode=stream --stdin=no "$3" &
         else

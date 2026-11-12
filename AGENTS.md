@@ -20,9 +20,9 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Upstream sync: local `master` mirrors `upstream/master` (ff-only, never commit); merge `master` into `amazebb`. Steps in `FORK.md`. Version string is `VERSION` in `src/nnn.c`.
 - Fold features into `src/nnn.c` / `src/nnn.h`. Do not re-apply compile-time user patches (gitstatus is already in-tree).
 - Ghostty preview uses **checked-in** helpers only, under `plugins/ghostty/`: `preview-ghostty-split.applescript`, `preview-ghostty-run.sh`, `preview-ghostty-close.applescript`. Never generate AppleScript or shell on the fly.
-- Rex preview: `rex split` + `rex block close <id>` from `preview-tui` (id in `$TMPDIR/nnn-preview-tui-rexid.*`); images `chafa -f kitty`. Close by block id only.
+- Rex preview: `rex split` + `rex block close <id>` from `preview-tui` (id in `$TMPDIR/nnn-preview-tui-rexid.*`); chafa runs as `chafa -f kitty`. Close by block id only.
 - Close Ghostty preview **by terminal id only**. Never close other splits in the tab (that kills unrelated panes).
-- Images: **chafa** first, then viu, then `kitty icat`. Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
+- Images: `NNN_IMGVIEWER` (default **viu**, or `chafa`; the other is the fallback), then `kitty icat`. Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
 - `getplugs`: strip the `-amazebb` suffix from `nnn -V` before fetching a jarun tag.
 
 ## Current behavior (bullets)
