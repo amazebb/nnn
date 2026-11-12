@@ -17,7 +17,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
   - [Preview (Ghostty)](#preview-ghostty)
   - [Sort keys (`t` / `s` / `e`)](#sort-keys-t--s--e)
   - [Copy / move with nothing selected](#copy--move-with-nothing-selected)
-  - [Plugin updates (`getplugs`)](#plugin-updates-getplugs)
+  - [Plugin updates](#plugin-updates)
 
 ## Tracking upstream
 
@@ -44,7 +44,7 @@ After the merge:
 
 - Conflicts cluster in `src/nnn.c` (colors, help text, `parse_opts` getopt string and cases, key handlers) and `patches/gitstatus/*.diff` (take upstream's; the patches are unused, git status is in-tree).
 - Re-check every fork option still parses: `-G -I -m -y -Y` in the getopt string and `NNN_OPTS`.
-- Recopy changed `plugins/preview-tui` and `plugins/ghostty/` to `~/.config/nnn/plugins/`; keep the `getplugs` suffix strip.
+- Copy the plugins to `~/.config/nnn/plugins/` (see Plugin updates); keep the `getplugs` suffix strip.
 - Smoke test: `NNN_OPTS=dIYGm nnn` shows US times, no dir sizes, no perms and the git column.
 - When upstream tags a release, bump the version string to `<tag>-amazebb`.
 
@@ -148,15 +148,12 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 `p` (copy) and `v` (move) still open the editor so you can paste a path list. A floating help window (same style as `f`) explains that first.
 
-### Plugin updates (`getplugs`)
+### Plugin updates
 
-`nnn -V` is `5.3-amazebb`, which is not a jarun/nnn release tag. This fork’s `plugins/getplugs` strips the `-amazebb` suffix and fetches **v5.3**.
-
-The wiki one-liner always downloads **upstream** `getplugs`, which does not strip. Use either:
+nnn does not load plugins from the git tree. After merging upstream (see Tracking upstream), copy them from the repo:
 
 ```bash
-# latest plugins from jarun master
-sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)" master
+rsync -a plugins/ ~/.config/nnn/plugins/
 ```
 
-or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run `getplugs` from there (it fetches the plugins for v5.3). Custom files (`preview-tui`, `ghostty/preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
+This installs jarun's current plugins plus ours (`preview-tui`, `ghostty/`).
