@@ -17,6 +17,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 
 ## Constraints
 
+- Upstream sync: local `master` mirrors `upstream/master` (ff-only, never commit); merge `master` into `amazebb`. Steps in `FORK.md`. Version string is `VERSION` in `src/nnn.c`.
 - Fold features into `src/nnn.c` / `src/nnn.h`. Do not re-apply compile-time user patches (gitstatus is already in-tree).
 - Ghostty preview uses **checked-in** helpers only, under `plugins/ghostty/`: `preview-ghostty-split.applescript`, `preview-ghostty-run.sh`, `preview-ghostty-close.applescript`. Never generate AppleScript or shell on the fly.
 - Close Ghostty preview **by terminal id only**. Never close other splits in the tab (that kills unrelated panes).

@@ -5,12 +5,32 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
 
 ## Tracking upstream
 
-Keep fork features as normal commits on this branch. When jarun/nnn moves:
+Remotes: `origin` = amazebb/nnn, `upstream` = jarun/nnn. Local `master` is a pure mirror of `upstream/master`: never commit to it. GitHub's "up to date with jarun/nnn" and an old "last changed" date are expected after a fast-forward.
 
 ```bash
-git fetch origin   # or an upstream remote
-git merge master   # resolve conflicts in src/nnn.c, then make deploy
+# 1. update the mirror
+git fetch upstream
+git switch master
+git merge --ff-only upstream/master
+git push origin master
+
+# 2. bring upstream into the fork
+git switch amazebb
+git merge master            # resolve conflicts, then continue
+
+# 3. verify, deploy, push
+make O_NERD=1               # must build with no warnings
+make deploy
+git push origin amazebb
 ```
+
+After the merge:
+
+- Conflicts cluster in `src/nnn.c` (colors, help text, `parse_opts` getopt string and cases, key handlers) and `patches/gitstatus/*.diff` (take upstream's; the patches are unused, git status is in-tree).
+- Re-check every fork option still parses: `-G -I -m -y -Y` in the getopt string and `NNN_OPTS`.
+- Recopy changed `plugins/preview-tui` and `plugins/ghostty/` to `~/.config/nnn/plugins/`; keep the `getplugs` suffix strip.
+- Smoke test: `NNN_OPTS=dIYGm nnn` shows US times, no dir sizes, no perms and the git column.
+- When upstream tags a release, bump the version string to `<tag>-amazebb`.
 
 ## Build and Install
 
@@ -24,7 +44,6 @@ git merge master   # resolve conflicts in src/nnn.c, then make deploy
 
 Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
----
 ## Changes from master
 
 ### Timestamps
@@ -102,5 +121,3 @@ sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/get
 ```
 
 or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.3). Custom files (`preview-tui`, `ghostty/preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
-
-
