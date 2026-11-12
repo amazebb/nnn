@@ -33,6 +33,7 @@ clear_input() {
     READLINE_POINT=0
 }
 
+set -o emacs
 bind -x '"\e[A":restore_previous_input'
 bind -x '"\e[B":clear_input'
 

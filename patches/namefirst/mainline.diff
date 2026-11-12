@@ -4,9 +4,10 @@
 # Author: Luuk van Baal
 
 diff --git a/src/nnn.c b/src/nnn.c
+index 1eac4b67..b1a7616f 100644
 --- a/src/nnn.c
 +++ b/src/nnn.c
-@@ -432,6 +432,10 @@ typedef struct {
+@@ -436,6 +436,10 @@ typedef struct {
  } session_header_t;
  #endif
  
@@ -17,7 +18,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  /* GLOBALS */
  
  /* Configuration, contexts */
-@@ -1177,10 +1181,13 @@ static char *getpwname(uid_t uid)
+@@ -1180,10 +1184,13 @@ static char *getpwname(uid_t uid)
  	static char *namecache;
  
  	if (uidcache != uid) {
@@ -31,7 +32,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  	}
  
  	return namecache ? namecache : xitoa(uid);
-@@ -1192,10 +1199,13 @@ static char *getgrname(gid_t gid)
+@@ -1195,10 +1202,13 @@ static char *getgrname(gid_t gid)
  	static char *grpcache;
  
  	if (gidcache != gid) {
@@ -45,7 +46,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  	}
  
  	return grpcache ? grpcache : xitoa(gid);
-@@ -4572,14 +4582,13 @@ static void resetdircolor(int flags)
+@@ -4727,57 +4727,56 @@ static void resetdircolor(int flags)
   * Max supported str length: NAME_MAX;
   */
  #ifdef NOLC
@@ -57,22 +58,58 @@ diff --git a/src/nnn.c b/src/nnn.c
 -
 -	xstrsncpy(wbuf, str, maxcols);
 +	size_t len = xstrsncpy(wbuf, str, maxcols);
- #else
--static wchar_t *unescape(const char *str, uint_t maxcols)
-+static size_t unescape(const char *str, uint_t maxcols)
- {
- 	wchar_t * const wbuf = (wchar_t *)g_buf;
- 	wchar_t *buf = wbuf;
-@@ -4604,7 +4613,7 @@ static wchar_t *unescape(const char *str, uint_t maxcols)
+ 
+ 	while (*buf) {
+ 		if (*buf <= '\x1f' || *buf == '\x7f')
+ 			*buf = '\?';
+ 
  		++buf;
  	}
  
 -	return wbuf;
 +	return len;
  }
+ #else
+-static wchar_t *unescape(const char *str, uint_t maxcols)
++static size_t unescape(const char *str, uint_t maxcols)
+ {
+ 	wchar_t * const wbuf = (wchar_t *)g_buf;
+ 	wchar_t *buf = wbuf;
+ 	size_t len = mbstowcs(wbuf, str, maxcols); /* Convert multi-byte to wide char */
+ 	size_t lencount;
+ 
+ 	if (len == (size_t)-1)
+ 		len = 0;
+ 	wbuf[len] = L'\0';
+ 
+ 	/* Replace controls first so width accounting sees printable substitutes */
+ 	while (*buf) {
+ 		if (*buf <= L'\x1f' || *buf == L'\x7f')
+ 			*buf = L'?';
+ 
+ 		++buf;
+ 	}
+ 
+ 	len = wcswidth(wbuf, wcslen(wbuf));
+ 	if ((ssize_t)len < 0)
+ 		len = wcslen(wbuf);
+ 
+ 	if (len >= maxcols) {
+ 		lencount = maxcols;
+ 
+ 		while (len > maxcols) /* Reduce wide chars one by one till it fits */
+ 			len = wcswidth(wbuf, --lencount);
+ 
+ 		wbuf[lencount] = L'\0'; // NOLINT
+ 	}
+ 
+-	return wbuf;
++	return len;
+ }
+ #endif
  
  static off_t get_size(off_t size, off_t *pval, int comp)
-@@ -4853,9 +4862,10 @@ static uchar_t get_color_pair_name_ind(const struct entry *ent, char *pind, int
+@@ -4920,9 +4929,10 @@ static uchar_t get_color_pair_name_ind(const struct entry *ent, char *pind, int
  }
  
  #ifdef DIM_FILTERED
@@ -84,7 +121,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  
  	/* If there's a filter string, dim matching characters */
  	if (fltr[1]) {
-@@ -4866,15 +4876,18 @@ static void printent_name(const struct entry *ent, uint_t namecols)
+@@ -4933,15 +4943,18 @@ static void printent_name(const struct entry *ent, uint_t namecols)
  		if (cfg.regex) {
  			/* For regex, we don't dim - just print normally */
  #ifndef NOLC
@@ -106,7 +143,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  			uint_t col = 0;
  			for (wchar_t *p = wbuf; *p && col < namecols; ++p, ++col) {
  				if (matched[col]) {
-@@ -4887,7 +4900,8 @@ static void printent_name(const struct entry *ent, uint_t namecols)
+@@ -4954,7 +4967,8 @@ static void printent_name(const struct entry *ent, uint_t namecols)
  			}
  #else
  			/* Non-wide character version for fuzzy dimming */
@@ -116,7 +153,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  			for (uint_t i = 0; (i < namecols) && name[i]; ++i) {
  				if (matched[i]) {
  					attron(match_attrs);
-@@ -4902,7 +4916,8 @@ static void printent_name(const struct entry *ent, uint_t namecols)
+@@ -4969,7 +4983,8 @@ static void printent_name(const struct entry *ent, uint_t namecols)
  			/* String match - dim the substring */
  			string_match_positions(fltr + 1, ent->name, matched);
  #ifndef NOLC
@@ -126,7 +163,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  			uint_t col = 0;
  			for (wchar_t *p = wbuf; *p && col < namecols; ++p, ++col) {
  				if (matched[col]) {
-@@ -4915,7 +4930,8 @@ static void printent_name(const struct entry *ent, uint_t namecols)
+@@ -4982,7 +4997,8 @@ static void printent_name(const struct entry *ent, uint_t namecols)
  			}
  #else
  			/* Non-wide character version for string dimming */
@@ -136,7 +173,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  			for (uint_t i = 0; (i < namecols) && name[i]; ++i) {
  				if (matched[i]) {
  					attron(match_attrs);
-@@ -4930,21 +4946,29 @@ static void printent_name(const struct entry *ent, uint_t namecols)
+@@ -4997,21 +5013,29 @@ static void printent_name(const struct entry *ent, uint_t namecols)
  	} else {
  		/* No filter or filter not active - print normally */
  #ifndef NOLC
@@ -171,7 +208,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  }
  #endif
  
-@@ -4952,38 +4976,14 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
+@@ -5019,38 +5043,14 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
  {
  	const struct entry *ent = &pdents[pdents_index];
  	char ind = '\0';
@@ -212,7 +249,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  	uchar_t color_pair = get_color_pair_name_ind(ent, &ind, &attrs);
  
  	addch((ent->flags & FILE_SELECTED) ? '+' | A_REVERSE | A_BOLD : ' ');
-@@ -5007,12 +5007,44 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
+@@ -5074,12 +5074,44 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
  	if (!ind)
  		++namecols;
  
@@ -259,18 +296,26 @@ diff --git a/src/nnn.c b/src/nnn.c
  }
  
  /**
-@@ -8063,10 +8063,2 @@ static void statusbar(char *path)
+@@ -7991,18 +8023,6 @@ static void statusbar(char *path)
+ 	tocursor();
+ }
+ 
 -static inline void markhovered(void)
 -{
 -	if (cfg.showdetail && ndents) { /* Bold forward arrowhead */
 -		tocursor();
+-#if defined(NOBRAILLE) && defined(ICONS_ENABLED)
+-		addstr("▌");
+-#else
 -		addch('>' | A_BOLD);
+-#endif
 -	}
 -}
 -
  #define PREVIEW_BORDER_COL (xcols / 2)
  #define PREVIEW_COL        (PREVIEW_BORDER_COL + 2)
-@@ -8340,12 +8331,13 @@ static void preview_pane(const char *path)
+ #define PREVIEW_WIDTH      (xcols - PREVIEW_COL - 1)
+@@ -8271,12 +8291,13 @@ static int adjust_cols(int n)
  #ifdef ICONS_ENABLED
  	n -= (g_state.oldcolor ? 0 : ICON_SIZE + ICON_PADDING_LEFT_LEN + ICON_PADDING_RIGHT_LEN);
  #endif
@@ -286,7 +331,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  	}
  
  	/* 2 columns for preceding space and indicator */
-@@ -8385,8 +8378,6 @@ static void draw_line(int ncols)
+@@ -8315,8 +8336,6 @@ static void draw_line(int ncols)
  	/* Must reset e.g. no files in dir */
  	if (dir)
  		attroff(COLOR_PAIR(cfg.curctx + 1) | A_BOLD);
@@ -295,7 +340,7 @@ diff --git a/src/nnn.c b/src/nnn.c
  }
  
  static void redraw(char *path)
-@@ -8500,6 +8491,26 @@ static void redraw(char *path)
+@@ -8431,6 +8450,26 @@ static void redraw(char *path)
  	int onscreen = MIN(ONSCREEN + curscroll, ndents);
  	int len = scanselforpath(path, FALSE);
  
@@ -322,7 +367,8 @@ diff --git a/src/nnn.c b/src/nnn.c
  	ncols = adjust_cols(ncols);
  
  	/* Print listing */
-@@ -8531,9 +8542,9 @@ static void redraw(char *path)
+@@ -8459,7 +8498,7 @@ static void redraw(char *path)
+ #endif
  	}
  
 -	markhovered();
@@ -330,6 +376,3 @@ diff --git a/src/nnn.c b/src/nnn.c
  
  	if (cfg.preview)
  		preview_pane(path);
- }
- 
- static bool cdprep(char *lastdir, char *lastname, char *path, char *newpath)

@@ -30,6 +30,7 @@ O_NOUG := 0  # disable user, group name in status bar
 O_NOX11 := 0  # disable X11 integration
 O_NOSORT := 0  # disable sorting entries on dir load
 O_DIMFILTERED := 1  # dim characters matching filter (default: enabled)
+O_NOBRAILLE := 0  # braille support enabled by default
 
 # User patches
 O_COLEMAK := 0 # change key bindings to colemak compatible layout
@@ -148,6 +149,10 @@ ifeq ($(strip $(O_DIMFILTERED)),1)
 	CPPFLAGS += -DDIM_FILTERED
 endif
 
+ifeq ($(strip $(O_NOBRAILLE)),1)
+	CPPFLAGS += -DNOBRAILLE
+endif
+
 ifeq ($(shell $(PKG_CONFIG) ncursesw && echo 1),1)
 	CFLAGS_CURSES ?= $(shell $(PKG_CONFIG) --cflags ncursesw)
 	LDLIBS_CURSES ?= $(shell $(PKG_CONFIG) --libs   ncursesw)
@@ -171,7 +176,9 @@ HOST_CFLAGS ?= $(CFLAGS)
 # static compilation needs libgpm development package
 ifeq ($(strip $(O_STATIC)),1)
 	LDFLAGS += -static
+ifneq ($(strip $(O_NOMOUSE)),1)
 	LDLIBS += -lgpm
+endif
 endif
 
 DISTFILES = src nnn.1 Makefile README.md LICENSE
@@ -247,7 +254,13 @@ uninstall-desktop:
 	$(RM) $(DESTDIR)$(DESKTOPICONPREFIX)/scalable/apps/nnn.svg
 	$(RM) $(DESTDIR)$(DESKTOPICONPREFIX)/64x64/apps/nnn.png
 
-install: all
+ifeq ($(strip $(O_DEBUG)),1)
+INSTALL_DEPS := all
+else
+INSTALL_DEPS := strip
+endif
+
+install: $(INSTALL_DEPS)
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(PREFIX)/bin
 	@if [ -e "$(DESTDIR)$(PREFIX)/bin/$(BIN)" ]; then \
 		$(CP) -p "$(DESTDIR)$(PREFIX)/bin/$(BIN)" "$(DESTDIR)$(PREFIX)/bin/$(BIN).bak"; \

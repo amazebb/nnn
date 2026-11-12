@@ -6,15 +6,16 @@
 <a href="https://circleci.com/gh/jarun/workflows/nnn"><img src="https://img.shields.io/circleci/project/github/jarun/nnn.svg?label=CircleCI" alt="Circle CI Status" /></a>
 <a href="https://github.com/jarun/nnn/actions"><img src="https://github.com/jarun/nnn/actions/workflows/ci.yml/badge.svg?branch=master" alt="GitHub CI Status" /></a>
 <a href="https://en.wikipedia.org/wiki/Privacy-invasive_software"><img src="https://img.shields.io/badge/privacy-✓-crimson?maxAge=2592000" alt="Privacy Awareness" /></a>
-<a href="https://github.com/jarun/nnn/blob/master/LICENSE"><img src="https://img.shields.io/badge/©-BSD%202--Clause-important.svg?maxAge=2592000" alt="License" /></a>
+<a href="https://github.com/jarun/nnn/blob/master/LICENSE"><img src="https://img.shields.io/badge/⚖-BSD%202--Clause-important.svg?maxAge=2592000" alt="License" /></a>
+<a href="https://github.com/sponsors/jarun" target="_blank"><img src="https://img.shields.io/badge/sponsor-nnn-deeppink.svg" alt="GitHub Sponsors"></a>
 </p>
 
 <p align="center"><a href="https://github.com/user-attachments/assets/541ca36d-ae26-49fb-97da-d1f7a12d4b9a"><img src="https://github.com/user-attachments/assets/a8ee4689-1552-4fb1-997e-b16fe8ef5086"></a></p>
 
 <h3 align="center">[<a
-href="https://github.com/jarun/nnn#features">Features</a>] [<a
-href="https://github.com/jarun/nnn#quickstart">Quickstart</a>] [<a
-href="https://github.com/jarun/nnn/tree/master/plugins#nnn-plugins">Plugins</a>] [<a
+href="https://github.com/jarun/nnn#features">Features</a>] $~~$ [<a
+href="https://github.com/jarun/nnn#quickstart">Quickstart</a>] $~~$ [<a
+href="https://github.com/jarun/nnn/tree/master/plugins#nnn-plugins">Plugins</a>] $~~$ [<a
 href="https://github.com/jarun/nnn/wiki">Wiki</a>]</h3>
 
 > **amazebb fork** of [jarun/nnn](https://github.com/jarun/nnn). Differences from `master` are in [FORK.md](FORK.md). `nnn -V` prints `5.3-amazebb`.
@@ -31,6 +32,8 @@ Runs on the Pi, [Termux](https://www.youtube.com/embed/AbaauM7gUJw) (Android), L
 
 [_(more use cases)_](https://github.com/jarun/nnn/wiki/Basic-use-cases#the_nnn-magic)
 
+<a href="https://build.demoshell.com/launch?snapshot=demoshell%2Ftui%3Annn"><img src="https://build.demoshell.com/v1/embed/badge.svg" alt="Live demo by Demoshell" align="absmiddle"></a>
+
 ## Features
 
 - Quality
@@ -43,7 +46,7 @@ Runs on the Pi, [Termux](https://www.youtube.com/embed/AbaauM7gUJw) (Android), L
   - Disk-IO sensitive (few disk reads and writes)
   - No FPU usage (all integer maths, even for file size)
   - Minimizes screen refresh with fast line redraws
-  - Tiny binary (typically around 100KB)
+  - Tiny binary (typically around 150KB)
   - 1-column mode for smaller terminals and form factors
   - Hackable - compile in/out features and dependencies
 - Portable
@@ -111,7 +114,7 @@ Runs on the Pi, [Termux](https://www.youtube.com/embed/AbaauM7gUJw) (Android), L
 
 ### Beginners
 
-1. [Install](https://github.com/jarun/nnn/wiki/Usage#installation) `nnn`, preferbly using the package manager.
+1. [Install](https://github.com/jarun/nnn/wiki/Usage#installation) `nnn`, preferably using the package manager.
 2. Run the following command to generate (and optionally add to your rc file) a shell function to start with.
    ```sh
    sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/misc/quickstart.sh)"
@@ -122,30 +125,29 @@ Use the shell function name you chose to run `nnn` with your preferred configura
 ### Power users
 
 1. [Install](https://github.com/jarun/nnn/wiki/Usage) `nnn` and the dependencies you need.
-2. The desktop opener is default. Use `-e` to open text files in the terminal. Optionally [open detached](https://github.com/jarun/nnn/wiki/Basic-use-cases#detached-text).
+2. [Install plugins](https://github.com/jarun/nnn/tree/master/plugins#installation).
 3. Configure [cd on quit](https://github.com/jarun/nnn/wiki/Basic-use-cases#configure-cd-on-quit).
-4. [Sync subshell](https://github.com/jarun/nnn/wiki/Basic-use-cases#sync-subshell-pwd) `$PWD` to `nnn`.
-5. [Install plugins](https://github.com/jarun/nnn/tree/master/plugins#installation).
-6. Use `-x` to sync selection to clipboard, show notis on `cp`, `mv`, `rm` and set xterm title.
-7. For a CLI-only environment, set [`NNN_OPENER`](https://github.com/jarun/nnn/wiki/Usage#configuration) to [`nuke`](https://github.com/jarun/nnn/blob/master/plugins/nuke). Use option `-c`.
-8. Bid `ls` goodbye! `alias ls='nnn -de'` :sunglasses:
+4. The desktop opener is default. Use `-e` to open text files in the terminal. Optionally [open detached](https://github.com/jarun/nnn/wiki/Basic-use-cases#detached-text).
+5. In a CLI environment, set [`NNN_OPENER`](https://github.com/jarun/nnn/wiki/Usage#configuration) to [`nuke`](https://github.com/jarun/nnn/blob/master/plugins/nuke). Use option `-c`. For GUI apps, consider [xopen](https://github.com/jarun/xopen).
+6. [Sync subshell](https://github.com/jarun/nnn/wiki/Basic-use-cases#sync-subshell-pwd) `$PWD` to `nnn`.
+7. Use `-x` to sync selection to clipboard, show notis on `cp`, `mv`, `rm` and set xterm title.
+8. Bid `ls` goodbye! `alias l='nnn -dDe'` :sunglasses:
 9. Visit the [Live previews](https://github.com/jarun/nnn/wiki/Live-previews) and [Troubleshooting](https://github.com/jarun/nnn/wiki/Troubleshooting) Wiki pages.
 
 Don't memorize! Arrows, <kbd>/</kbd>, <kbd>q</kbd> suffice. <kbd>Tab</kbd> creates and/or cycles contexts. <kbd>?</kbd> lists shortcuts.
 
-[![](https://github.com/user-attachments/assets/e93f7571-8b8d-4703-bef1-93fc804adf7d)](https://www.youtube.com/embed/-knZwdd1ScU)
-
-[![Wiki](https://img.shields.io/badge/RTFM-nnn%20Wiki-crimson?maxAge=2592000)](https://github.com/jarun/nnn/wiki)
+[![Wiki](https://img.shields.io/badge/RTFM-nnn%20Wiki-important?maxAge=2592000)](https://github.com/jarun/nnn/wiki)
 
 ## Videos
+
+[![](https://github.com/user-attachments/assets/e93f7571-8b8d-4703-bef1-93fc804adf7d)](https://www.youtube.com/embed/-knZwdd1ScU)
 
 - [nnn file manager on Termux (Android)](https://www.youtube.com/embed/AbaauM7gUJw)
 - [NNN File Manager](https://www.youtube.com/embed/1QXU4XSqXNo)
 - [This Week in Linux 114 - TuxDigital](https://www.youtube.com/watch?v=5W9ja0DQjSY&t=2059s)
-- [nnn file manager basics - Linux](https://www.youtube.com/embed/il2Fm-KJJfM)
 - [I'M GOING TO USE THE NNN FILE BROWSER! 😮](https://www.youtube.com/embed/U2n5aGqou9E)
 - [NNN: Is This Terminal File Manager As Good As People Say?](https://www.youtube.com/embed/KuJHo-aO_FA)
-- [nnn - A File Manager (By Uoou, again.)](https://www.youtube.com/embed/cnzuzcCPYsk)
+- [Checkmate, GUI users. | 4P](https://youtu.be/5nBQshNBsV0?si=0mXEzCjGXgIv0Wo9)
 
 ## Elsewhere
 
