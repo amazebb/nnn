@@ -118,6 +118,7 @@ ENVVARS=(
     "NNN_PREVIEWDIR=${NNN_PREVIEWDIR:-$TMPDIR/nnn/previews}" # location of generated preview images
     "NNN_PREVIEWIMGPROG=${NNN_PREVIEWIMGPROG:-}"             # command used to preview images
     "NNN_IMGVIEWER=${NNN_IMGVIEWER:-chafa}"                  # Ghostty/Rex image viewer: chafa (default) or viu
+    "NNN_PREVIEWEXIF=${NNN_PREVIEWEXIF:-1}"                  # Ghostty/Rex: print an EXIF caption under images (0 disables)
     "NNN_PREVIEWVIDEO=${NNN_PREVIEWVIDEO:-}"                 # mpv backend used to preview video
 )
 # Non-configurable environment variables
@@ -444,6 +445,10 @@ preview_file() {
     # Detecting the exact type of the file: the encoding, mime type, and extension in lowercase.
     encoding="$(file -bL --mime-encoding -- "$1")"
     mimetype="$(file -bL --mime-type -- "$1")"
+    case $mimetype in
+    image/*) EXIFSRC=$1 ;;
+    *) EXIFSRC="" ;;
+    esac
     ext="${1##*.}"
     [ -n "$ext" ] && ext="$(printf "%s" "${ext}" | tr '[:upper:]' '[:lower:]')"
     lines=$(tput lines)
@@ -545,6 +550,47 @@ generate_preview() {
     fi
 } >/dev/null 2>&1
 
+# Print a short EXIF caption on the bottom rows of the pane and reserve them (CAPROWS)
+# for the viewer. Photos: camera, lens, focal length / aperture, shutter, ISO, date.
+# Other images: size and file size.
+exif_caption() {
+    CAPROWS=0
+    [ "${NNN_PREVIEWEXIF:-1}" = 0 ] && return
+    [ -n "$1" ] && exists exiftool || return
+    local out model lens fl fn et iso date size fsize l1 l2 tl tc
+    out=$(exiftool -S -d '%Y-%m-%d %H:%M' -Model -LensModel -FocalLength -FNumber -ExposureTime \
+        -ISO -DateTimeOriginal -ImageSize -FileSize -- "$1" 2>/dev/null) || return
+    [ -n "$out" ] || return
+    exif_get() { printf '%s\n' "$out" | sed -n "s/^$1: //p" | head -1; }
+    model=$(exif_get Model) lens=$(exif_get LensModel) fl=$(exif_get FocalLength)
+    fn=$(exif_get FNumber) et=$(exif_get ExposureTime) iso=$(exif_get ISO)
+    date=$(exif_get DateTimeOriginal) size=$(exif_get ImageSize) fsize=$(exif_get FileSize)
+    fl=${fl/.0 mm/mm}
+    fn=${fn%.0}
+    l1="$model${lens:+ · $lens}${fl:+ · $fl}"
+    l2="${fn:+f/$fn  }${et:+${et}s  }${iso:+ISO $iso  }$date"
+    if [ -z "${l1// /}" ] && [ -z "${l2// /}" ]; then
+        l1="$size${fsize:+  $fsize}"
+        l2=""
+    fi
+    l1=${l1%"${l1##*[! ]}"} l2=${l2%"${l2##*[! ]}"}
+    [ -n "$l1" ] || return
+    read -r tl tc <<EOF
+$(stty size </dev/tty 2>/dev/null)
+EOF
+    [ "${tl:-0}" -gt 6 ] || return
+    [ "${tc:-0}" -gt 0 ] || tc=$(tput cols)
+    if [ -n "$l2" ]; then
+        CAPROWS=2
+        printf '\033[%d;1H\033[2K\033[2m%s\033[0m' "$((tl - 1))" "${l1:0:tc}"
+        printf '\033[%d;1H\033[2K\033[2m%s\033[0m' "$tl" "${l2:0:tc}"
+    else
+        CAPROWS=1
+        printf '\033[%d;1H\033[2K\033[2m%s\033[0m' "$tl" "${l1:0:tc}"
+    fi
+    printf '\033[H' # viewers draw from the top-left
+}
+
 # Fit the image in the pane with chafa (kitty graphics forced: chafa does not detect Rex)
 img_chafa() {
     gl=0 gc=0
@@ -553,6 +599,8 @@ $(stty size </dev/tty 2>/dev/null)
 EOF
     [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
     [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
+    gl=$((gl - ${CAPROWS:-0}))
+    [ "$gl" -ge 1 ] || gl=1
     if [ "$NNN_TERMINAL" = "rex" ]; then
         chafa -f kitty -s "${gc}x${gl}" "$1" &
     else
@@ -568,6 +616,8 @@ $(stty size </dev/tty 2>/dev/null)
 EOF
     [ "${gc:-0}" -gt 0 ] || gc=$(tput cols)
     [ "${gl:-0}" -gt 0 ] || gl=$(tput lines)
+    gl=$((gl - ${CAPROWS:-0}))
+    [ "$gl" -ge 1 ] || gl=1
     iw=0 ih=0
     if exists sips; then
         iw=$(sips -g pixelWidth "$1" 2>/dev/null | awk '/pixelWidth/{print $2}')
@@ -603,6 +653,7 @@ image_preview() {
     elif [ "$NNN_TERMINAL" = "ghostty" ] || [ "$NNN_TERMINAL" = "rex" ]; then
         # Ghostty and Rex speak the kitty graphics protocol. NNN_IMGVIEWER picks
         # chafa (default) or viu; the other one is the fallback.
+        exif_caption "$EXIFSRC"
         if [ -n "$NNN_PREVIEWIMGPROG" ] && exists "${NNN_PREVIEWIMGPROG%% *}"; then
             $NNN_PREVIEWIMGPROG "$3" &
         elif [ "$NNN_IMGVIEWER" = "viu" ] && exists viu; then

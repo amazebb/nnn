@@ -22,7 +22,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Ghostty preview uses **checked-in** helpers only, under `plugins/ghostty/`: `preview-ghostty-split.applescript`, `preview-ghostty-run.sh`, `preview-ghostty-close.applescript`. Never generate AppleScript or shell on the fly.
 - Rex preview: `rex split` + `rex block close <id>` from `preview-tui` (id in `$TMPDIR/nnn-preview-tui-rexid.*`); chafa runs as `chafa -f kitty`. Close by block id only.
 - Close Ghostty preview **by terminal id only**. Never close other splits in the tab (that kills unrelated panes).
-- Images: `NNN_IMGVIEWER` (default **chafa**, or `viu`; the other is the fallback), then `kitty icat` if kitty runs. RAW files: `exiftool -b -PreviewImage`, else `sips`, cached as `.jpg` in `NNN_PREVIEWDIR`. Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
+- Images: `NNN_IMGVIEWER` (default **chafa**, or `viu`; the other is the fallback), then `kitty icat` if kitty runs. Image preview prints an `exiftool` EXIF caption on the bottom rows (`NNN_PREVIEWEXIF=0` disables; viewers shrink by `CAPROWS`). RAW files: `exiftool -b -PreviewImage`, else `sips`, cached as `.jpg` in `NNN_PREVIEWDIR`. Video: `mpv --vo=kitty --profile=sw-fast --vo-kitty-use-shm=no --really-quiet`.
 - `getplugs`: strip the `-amazebb` suffix from `nnn -V` before fetching a jarun tag.
 
 ## Current behavior (bullets)
