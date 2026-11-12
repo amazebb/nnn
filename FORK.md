@@ -3,6 +3,22 @@
 This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn 5.3).
 `nnn -V` reports **5.3-amazebb**. License is unchanged (BSD 2-Clause).
 
+## Contents
+
+- [Tracking upstream](#tracking-upstream)
+- [Build and Install](#build-and-install)
+- [Changes from master](#changes-from-master)
+  - [Keys](#keys)
+  - [Timestamps](#timestamps)
+  - [Directory sizes](#directory-sizes)
+  - [Detail colors](#detail-colors)
+  - [Git status](#git-status)
+  - [macOS `stat`](#macos-stat)
+  - [Preview (Ghostty)](#preview-ghostty)
+  - [Sort keys (`t` / `s` / `e`)](#sort-keys-t--s--e)
+  - [Copy / move with nothing selected](#copy--move-with-nothing-selected)
+  - [Plugin updates (`getplugs`)](#plugin-updates-getplugs)
+
 ## Tracking upstream
 
 Remotes: `origin` = amazebb/nnn, `upstream` = jarun/nnn. Local `master` is a pure mirror of `upstream/master`: never commit to it. GitHub's "up to date with jarun/nnn" and an old "last changed" date are expected after a fast-forward.
@@ -52,7 +68,7 @@ New keys (not bound upstream):
 
 | Key | Action |
 | --- | --- |
-| `i` | Toggle the git status column on/off (same as `-G`; reloads the directory) |
+| `i` | Toggle the git status column on/off (same as the `-G` option; reloads the directory) |
 | `M` | Toggle octal permissions in detail mode (same as `-m`) |
 
 Changed behavior of existing keys:
@@ -94,7 +110,7 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
 Built into `nnn.c` (not applied as a compile-time patch).
 
-- **`-G`**: query git and show the status column (detail and normal mode). Without `-G`, git is not run.
+- **`-G` option**: query git and show the status column (detail and normal mode). Without the `-G` option, git is not run.
 - **`i`**: toggle that column in a running instance (reloads the directory).
 - The column appears only when git reports a change (a clean repo looks like no column).
 - In `$HOME`, git is invoked against the bare `~/.dotfiles` repo.
@@ -139,4 +155,4 @@ The wiki one-liner always downloads **upstream** `getplugs`, which does not stri
 sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)" master
 ```
 
-or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run it (matches v5.3). Custom files (`preview-tui`, `ghostty/preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
+or copy this repo’s `plugins/getplugs` into `~/.config/nnn/plugins/` and run `getplugs` from there (it fetches the plugins for v5.3). Custom files (`preview-tui`, `ghostty/preview-ghostty-*`) should be kept (keep/merge), not overwritten blindly.
