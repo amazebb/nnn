@@ -6664,6 +6664,7 @@ static void show_help(const char *path)
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
 		  "ci  Toggle git status%07M  Toggle perms\n"
 		  "cy  Cycle time format%07I  Toggle dir sizes\n"
+		  "cL  Quick Look (macOS)\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  Create new/link\n"
@@ -9615,6 +9616,20 @@ nochange:
 				ENTSORT(pdents, ndents, entrycmpfn);
 				move_cursor(ndents ? dentfind(lastname, ndents) : 0, 0);
 			}
+			continue;
+		case SEL_QUICKLOOK:
+#ifdef __APPLE__
+			if (ndents) {
+				mkpath(path, pdents[cur].name, newpath);
+				/* qlmanage opens behind the terminal: raise it once its window exists */
+				spawn("sh", "-c",
+				      "qlmanage -p \"$0\" >/dev/null 2>&1 & sleep 0.15; "
+				      "osascript -e 'tell application \"System Events\" to set frontmost of process \"qlmanage\" to true' >/dev/null 2>&1; wait",
+				      newpath, F_NOTRACE | F_NOSTDIN | F_NOWAIT);
+			}
+#else
+			gitstat_notice = "quick look: macOS only";
+#endif
 			continue;
 		case SEL_STATS: // fallthrough
 		case SEL_CHMODX:
