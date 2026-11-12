@@ -6640,6 +6640,7 @@ static void show_help(const char *path)
 		  "c/  Filter%17^N  Toggle type-to-nav\n"
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
 		  "ci  Toggle git status%07M  Toggle perms\n"
+		  "cy  Cycle time format%07I  Toggle dir sizes\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  Create new/link\n"
@@ -9507,6 +9508,8 @@ nochange:
 		case SEL_DETAIL: // fallthrough
 		case SEL_GITSTATUS: // fallthrough
 		case SEL_NOPERMS: // fallthrough
+		case SEL_TIMEFMT: // fallthrough
+		case SEL_NODIRSIZE: // fallthrough
 		case SEL_PREVIEW: // fallthrough
 		case SEL_SORT:
 			switch (sel) {
@@ -9539,6 +9542,25 @@ nochange:
 			case SEL_NOPERMS:
 				cfg.noperms ^= 1;
 				gitstat_notice = cfg.noperms ? "perms off" : "perms on";
+				continue;
+			case SEL_TIMEFMT:
+				/* ISO -> eza -> US -> ISO */
+				if (!cfg.compacttime) {
+					cfg.compacttime = 1;
+					cfg.ustime = 0;
+					gitstat_notice = "time: eza";
+				} else if (!cfg.ustime) {
+					cfg.ustime = 1;
+					gitstat_notice = "time: US";
+				} else {
+					cfg.compacttime = 0;
+					cfg.ustime = 0;
+					gitstat_notice = "time: ISO";
+				}
+				continue;
+			case SEL_NODIRSIZE:
+				cfg.nodirsize ^= 1;
+				gitstat_notice = cfg.nodirsize ? "dir sizes off" : "dir sizes on";
 				continue;
 			case SEL_PREVIEW:
 				cfg.preview ^= 1;

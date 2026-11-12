@@ -101,7 +101,7 @@ supports the following options:
 .Pp
 .Fl G
         query git and show the status column (detail and normal mode).
-        Without \fB-G\fR, git is not run.
+        Without \fB-G\fR, git is not run. Toggle with \fBi\fR.
 .Pp
 .Fl H
         show hidden files
@@ -111,7 +111,7 @@ supports the following options:
 .Pp
 .Fl I
         hide directory sizes in detail mode (files still show size;
-        disk-usage sort still shows directory totals)
+        disk-usage sort still shows directory totals). Toggle with \fBI\fR.
 .Pp
 .Fl J
         disable auto-advance on selection
@@ -180,7 +180,8 @@ supports the following options:
 .Pp
 .Fl y
         compact timestamps in the eza default style (fixed 12 columns):
-        this year as \fBDD MMM HH:MM\fR, earlier years as \fBDD MMM  YYYY\fR
+        this year as \fBDD MMM HH:MM\fR, earlier years as \fBDD MMM  YYYY\fR.
+        \fBy\fR cycles ISO, eza and US formats.
 .Pp
 .Fl Y
         compact timestamps in US style (fixed 12 columns):

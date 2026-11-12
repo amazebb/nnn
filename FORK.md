@@ -70,13 +70,15 @@ New keys (not bound upstream):
 | --- | --- |
 | `i` | Toggle the git status column on/off (same as the `-G` option; reloads the directory) |
 | `M` | Toggle octal permissions in detail mode (same as `-m`) |
+| `y` | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), back to ISO |
+| `I` | Toggle directory sizes in detail mode (same as the `-I` option) |
 
 Changed behavior of existing keys:
 
 | Key | Change |
 | --- | --- |
 | `t` then `t` / `s` / `e` | Sets that sort key instead of toggling it off |
-| `t` then `T` | Reverse time (oldest first); `t` then `c` clears |
+| `t` then `T` | Reverse time (oldest first); `t` then `c` resets to the default sort (see [Sort keys](#sort-keys-t--s--e)) |
 | `p` / `v` with nothing selected | Floating help, then the editor |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
 | `;` then `p` | Closes the Ghostty preview split by recorded id |
@@ -89,13 +91,13 @@ Changed behavior of existing keys:
 | `-y` | `y` | eza style: `19 Aug 14:32` / older `19 Aug  2024` |
 | `-Y` | `Y` | US style: `Aug 19 14:32` / older `Aug 19  2024` |
 
-Use with detail mode (`-d` / `d`). `-y` and `-Y` are exclusive; the last one wins.
+Use with detail mode (`-d` / `d`). `-y` and `-Y` are exclusive; the last one wins. In a running instance, `y` cycles ISO, eza, US, ISO.
 
 ### Directory sizes
 
 | Flag | `NNN_OPTS` | Detail listing |
 | --- | --- | --- |
-| `-I` | `I` | Size column for files only; directories left blank (du/`d` sort still shows totals) |
+| `-I` | `I` | Size column for files only; directories left blank (du/`d` sort still shows totals). Key `I` toggles it. |
 | `-m` | `m` | Hide octal permissions (`644`). Status bar still shows `rw-r--r--`. Toggle with `M`. |
 
 ### Detail colors
@@ -138,7 +140,7 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 ### Sort keys (`t` / `s` / `e`)
 
-`t` then `t` / `s` / `e` **sets** that key (does not toggle it off). Uppercase keeps the key and reverses: `t` then `T` is oldest first. Clear with `t` then `c`.
+`t` then `t` / `s` / `e` **sets** that key (does not toggle it off). Uppercase keeps the key and reverses: `t` then `T` is oldest first. Clear with `t` then `c`: it drops every sort key (time, size, extension, disk usage), reverse and version sort, so the listing is back to the default name order.
 
 ### Copy / move with nothing selected
 

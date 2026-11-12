@@ -83,6 +83,8 @@ enum action {
 	SEL_DETAIL,
 	SEL_GITSTATUS,
 	SEL_NOPERMS,
+	SEL_TIMEFMT,
+	SEL_NODIRSIZE,
 	SEL_STATS,
 	SEL_CHMODX,
 	SEL_ARCHIVE,
@@ -212,6 +214,10 @@ static struct key bindings[] = {
 	{ 'i',            SEL_GITSTATUS },
 	/* Toggle octal permissions in detail mode */
 	{ 'M',            SEL_NOPERMS },
+	/* Cycle timestamp format in detail mode: ISO, eza, US */
+	{ 'y',            SEL_TIMEFMT },
+	/* Toggle directory sizes in detail mode */
+	{ 'I',            SEL_NODIRSIZE },
 	/* File details */
 	{ 'f',            SEL_STATS },
 	{ CONTROL('F'),   SEL_STATS },
