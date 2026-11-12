@@ -85,6 +85,7 @@ enum action {
 	SEL_NOPERMS,
 	SEL_TIMEFMT,
 	SEL_NODIRSIZE,
+	SEL_QUICKLOOK, /* Ctrl+Space (NUL), matched in nextsel() */
 	SEL_STATS,
 	SEL_CHMODX,
 	SEL_ARCHIVE,

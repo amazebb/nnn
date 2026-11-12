@@ -72,7 +72,7 @@ New keys (not bound upstream):
 | `M` | Toggle octal permissions in detail mode (same as `-m`) |
 | `y` | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
 | `I` | Toggle directory sizes in detail mode (same as the `-I` option) |
-| `;;` | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
+| `;;` or `Ctrl+Space` | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
 
 Changed behavior of existing keys:
 

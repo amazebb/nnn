@@ -3853,6 +3853,10 @@ try_quit:
 	} else
 		idle = 0;
 
+	/* Ctrl+Space is NUL (0); only a real key read counts, not an idle timeout */
+	if (c == 0 && i != ERR)
+		return SEL_QUICKLOOK;
+
 	for (i = 0; i < (int)ELEMENTS(bindings); ++i)
 		if (c == bindings[i].sym)
 			return bindings[i].act;
@@ -6678,7 +6682,7 @@ static void show_help(const char *path)
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
 		  "ci  Toggle git status%07M  Toggle perms\n"
 		  "cy  Cycle time format%07I  Toggle dir sizes\n"
-		  "c;;  Quick Look (macOS)\n"
+		  "c;; ^Space  Quick Look (macOS)\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  Create new/link\n"
@@ -9629,6 +9633,12 @@ nochange:
 
 				ENTSORT(pdents, ndents, entrycmpfn);
 				move_cursor(ndents ? dentfind(lastname, ndents) : 0, 0);
+			}
+			continue;
+		case SEL_QUICKLOOK:
+			if (ndents) {
+				mkpath(path, pdents[cur].name, newpath);
+				quicklook(newpath);
 			}
 			continue;
 		case SEL_STATS: // fallthrough
