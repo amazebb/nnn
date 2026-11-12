@@ -85,7 +85,6 @@ enum action {
 	SEL_NOPERMS,
 	SEL_TIMEFMT,
 	SEL_NODIRSIZE,
-	SEL_QUICKLOOK,
 	SEL_STATS,
 	SEL_CHMODX,
 	SEL_ARCHIVE,
@@ -219,8 +218,6 @@ static struct key bindings[] = {
 	{ 'y',            SEL_TIMEFMT },
 	/* Toggle directory sizes in detail mode */
 	{ 'I',            SEL_NODIRSIZE },
-	/* macOS Quick Look of the hovered file */
-	{ 'L',            SEL_QUICKLOOK },
 	/* File details */
 	{ 'f',            SEL_STATS },
 	{ CONTROL('F'),   SEL_STATS },
