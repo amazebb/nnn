@@ -12,6 +12,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Source of truth is this git tree (`src/nnn.c`, `src/nnn.h`, `plugins/`, `Makefile`).
 - Install: `make deploy` → `PREFIX=$HOME/.local`, `O_NERD=1`. Binary `~/.local/bin/nnn` (previous copy `nnn.bak`), man + zsh completion under `~/.local/share/`.
 - nnn does **not** load plugins from this tree. After editing `plugins/preview-tui` or `plugins/ghostty/preview-ghostty-*`, copy them to `~/.config/nnn/plugins/` (keep the `ghostty/` subdir).
+- `plugins/` keeps the full upstream set; our own plugins go in the same folder with a **`bb-`** prefix (thin wrappers around `~/.local/share/scripts/bin`, never copies). Install: `rsync -a plugins/ ~/.config/nnn/plugins/`.
 - Launcher **`n3` is not in this repo.** Edit only `/Users/boris/.local/share/scripts/bin/n3` (symlink `~/.local/bin/n3`). Alias `n='source …/n3'` so zsh `NOMATCH` applies — never unmatched globs in sourced `n3`.
 - `n3` default: `nnn -dIYGaPp`. **`n3 -t`** / **`N3_TMUX=1`** wraps tmux; otherwise Ghostty native split.
 

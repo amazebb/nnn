@@ -163,3 +163,13 @@ Once the fork is in sync with upstream, just copy the plugins folder:
 ```bash
 rsync -a plugins/ ~/.config/nnn/plugins/
 ```
+
+`plugins/` keeps the full upstream set untouched. Our own plugins live in the same folder with a **`bb-`** prefix, so they never clash with upstream names or merges and are easy to find (`ls plugins/bb-*`, or type `bb-` in `;f` fzplug). Wrap scripts from `~/.local/share/scripts/bin` instead of copying them, so there is one source of truth:
+
+```sh
+#!/usr/bin/env sh
+# Description: what it does (shown by fzplug)
+exec "$HOME/.local/share/scripts/bin/myscript" "$@"
+```
+
+Make it executable, then bind a key in `NNN_PLUG` in `n3` (`x:bb-myscript`). For a script that only needs the hovered file, no wrapper is needed: `NNN_PLUG='x:!myscript "$nnn"*'`.
