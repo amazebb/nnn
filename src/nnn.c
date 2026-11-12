@@ -6639,7 +6639,7 @@ static void show_help(const char *path)
 	"1FILTER & PROMPT\n"
 		  "c/  Filter%17^N  Toggle type-to-nav\n"
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
-		  "ci  Toggle git status%7M  Toggle perms\n"
+		  "ci  Toggle git status%07M  Toggle perms\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  Create new/link\n"
