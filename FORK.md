@@ -144,6 +144,8 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` on `;p`. No helper scripts are needed. Images use `chafa -f kitty` (chafa does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
 
+Rex fades unfocused panes, which mutes the image colors. Set Settings > Interface > Active Pane > **Fade inactive panes** to *surface* (not content) so the preview stays at full color. It is a global setting; Rex has no per-pane control.
+
 ### Sort keys (`t` / `s` / `e`)
 
 `t` then `t` / `s` / `e` **sets** that key (does not toggle it off). Uppercase keeps the key and reverses: `t` then `T` is oldest first. Clear with `t` then `c`: it drops every sort key (time, size, extension, disk usage), reverse and version sort, so the listing is back to the default name order.
