@@ -9679,9 +9679,15 @@ nochange:
 				if (!(getutil(utils[UTIL_BASH])
 				      && plugscript(utils[UTIL_NMV], F_CLI))
 #ifndef NOBATCH
-				    && !batch_rename()
+				    && (!getutil(SED) || !batch_rename())
 #endif
 				) {
+#ifndef NOBATCH
+					if (!getutil(SED)) {
+						printwait(SED " not found (install gnu-sed)", &presel);
+						goto nochange;
+					}
+#endif
 					printwait(messages[MSG_FAILED], &presel);
 					goto nochange;
 				}
