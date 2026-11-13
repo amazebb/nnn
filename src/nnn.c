@@ -9684,7 +9684,15 @@ nochange:
 				) {
 #ifndef NOBATCH
 					if (!getutil(SED)) {
-						printwait(SED " not found (install gnu-sed)", &presel);
+						static const char nosed_help[] =
+							"Batch rename needs " SED "\n"
+							"\n"
+							"Install it:  brew install gsed\n"
+							"\n"
+							"Press q to close.\n";
+
+						show_content_in_floating_window((char *)nosed_help,
+									       xstrlen(nosed_help), NULL, FALSE);
 						goto nochange;
 					}
 #endif
