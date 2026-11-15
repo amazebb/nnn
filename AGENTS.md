@@ -40,6 +40,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - `f` popup `j`/`n` and `k`/`p`: listing highlight (and status bar) follow the hovered file; preview-tui already did via FIFO.
 - Empty `p` (copy) / `v` (move): floating help in the same style as `f`, then the editor.
 - `;p` / quit: close the Ghostty preview surface by recorded id; leftover id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
+- `C` / `^B`: copy name(s) / full path(s) of the selection (else hovered) to the clipboard; `^G` (`^Y` is swallowed by the macOS tty DSUSP) in `xreadline` prompts pastes the first entry from `yankbuf`.
 - Sort `t`/`s`/`e`: set the key (no xor-off). `t` `T` is reverse time; `t` `c` clears.
 
 ## Commits

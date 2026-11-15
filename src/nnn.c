@@ -4333,6 +4333,87 @@ static void xwrite_history(const char *histpath)
 }
 #endif
 
+/* Last C / ^B result: newline separated names or paths, pasted with ^Y in prompts */
+static char *yankbuf;
+static uint_t nyank;
+
+/* Pipe text to the system clipboard; failure is ignored (the yank buffer still works) */
+static void clipwrite(const char *text, size_t len)
+{
+#ifdef __APPLE__
+	FILE *fp = popen("pbcopy", "w");
+#else
+	FILE *fp = popen("wl-copy 2>/dev/null || xclip -selection clipboard 2>/dev/null"
+			 " || xsel -ib 2>/dev/null", "w");
+#endif
+	if (!fp)
+		return;
+
+	fwrite(text, 1, len, fp);
+	pclose(fp);
+}
+
+/* Copy names (or full paths) of the selection, else of the hovered entry; returns the count */
+static uint_t yankentries(const char *dir, bool fullpath)
+{
+	size_t cap = 0, len = 0;
+	uint_t count = 0;
+	char *out = NULL, *p;
+	const char *ent;
+
+	if (nselected) {
+		cap = selbufpos + 1;
+	} else if (ndents) {
+		cap = strlen(dir) + NAME_MAX + 3;
+	} else
+		return 0;
+
+	out = xrealloc(NULL, cap);
+	if (!out)
+		errexit();
+
+	for (p = nselected ? pselbuf : NULL; ; ) {
+		size_t elen;
+
+		if (nselected) {
+			if (p >= pselbuf + selbufpos)
+				break;
+			ent = p;
+			p += strlen(p) + 1;
+			if (!fullpath)
+				ent = xbasename((char *)ent);
+		} else {
+			if (count)
+				break;
+			if (fullpath) {
+				mkpath(dir, pdents[cur].name, g_buf);
+				ent = g_buf;
+			} else
+				ent = pdents[cur].name;
+		}
+
+		elen = strlen(ent);
+		if (len + elen + 2 > cap) {
+			cap = len + elen + 2;
+			out = xrealloc(out, cap);
+			if (!out)
+				errexit();
+		}
+
+		memcpy(out + len, ent, elen);
+		len += elen;
+		out[len++] = '\n';
+		++count;
+	}
+
+	out[len] = '\0';
+	free(yankbuf);
+	yankbuf = out;
+	nyank = count;
+	clipwrite(out, len - 1); /* No trailing newline */
+	return count;
+}
+
 /* Show a prompt with input string and return the changes */
 static char *xreadline(const char *prefill, const char *prompt)
 {
@@ -4440,6 +4521,33 @@ static char *xreadline(const char *prefill, const char *prompt)
 						pos = tab_basepos + mbstowcs(buf + tab_basepos, g_buf, lpos + 1);
 						len = pos;
 						tab_cycle = idx;
+					}
+				}
+				continue;
+			case CONTROL('G'): // fallthrough
+			case CONTROL('Y'): /* Paste the first yanked name/path */
+				if (yankbuf && *yankbuf) {
+					char *nl = strchr(yankbuf, '\n');
+					size_t ylen = nl ? (size_t)(nl - yankbuf) : strlen(yankbuf);
+					wchar_t *ybuf = malloc(sizeof(wchar_t) * (ylen + 1));
+					size_t wlen = (size_t)-1;
+
+					if (ybuf) {
+						char *ytmp = xstrdup(yankbuf);
+
+						if (ytmp) {
+							ytmp[ylen] = '\0';
+							wlen = mbstowcs(ybuf, ytmp, ylen + 1);
+							free(ytmp);
+						}
+
+						if (wlen != (size_t)-1 && wlen + len < READLINE_MAX - 1) {
+							memmove(buf + pos + wlen, buf + pos,
+								(len - pos) * WCHAR_T_WIDTH);
+							memcpy(buf + pos, ybuf, wlen * WCHAR_T_WIDTH);
+							len += wlen, pos += wlen;
+						}
+						free(ybuf);
 					}
 				}
 				continue;
@@ -6685,7 +6793,7 @@ static void show_help(const char *path)
 		  "c;; ^Space  Quick Look (macOS)\n"
 	"0\n"
 	"1FILES\n"
-	       "9o ^O  Open with%15n  Create new/link\n"
+	       "9o ^O  Open with%15n  New/link (^g pastes)\n"
 	       "9f ^F  File stats%14P  Preview toggle\n"
 		 "b^R  Rename/dup%14r  Batch rename\n"
 		  "cz  Archive%17e  Edit file\n"
@@ -6696,6 +6804,7 @@ static void show_help(const char *path)
 	       "9v ^V  Move here%15E  Edit sel list\n"
 	       "9x ^X  Delete or trash%09S  Listed sel size\n"
 		  "cX  Delete (rm -rf)%07Esc  Send to FIFO\n"
+		  "cC  Copy name%15^B Copy path\n"
 	"0\n"
 	"1MISC\n"
 	      "8Alt ;  Select plugin%11=  Launch app\n"
@@ -9826,6 +9935,19 @@ nochange:
 			copytoclipboard();
 #endif
 			continue;
+		case SEL_CPNAME: // fallthrough
+		case SEL_CPPATH:
+			r = yankentries(path, sel == SEL_CPPATH);
+			if (!r) {
+				printwait(messages[MSG_0_SELECTED], &presel);
+				goto nochange;
+			}
+
+			snprintf(g_buf, CMD_LEN_MAX, "%d %s copied%s", r,
+				 sel == SEL_CPPATH ? "path(s)" : "name(s)",
+				 r > 1 ? " (^g pastes the first)" : " (^g pastes in prompts)");
+			printwait(g_buf, &presel);
+			goto nochange;
 		case SEL_SELEDIT:
 			r = editselection(FALSE);
 			if (r <= 0) {

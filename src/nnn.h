@@ -96,6 +96,8 @@ enum action {
 	SEL_SELALL,
 	SEL_SELINV,
 	SEL_SELEDIT,
+	SEL_CPNAME,
+	SEL_CPPATH,
 	SEL_CP,
 	SEL_MV,
 	SEL_CPMVAS,
@@ -242,6 +244,9 @@ static struct key bindings[] = {
 	{ 'A',            SEL_SELINV },
 	/* List, edit selection */
 	{ 'E',            SEL_SELEDIT },
+	/* Copy name / full path of selection (or hovered entry) to the clipboard */
+	{ 'C',            SEL_CPNAME },
+	{ CONTROL('B'),   SEL_CPPATH },
 	/* Copy from selection buffer */
 	{ 'p',            SEL_CP },
 	{ CONTROL('P'),   SEL_CP },
