@@ -111,6 +111,10 @@ Use with detail mode (`-d` / `d`). `-y`, `-Y` and `-Z` are exclusive; the last o
 export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 ```
 
+### Rounded highlight
+
+In `O_NERD` builds the hovered entry's highlight and the status-line selection counter get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. A name that fills the whole row keeps a square right end.
+
 ### Git status
 
 Built into `nnn.c` (not applied as a compile-time patch).
