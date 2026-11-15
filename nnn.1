@@ -52,7 +52,139 @@ Press
 .Ql \fB?\fR
 in
 .Nm
-to see the list of keybinds.
+for a one-line summary of the keybinds. This section describes them in full.
+Keys shown as \fB^X\fR are Ctrl+X. Keys separated by commas are aliases.
+.Ss Navigation
+.Bd -literal
+ Key                  | Function
+--------------------- + ---------------------------------------------------
+ j, Down              | Next entry
+ k, Up                | Previous entry
+ h, Left              | Go to the parent directory
+ l, Right             | Open the hovered dir or file
+ Enter                | Same as l; in picker mode, picks the hovered file
+ PgDn, ^D             | Page down (^D: half page)
+ PgUp, ^U             | Page up (^U: half page)
+ g, ^A, Home          | First entry
+ G, ^E, End           | Last entry
+ '                    | Prompt for a key; jump to the next entry starting
+                      | with it, or press ' again for the first non-dir file
+ J                    | Prompt for an entry number n to jump to; +n or -n
+                      | moves relative to the current entry
+ ^Y                   | Jump to the next recently modified ("young") entry
+ ~                    | Go to HOME
+ `                    | Go to /
+ @                    | Go to the directory nnn was started in
+ -                    | Go to the last visited directory
+ ^J                   | Toggle auto-advance to the next entry after opening
+ .                    | Toggle hidden files
+--------------------- + ---------------------------------------------------
+.Ed
+.Ss Contexts, bookmarks, quit
+.Bd -literal
+ Key                  | Function
+--------------------- + ---------------------------------------------------
+ 1-8                  | Go to context n, creating it if needed
+ Tab, Shift+Tab       | Cycle contexts forward, backward
+ q, Alt+Esc           | Quit the current context (quits at the last one)
+ R                    | Reopen the last closed context
+ B                    | Bookmark the current directory (prompts for a name)
+ b, ^/                | Prompt for a bookmark key and go to it; , goes to
+                      | the marked directory, Enter to the bookmarks dir
+ ,                    | Mark the current directory
+ Esc, ^Q              | Quit
+ ^G                   | Quit and change directory (with the n3 launcher)
+ Q                    | Quit with an error code (picker/cd-on-quit scripts)
+--------------------- + ---------------------------------------------------
+.Ed
+.Ss Filter and display
+.Bd -literal
+ Key                  | Function
+--------------------- + ---------------------------------------------------
+ /                    | Filter entries in the current directory
+ ^N                   | Toggle type-to-nav mode
+ d                    | Toggle detail mode (permissions, time, size)
+ i                    | Toggle the git status column
+ M                    | Toggle octal permissions in detail mode
+ y                    | Cycle the detail time format: ISO, eza, US, eza with
+                      | weekday for files modified today
+ I                    | Toggle directory sizes in detail mode
+ T                    | Set the time type: access, change, modified
+ t, ^T                | Sort toggles (see SORTING)
+ P                    | Toggle the preview plugin
+ ^L                   | Redraw the screen
+ ;;, Ctrl+Space       | macOS Quick Look of the hovered file
+--------------------- + ---------------------------------------------------
+.Ed
+.Ss Selection and file operations
+.Bd -literal
+ Key                  | Function
+--------------------- + ---------------------------------------------------
+ Space, +             | Toggle selection of the hovered entry
+ m, mm                | Start a range selection; press m again (or move
+                      | and press m) to end it; mm clears the selection
+ a                    | Select all entries in the current directory
+ A                    | Invert the selection in the current directory
+ E                    | Edit the selection list in the editor
+ S                    | Show the total size of the selection listed here
+ C                    | Copy file name(s) of the selection, else the hovered
+                      | entry, to the system clipboard
+ ^B                   | Same as C, with full paths
+ p, ^P                | Copy the selection into the current directory
+ v, ^V                | Move the selection into the current directory
+ w, ^W                | Copy or move the selection, prompting for new names
+ x, ^X                | Delete the selection (or hovered entry) to trash
+ X                    | Delete with rm -rf
+ n                    | Create a file, directory, symlink or hard link
+ ^R                   | Rename the hovered entry (or duplicate if the name
+                      | is unchanged)
+ r                    | Batch rename the entries of the current directory
+ z                    | Archive the selection or hovered entry
+ e                    | Edit the hovered file in $EDITOR
+ o, ^O                | Open the hovered entry with a command you type
+ f, ^F                | Show file details (stat, file, mime type)
+ *                    | Toggle the executable bit
+ >                    | Export the file list of the directory to a file
+--------------------- + ---------------------------------------------------
+.Ed
+.Pp
+C and ^B put one name or path per line on the clipboard. In any text prompt,
+such as the one opened by \fBn\fR, \fB^g\fR (lowercase) inserts the first
+copied entry at the cursor. If several entries were copied, only the first
+is inserted. \fB^Y\fR does the same where the terminal passes it through, but
+macOS reserves it, so use \fB^g\fR.
+.Ss Prompt editing
+These keys work in every text prompt (new, rename, open with, ...):
+.Bd -literal
+ Key                  | Function
+--------------------- + ---------------------------------------------------
+ Enter                | Accept
+ Esc                  | Cancel
+ ^A, ^E               | Start, end of line
+ ^F, ^B               | Forward, back one character
+ ^W, ^U, ^K, ^L       | Delete word before cursor, before cursor, after
+                      | cursor, whole line
+ ^D                   | Delete character (cancels on an empty prompt)
+ Tab                  | Insert hovered file names, cycling on repeat
+ ^g                   | Paste the first entry copied with C or ^B
+--------------------- + ---------------------------------------------------
+.Ed
+.Ss Other
+.Bd -literal
+ Key                  | Function
+--------------------- + ---------------------------------------------------
+ ;                    | Run a plugin by its key; ;; is Quick Look
+ Alt+;                | Select a plugin from a menu
+ =                    | Launch a GUI application
+ ! , ^]               | Spawn a shell in the current directory
+ ]                    | Command prompt
+ c                    | Connect to a remote host over SSHFS
+ u                    | Unmount a remote host or archive
+ s                    | Manage sessions
+ 0                    | Lock the terminal
+ ?                    | Show help and configuration
+--------------------- + ---------------------------------------------------
+.Ed
 .Pp
 On macOS, \fB;;\fR (the plugin key twice) or \fBCtrl+Space\fR opens the hovered file in Quick Look (\fBqlmanage -p\fR) and
 brings its window to the front. The first use may ask for Automation permission
