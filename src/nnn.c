@@ -5525,7 +5525,7 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 	printent_name(ent, namecols);
 
 	if (sel && pill && !g_state.oldcolor) {
-		/* Indicator stays inside the highlight; trailing cap in its color, if there is room */
+		/* Indicator stays inside the highlight; trailing cap in its color */
 		if (ind)
 			addch(ind);
 		attroff(attrs);
@@ -8826,8 +8826,8 @@ static int adjust_cols(int n)
 	} else if (cfg.normalgit && git_statuses.show)
 		n -= 3;
 
-	/* 2 columns for preceding space and indicator */
-	return (n - 2);
+	/* 2 columns for preceding space and indicator, 1 more for the trailing cap */
+	return (n - 2 - ((pill && !g_state.oldcolor) ? 1 : 0));
 }
 
 static void draw_line(int ncols)
