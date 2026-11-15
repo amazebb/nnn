@@ -497,6 +497,17 @@ static int devnullfd = -1;
 static time_t gtimesecs;
 static uint_t idletimeout, selbufpos, selbuflen;
 static ushort_t xlines, xcols;
+
+#ifdef NERD
+/* Rounded Powerline caps for the cursor highlight; NNN_PILL=0 disables them */
+#define PILL_L "\xee\x82\xb6" /* U+E0B6 */
+#define PILL_R "\xee\x82\xb4" /* U+E0B4 */
+static bool pill = TRUE;
+#else
+#define PILL_L ""
+#define PILL_R ""
+#define pill FALSE
+#endif
 static ushort_t idle;
 static uchar_t maxbm, maxplug, maxorder;
 static uchar_t cfgsort[CTX_MAX + 1];
@@ -5150,7 +5161,7 @@ static struct icon get_icon(const struct entry *ent)
 	return file_icon;
 }
 
-static void print_icon(const struct entry *ent, const int attrs)
+static void print_icon(const struct entry *ent, const int attrs, bool sel)
 {
 	const struct icon icon = get_icon(ent);
 	addstr(ICON_PADDING_LEFT);
@@ -5163,7 +5174,13 @@ static void print_icon(const struct entry *ent, const int attrs)
 		attroff(COLOR_PAIR(C_SIZ + 1 + icon.color));
 	else if (attrs)
 		attroff(attrs);
-	addstr(ICON_PADDING_RIGHT);
+	if (sel && pill) { /* Leading cap replaces the last padding cell, in the highlight's color */
+		addnstr(ICON_PADDING_RIGHT, ICON_PADDING_RIGHT_LEN - 1);
+		attron(attrs | A_BOLD);
+		addstr(PILL_L);
+		attroff(attrs | A_BOLD);
+	} else
+		addstr(ICON_PADDING_RIGHT);
 }
 #endif
 
@@ -5494,7 +5511,7 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		if (color_pair && fcolors[color_pair])
 			attrs |= COLOR_PAIR(color_pair);
 #ifdef ICONS_ENABLED
-		print_icon(ent, attrs);
+		print_icon(ent, attrs, sel);
 #endif
 	}
 
@@ -5507,10 +5524,26 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 
 	printent_name(ent, namecols);
 
+	if (sel && pill && !g_state.oldcolor) {
+		/* Indicator stays inside the highlight; trailing cap in its color, if there is room */
+		if (ind)
+			addch(ind);
+		attroff(attrs);
+		if (getcurx(stdscr) < xcols) {
+			attrs &= ~A_REVERSE;
+			attron(attrs);
+			addstr(PILL_R);
+			attroff(attrs);
+		}
+		return;
+	}
+
 	if (attrs)
 		attroff(attrs);
 	if (ind)
 		addch(ind);
+	if (pill && !g_state.oldcolor)
+		clrtoeol(); /* Erase a trailing cap left by an earlier highlight */
 }
 
 /**
@@ -8423,6 +8456,8 @@ static void statusbar(char *path)
 	printw("%d/%d ", cur + 1, ndents);
 
 	if (g_state.selmode || nselected) {
+		if (pill)
+			addstr(PILL_L);
 		attron(A_REVERSE);
 		addch(' ');
 		if (g_state.rangesel)
@@ -8433,6 +8468,7 @@ static void statusbar(char *path)
 			addstr(xitoa(nselected));
 		addch(' ');
 		attroff(A_REVERSE);
+		addstr(pill ? PILL_R : " ");
 		addch(' ');
 	}
 
@@ -11380,6 +11416,11 @@ int main(int argc, char *argv[])
 		xstrsncpy(g_buf + r - 1, xitoa(getpid()), PATH_MAX - r);
 		setenv("NNN_FIFO", g_buf, TRUE);
 	}
+
+#ifdef NERD
+	if (xgetenv("NNN_PILL", "1")[0] == '0')
+		pill = FALSE;
+#endif
 
 	fifopath = xgetenv("NNN_FIFO", NULL);
 	if (fifopath) {
