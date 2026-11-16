@@ -115,6 +115,10 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
 In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills when the terminal is at least 80 columns wide) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
 
+### Choice prompts
+
+Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). Needs the pill caps and at least 60 columns, otherwise the plain `'f'ile/'d'ir` text is shown.
+
 ### Hovered entry marker
 
 In detail mode the `>` before the time column is hidden by default. `NNN_HOVERMARK=1` brings it back.

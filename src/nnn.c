@@ -1757,12 +1757,91 @@ static inline bool xconfirm(int c)
 	return (c == 'y' || c == 'Y');
 }
 
+/* Prompts written as 'k'ey options separated by /, with the default in [] */
+static bool is_choice_prompt(const char *prompt)
+{
+	static const uchar_t ids[] = {
+		MSG_CP_MV_AS, MSG_CUR_SEL_OPTS, MSG_NEW_OPTS, MSG_CLI_MODE,
+		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS
+	};
+
+	for (uchar_t i = 0; i < ELEMENTS(ids); ++i)
+		if (prompt == messages[ids[i]])
+			return TRUE;
+
+	return FALSE;
+}
+
+/*
+ * Draw a choice prompt as one pill per option. The default option (in []) is
+ * a filled message pill, the others use the context color. The key to press
+ * is capitalised and underlined: 'd'ir shows as Dir, e'x'tract as eXtract.
+ */
+static void printchoices(const char *spec)
+{
+	const char *p = spec;
+
+	tolastln();
+
+	while (*p) {
+		bool def = FALSE, key = FALSE;
+
+		if (*p == '[') {
+			def = TRUE;
+			++p;
+		}
+
+		if (def) {
+			if (msgcolor)
+				attron(COLOR_PAIR(C_MSG));
+			else
+				attron(A_BOLD);
+		} else
+			attron_curctx();
+
+		pill_open();
+		for (; *p && *p != '/' && *p != ']' && !(*p == '?' && !p[1]); ++p) {
+			if (*p == '\'') {
+				key = !key;
+				key ? attron(A_UNDERLINE) : attroff(A_UNDERLINE);
+			} else
+				addch(key ? toupper((uchar_t)*p) : *p);
+		}
+		if (key)
+			attroff(A_UNDERLINE);
+		pill_close();
+
+		if (def) {
+			if (msgcolor)
+				attroff(COLOR_PAIR(C_MSG));
+			else
+				attroff(A_BOLD);
+		} else
+			attroff_curctx();
+
+		if (*p == ']')
+			++p;
+		if (*p == '/' || *p == '?')
+			++p;
+	}
+
+	clrtoeol();
+}
+
+static void showprompt(const char *prompt)
+{
+	if (pill && !g_state.oldcolor && xcols >= 60 && is_choice_prompt(prompt))
+		printchoices(prompt);
+	else
+		printmsg(prompt);
+}
+
 static int get_input(const char *prompt)
 {
 	wint_t ch[1];
 
 	if (prompt)
-		printmsg(prompt);
+		showprompt(prompt);
 	cleartimeout();
 
 	get_wch(ch);
@@ -1772,7 +1851,7 @@ static int get_input(const char *prompt)
 		if (prompt) {
 			clearoldprompt();
 			xlines = LINES;
-			printmsg(prompt);
+			showprompt(prompt);
 		}
 
 		get_wch(ch);
