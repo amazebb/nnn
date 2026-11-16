@@ -8448,6 +8448,23 @@ static bool set_time_type(int *presel)
 	return ret;
 }
 
+/* Full file name as a pill, truncated to the remaining width (uses g_buf) */
+static void pill_name(const char *name)
+{
+	int avail = xcols - getcurx(stdscr) - 5; /* caps, padding and gap */
+
+	if (avail < 4)
+		return;
+
+	pill_open();
+#ifndef NOLC
+	addwstr(unescape(name, avail));
+#else
+	addstr(unescape(name, avail + 1));
+#endif
+	pill_close();
+}
+
 static void statusbar(char *path)
 {
 	int i = 0, len = 0;
@@ -8576,11 +8593,13 @@ static void statusbar(char *path)
 			if (segs)
 				pill_open();
 			addstr(coolsize(pent->size));
-			if (segs)
+			if (segs) {
 				pill_close();
-			else
+				pill_name(pent->name);
+			} else {
 				addch(' ');
-			addstr(ptr);
+				addstr(ptr);
+			}
 			if (pent->flags & HARD_LINK) {
 				struct stat sb;
 
