@@ -117,7 +117,7 @@ In `O_NERD` builds the hovered entry's highlight, the status-line segments (file
 
 ### Choice prompts
 
-Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). Needs the pill caps and at least 60 columns, otherwise the plain `'f'ile/'d'ir` text is shown.
+Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). A final `Esc` pill shows that any other key cancels. Needs the pill caps and at least 60 columns, otherwise the plain `'f'ile/'d'ir` text is shown.
 
 ### Hovered entry marker
 

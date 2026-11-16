@@ -1825,6 +1825,13 @@ static void printchoices(const char *spec)
 			++p;
 	}
 
+	/* Any other key cancels in every choice prompt */
+	attron_curctx();
+	pill_open();
+	addstr("Esc");
+	pill_close();
+	attroff_curctx();
+
 	clrtoeol();
 }
 
