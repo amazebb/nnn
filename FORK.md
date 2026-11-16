@@ -179,7 +179,7 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 ### Copy / move with nothing selected
 
-`p` (copy) and `v` (move) show a floating help window (same style as `f`) first. Enter opens the editor on a blank path list; q/Esc cancels without opening it. Upstream opens the editor straight away. The popup is titled and sized to its text.
+`p` (copy) and `v` (move) show a floating help window (same style as `f`) first. Enter opens the editor on a blank path list; q/Esc cancels without opening it. Upstream opens the editor straight away. The popup is titled and sized to its text. Floating windows have rounded corners and nerd font scroll carets (`^v<>` without `O_NERD`).
 
 ### Plugin updates
 

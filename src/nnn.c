@@ -3105,6 +3105,18 @@ finish:
 }
 
 static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile);
+/* Scroll indicators: nerd font carets (same family as the hover marker) or ASCII */
+#ifdef NERD
+#define FW_UP    "\xef\x83\x98" /* U+F0D8 nf-fa-caret_up */
+#define FW_DOWN  "\xef\x83\x97" /* U+F0D7 nf-fa-caret_down */
+#define FW_LEFT  "\xef\x83\x99" /* U+F0D9 nf-fa-caret_left */
+#define FW_RIGHT "\xef\x83\x9a" /* U+F0DA nf-fa-caret_right */
+#else
+#define FW_UP    "^"
+#define FW_DOWN  "v"
+#define FW_LEFT  "<"
+#define FW_RIGHT ">"
+#endif
 static bool fw_confirm; /* Enter confirms (returns TRUE); q/Esc returns FALSE */
 static const char *fw_title; /* Optional title on the top border of non-per-file popups */
 
@@ -6199,8 +6211,8 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 			break;
 	}
 
-	const char *footer = fw_confirm ? "Enter:edit  q/ESC:cancel  arrows:scroll"
-					: "q/ESC:close  arrows:scroll";
+	const char *footer = fw_confirm ? "Enter:edit  q/ESC:cancel"
+					: "q/ESC:close";
 	int footer_width = (int)xstrlen(footer) + (perfile ? 21 : 0);
 
 	/* Calculate window dimensions */
@@ -6233,6 +6245,13 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 
 	keypad(win, TRUE); /* Enable special keys */
 
+	/* Rounded corners: top-left, top-right, bottom-left, bottom-right */
+	static const wchar_t corner_ch[4][2] = {L"\x256d", L"\x256e", L"\x2570", L"\x256f"};
+	cchar_t corner[4];
+
+	for (int i = 0; i < 4; i++)
+		setcchar(&corner[i], corner_ch[i], A_NORMAL, 0, NULL);
+
 	/* Display content with scrolling */
 	int max_lines = win_height - 3; /* Account for border and help line */
 	int max_display_width = win_width - 2; /* Account for border */
@@ -6244,7 +6263,8 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 
 	while (!done) {
 		werase(win);
-		box(win, 0, 0);
+		wborder_set(win, WACS_VLINE, WACS_VLINE, WACS_HLINE, WACS_HLINE,
+			    &corner[0], &corner[1], &corner[2], &corner[3]);
 
 		if (!perfile && fw_title) {
 			mvwaddch(win, 0, 2, ' ');
@@ -6312,17 +6332,17 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 		/* Show vertical scroll indicators if needed */
 		if (line_count > max_lines) {
 			if (scroll_offset > 0)
-				mvwaddch(win, 1, win_width - 2, '^');
+				mvwaddstr(win, 1, win_width - 2, FW_UP);
 			if (scroll_offset + max_lines < line_count)
-				mvwaddch(win, max_lines, win_width - 2, 'v');
+				mvwaddstr(win, max_lines, win_width - 2, FW_DOWN);
 		}
 
 		/* Show horizontal scroll indicators if needed */
 		if (max_line_width > max_display_width) {
 			if (hscroll_offset > 0)
-				mvwaddch(win, max_lines + 1, 1, '<');
+				mvwaddstr(win, max_lines + 1, 1, FW_LEFT);
 			if (hscroll_offset + max_display_width < max_line_width)
-				mvwaddch(win, max_lines + 1, win_width - 2, '>');
+				mvwaddstr(win, max_lines + 1, win_width - 2, FW_RIGHT);
 		}
 
 		/* Show help hint */
