@@ -8540,7 +8540,10 @@ static void statusbar(char *path)
 		if (cfg.filtermode)
 			addch('F');
 
-		getorderstr(sort) ? addstr(sort) : addch(' ');
+		if (getorderstr(sort))
+			addstr(sort);
+		else if (!segs)
+			addch(' '); /* The pill gap already separates segments */
 
 		/* Timestamp */
 		if (segs)
