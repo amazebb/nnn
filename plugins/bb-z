@@ -2,6 +2,7 @@
 
 # Description: Jump to a zoxide directory (empty query opens the picker)
 #
+# nnn passes the hovered file and directory as arguments; they are not a query.
 # Thin wrapper: the logic lives in ~/.local/share/scripts/bin/nnn-z
 
-exec "$HOME/.local/share/scripts/bin/nnn-z" "$@"
+exec "$HOME/.local/share/scripts/bin/nnn-z"
