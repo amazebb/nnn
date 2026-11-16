@@ -508,6 +508,26 @@ static bool pill = TRUE;
 #define PILL_R ""
 #define pill FALSE
 #endif
+
+/* Status line segment as a pill: cap, reversed padded text, cap, gap */
+static void pill_open(bool bold)
+{
+	if (bold)
+		attron(A_BOLD);
+	addstr(PILL_L);
+	attron(A_REVERSE);
+	addch(' ');
+}
+
+static void pill_close(bool bold)
+{
+	addch(' ');
+	attroff(A_REVERSE);
+	addstr(PILL_R);
+	if (bold)
+		attroff(A_BOLD);
+	addch(' ');
+}
 static ushort_t idle;
 static uchar_t maxbm, maxplug, maxorder;
 static uchar_t cfgsort[CTX_MAX + 1];
@@ -1678,13 +1698,9 @@ static void printmsg(const char *msg)
 	if (pill && msg[0] && !g_state.oldcolor) {
 		/* Rounded pill in the context color; the trailing space keeps prompt input off the cap */
 		tolastln();
-		addstr(PILL_L);
-		attron(A_REVERSE);
-		addch(' ');
+		pill_open(FALSE);
 		addstr(msg);
-		addch(' ');
-		attroff(A_REVERSE);
-		addstr(PILL_R " ");
+		pill_close(FALSE);
 		clrtoeol();
 	} else
 		printmsg_nc(msg);
@@ -8465,23 +8481,36 @@ static void statusbar(char *path)
 
 	tolastln();
 
-	printw("%d/%d ", cur + 1, ndents);
+	/* Segments (counter, time, perms, size) become pills when there is room */
+	bool segs = pill && !g_state.oldcolor && xcols >= 80;
+
+	if (segs) {
+		pill_open(TRUE);
+		printw("%d/%d", cur + 1, ndents);
+		pill_close(TRUE);
+	} else
+		printw("%d/%d ", cur + 1, ndents);
 
 	if (g_state.selmode || nselected) {
 		if (pill)
-			addstr(PILL_L);
-		attron(A_REVERSE);
-		addch(' ');
+			pill_open(FALSE);
+		else {
+			attron(A_REVERSE);
+			addch(' ');
+		}
 		if (g_state.rangesel)
 			addch('*');
 		else if (g_state.selmode)
 			addch('+');
 		if (nselected)
 			addstr(xitoa(nselected));
-		addch(' ');
-		attroff(A_REVERSE);
-		addstr(pill ? PILL_R : " ");
-		addch(' ');
+		if (pill)
+			pill_close(FALSE);
+		else {
+			addch(' ');
+			attroff(A_REVERSE);
+			addstr("  ");
+		}
 	}
 
 	if (cfg.blkorder) { /* du mode */
@@ -8501,27 +8530,46 @@ static void statusbar(char *path)
 		getorderstr(sort) ? addstr(sort) : addch(' ');
 
 		/* Timestamp */
+		if (segs)
+			pill_open(FALSE);
 		print_time(&pent->sec, pent->flags);
 
-		addch(' ');
-		addstr(get_lsperms(pent->mode));
-		addch(' ');
+		if (segs) {
+			attron(A_REVERSE); /* print_time clears it after a young highlight */
+			pill_close(FALSE);
+			pill_open(FALSE);
+			addstr(get_lsperms(pent->mode));
+			pill_close(FALSE);
+		} else {
+			addch(' ');
+			addstr(get_lsperms(pent->mode));
+			addch(' ');
+		}
 #ifndef NOUG
 		if (g_state.uidgid) {
+			if (segs)
+				pill_open(FALSE);
 			addstr(getpwname(pent->uid));
 			addch(':');
 			addstr(getgrname(pent->gid));
-			addch(' ');
+			if (segs)
+				pill_close(FALSE);
+			else
+				addch(' ');
 		}
 #endif
 		if (S_ISLNK(pent->mode)) {
 			if (!cfg.fileinfo) {
 				i = readlink(pent->name, g_buf, PATH_MAX);
+				if (segs)
+					pill_open(FALSE);
 				addstr(coolsize(i >= 0 ? i : pent->size)); /* Show symlink size */
+				if (segs)
+					pill_close(FALSE);
 				if (i > 1) { /* Show symlink target */
 					int y;
 
-					addstr(" ->");
+					addstr(segs ? "->" : " ->");
 					getyx(stdscr, len, y);
 					i = MIN(i, xcols - y);
 					g_buf[i] = '\0';
@@ -8529,8 +8577,13 @@ static void statusbar(char *path)
 				}
 			}
 		} else {
+			if (segs)
+				pill_open(FALSE);
 			addstr(coolsize(pent->size));
-			addch(' ');
+			if (segs)
+				pill_close(FALSE);
+			else
+				addch(' ');
 			addstr(ptr);
 			if (pent->flags & HARD_LINK) {
 				struct stat sb;

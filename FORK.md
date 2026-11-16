@@ -113,7 +113,7 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
 ### Rounded highlight
 
-In `O_NERD` builds the hovered entry's highlight, the status-line selection counter and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier.
+In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, time, permissions, owner, size; separate pills when the terminal is at least 80 columns wide) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier.
 
 ### Git status
 
