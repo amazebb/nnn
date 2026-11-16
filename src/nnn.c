@@ -9351,9 +9351,9 @@ static void redraw(char *path)
 	//DPRINTF_D(cur);
 	DPRINTF_S(path);
 
-	/* The current context is a pill (2 more columns) when caps are available */
+	/* The current context and the path are pills (2 more columns each) when caps are available */
 	bool ctxpill = pill && !g_state.oldcolor;
-	int mincol = MIN_DISPLAY_COL + (ctxpill ? 2 : 0);
+	int mincol = MIN_DISPLAY_COL + (ctxpill ? 4 : 0);
 
 	for (i = 0; i < CTX_MAX; ++i) { /* 8 chars printed for contexts - "1 2 3 4 " */
 		if (!g_ctx[i].c_cfg.ctxactive)
@@ -9374,7 +9374,10 @@ static void redraw(char *path)
 		addch(' ');
 	}
 
-	attron(A_UNDERLINE | COLOR_PAIR(cfg.curctx + 1));
+	attron(COLOR_PAIR(cfg.curctx + 1));
+	if (ctxpill)
+		addstr(PILL_L);
+	attron(ctxpill ? (A_REVERSE | A_BOLD) : A_UNDERLINE);
 
 	/* Print path */
 	bool in_home = set_tilde_in_path(path);
@@ -9416,7 +9419,10 @@ static void redraw(char *path)
 	if (in_home)
 		reset_tilde_in_path(path);
 
-	attroff(A_UNDERLINE | COLOR_PAIR(cfg.curctx + 1));
+	attroff(A_REVERSE | A_BOLD | A_UNDERLINE);
+	if (ctxpill)
+		addstr(PILL_R);
+	attroff(COLOR_PAIR(cfg.curctx + 1));
 
 	/* Go to first entry */
 	if (curscroll > 0) {
