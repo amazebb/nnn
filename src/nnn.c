@@ -3105,6 +3105,7 @@ finish:
 }
 
 static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile);
+static bool fw_confirm; /* Enter confirms (returns TRUE); q/Esc returns FALSE */
 
 static bool cpmvrm_selection(enum action sel, char *path)
 {
@@ -3116,13 +3117,18 @@ static bool cpmvrm_selection(enum action sel, char *path)
 			"\n"
 			"Space selects files, then p copies (v moves) them here.\n"
 			"\n"
-			"With no selection, the editor opens a path list.\n"
+			"Press Enter to start editing a blank path list (q/Esc cancels).\n"
 			"Add paths, one per line, save, and the copy/move runs.\n"
-			"Leave the file empty (or don't save) to cancel.\n"
-			"E edits an existing selection the same way.\n";
+			"Leave the file empty (or don't save) to cancel.\n";
 
-		show_content_in_floating_window((char *)empty_sel_help,
-					       xstrlen(empty_sel_help), NULL, FALSE);
+		fw_confirm = TRUE;
+		r = show_content_in_floating_window((char *)empty_sel_help,
+						   xstrlen(empty_sel_help), NULL, FALSE);
+		fw_confirm = FALSE;
+		if (!r) {
+			printmsg(messages[MSG_CANCEL]);
+			return FALSE;
+		}
 		editselection(TRUE);
 	}
 
@@ -6207,7 +6213,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 	int max_line_width = 0; /* Maximum line width in content */
 	int ret, x;
 	wint_t ch;
-	bool done = FALSE;
+	bool done = FALSE, entered = FALSE;
 
 	/* Calculate maximum line width */
 	char *line_ptr = content;
@@ -6298,7 +6304,9 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 		}
 
 		/* Show help hint */
-		mvwaddstr(win, win_height - 1, 1, "q/ESC:close  arrows:scroll");
+		mvwaddstr(win, win_height - 1, 1, fw_confirm
+			  ? "Enter:edit  q/ESC:cancel  arrows:scroll"
+			  : "q/ESC:close  arrows:scroll");
 		if (perfile)
 			waddstr(win, "  n/j:next  p/k:prev");
 
@@ -6313,6 +6321,14 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 		case 'q':
 		case ESC:
 			done = TRUE;
+			break;
+		case '\n':
+		case '\r':
+		case KEY_ENTER:
+			if (fw_confirm) {
+				entered = TRUE;
+				done = TRUE;
+			}
 			break;
 		case 'j':
 		case 'n':
@@ -6371,7 +6387,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 	 * (e.g. spawning the editor) does not restore this popup. */
 	redrawwin(stdscr);
 	refresh();
-	return TRUE;
+	return fw_confirm ? entered : TRUE;
 }
 
 /*

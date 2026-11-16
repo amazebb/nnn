@@ -38,7 +38,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - `i`: toggle that git column; short on/off notice. Column is omitted when the repo is clean. In `$HOME`, git uses the bare `~/.dotfiles` repo.
 - macOS `f` stats: Homebrew GNU `stat` if `…/coreutils/libexec/gnubin/stat` exists, else `/usr/bin/stat -x`.
 - `f` popup `j`/`n` and `k`/`p`: listing highlight (and status bar) follow the hovered file; preview-tui already did via FIFO.
-- Empty `p` (copy) / `v` (move): floating help in the same style as `f`, then the editor.
+- Empty `p` (copy) / `v` (move): floating help in the same style as `f`; Enter opens the editor, q/Esc cancels (`fw_confirm`).
 - `;p` / quit: close the Ghostty preview surface by recorded id; leftover id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
 - `C` / `^B`: copy name(s) / full path(s) of the selection (else hovered) to the clipboard; `^G` (`^Y` is swallowed by the macOS tty DSUSP) in `xreadline` prompts pastes the first entry from `yankbuf`.
 - `O_NERD` builds: cursor highlight, status-line segments (`pill_open`/`pill_close` in `statusbar()`, one pill each for counter, selection, sort/filter flags (only when set), time, perms, owner, size, file name for non-symlinks in place of the extension; only at `xcols >= 80`) and `printmsg()` messages/prompts (own color pair `C_MSG`, xterm 208, `NNN_MSGCOLOR`) use U+E0B6/U+E0B4 caps (`PILL_L`/`PILL_R`, `pill` in `nnn.c`); `NNN_PILL=0` disables. `printent` clears to end of line on other rows to erase a stale trailing cap.

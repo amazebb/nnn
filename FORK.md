@@ -81,7 +81,7 @@ Changed behavior of existing keys:
 | --- | --- |
 | `t` then `t` / `s` / `e` | Sets that sort key instead of toggling it off |
 | `t` then `T` | Reverse time (oldest first); `t` then `c` resets to the default sort (see [Sort keys](#sort-keys-t--s--e)) |
-| `p` / `v` with nothing selected | Floating help, then the editor |
+| `p` / `v` with nothing selected | Floating help; Enter opens the editor, q/Esc cancels |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
 | `;` then `p` | Closes the Ghostty preview split by recorded id |
 
@@ -179,7 +179,7 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 ### Copy / move with nothing selected
 
-`p` (copy) and `v` (move) still open the editor so you can paste a path list. A floating help window (same style as `f`) explains that first.
+`p` (copy) and `v` (move) show a floating help window (same style as `f`) first. Enter opens the editor on a blank path list; q/Esc cancels without opening it. Upstream opens the editor straight away.
 
 ### Plugin updates
 
