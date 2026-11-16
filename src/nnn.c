@@ -515,6 +515,8 @@ static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 #define YOUNG_REVERSE   0 /* reverse video (as upstream) */
 #define YOUNG_PILL      1 /* reverse video with rounded caps (needs pill support) */
 #define YOUNG_NONE      2
+#define YOUNG_ICON      3 /* clock icon in the spare cell before the time (needs O_NERD) */
+#define CLOCK_ICON "\xef\x80\x97" /* U+F017 nf-fa-clock_o */
 #ifdef NERD
 static uchar_t youngstyle = YOUNG_PILL;
 #else
@@ -5393,7 +5395,8 @@ static void print_time(const time_t *timep, const uchar_t flags, bool inpill)
 	localtime_r(timep, &t);
 
 	/* Reverse video for both the plain and the pill style (caps are printed by the caller) */
-	bool young = !inpill && youngstyle != YOUNG_NONE && young_entry(timep, flags);
+	bool young = !inpill && youngstyle != YOUNG_NONE && youngstyle != YOUNG_ICON
+		     && young_entry(timep, flags);
 
 	if (young)
 		attron(A_REVERSE);
@@ -5609,7 +5612,11 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 			     && (!cfg.noperms || xstrlen(sz) <= 8)
 			     && young_entry(&ent->sec, ent->flags);
 
-		if (!ypill)
+		/* The clock takes the cell before the time, so the time column keeps its width */
+		bool yicon = youngstyle == YOUNG_ICON && !g_state.oldcolor
+			     && young_entry(&ent->sec, ent->flags);
+
+		if (!ypill && !yicon)
 			addch(' ');
 		attrs = g_state.oldcolor ? (resetdircolor(ent->flags), A_DIM)
 					 : (fcolors[C_MIS] ? COLOR_PAIR(C_MIS) : 0);
@@ -5622,6 +5629,8 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 			attron(tattrs);
 		if (ypill)
 			addstr(PILL_L);
+		else if (yicon)
+			addstr(CLOCK_ICON);
 		print_time(&ent->sec, ent->flags, FALSE);
 		if (ypill)
 			addstr(PILL_R);
@@ -8766,15 +8775,29 @@ static void statusbar(char *path)
 	tocursor();
 }
 
-/* Arrowhead before the hovered entry in detail mode; off unless NNN_HOVERMARK=1 */
-static bool hovermark;
+/* Marker before the hovered entry in detail mode: NNN_HOVERMARK=0 off, 1 arrowhead, triangle (O_NERD, default there) */
+#define HOVER_OFF      0
+#define HOVER_ARROW    1
+#define HOVER_TRIANGLE 2
+#define TRIANGLE_ICON "\xef\x83\x9a" /* U+F0DA nf-fa-caret_right: filled, about the size of > */
+#ifdef NERD
+static uchar_t hovermark = HOVER_TRIANGLE;
+#else
+static uchar_t hovermark = HOVER_ARROW;
+#endif
 
 static inline void markhovered(void)
 {
 	if (cfg.showdetail && ndents) {
 		tocursor();
-		if (!hovermark)
+		if (hovermark == HOVER_OFF)
 			return;
+		if (hovermark == HOVER_TRIANGLE) {
+			attron(A_BOLD);
+			addstr(TRIANGLE_ICON);
+			attroff(A_BOLD);
+			return;
+		}
 		/* Bold forward arrowhead */
 #if defined(NOBRAILLE) && defined(ICONS_ENABLED)
 		addstr("▌");
@@ -11667,7 +11690,18 @@ int main(int argc, char *argv[])
 		pill = FALSE;
 #endif
 
-	hovermark = (xgetenv("NNN_HOVERMARK", "0")[0] == '1');
+	{
+		const char *hm = xgetenv("NNN_HOVERMARK", "");
+
+		if (hm[0] == '0')
+			hovermark = HOVER_OFF;
+		else if (hm[0] == '1')
+			hovermark = HOVER_ARROW;
+#ifdef NERD
+		else if (!strcmp(hm, "triangle"))
+			hovermark = HOVER_TRIANGLE;
+#endif
+	}
 
 	{
 		const char *young = xgetenv("NNN_YOUNG", "");
@@ -11678,6 +11712,10 @@ int main(int argc, char *argv[])
 			youngstyle = YOUNG_PILL;
 		else if (!strcmp(young, "none"))
 			youngstyle = YOUNG_NONE;
+#ifdef NERD
+		else if (!strcmp(young, "icon"))
+			youngstyle = YOUNG_ICON;
+#endif
 	}
 
 	fifopath = xgetenv("NNN_FIFO", NULL);

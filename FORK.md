@@ -121,7 +121,7 @@ Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cl
 
 ### Hovered entry marker
 
-In detail mode the `>` before the time column is hidden by default. `NNN_HOVERMARK=1` brings it back.
+In detail mode a marker before the time column points at the hovered entry. `NNN_HOVERMARK` picks it: `triangle` a filled right-pointing caret (U+F0DA, Font Awesome via Nerd Font; needs `O_NERD`; default with `O_NERD`), `1` the `>` arrowhead (default without `O_NERD`), `0` no marker.
 ### Recently modified timestamps
 
 Timestamps of entries modified in the last 5 minutes are highlighted. `NNN_YOUNG` picks the style:
@@ -130,6 +130,7 @@ Timestamps of entries modified in the last 5 minutes are highlighted. `NNN_YOUNG
 | --- | --- |
 | `reverse` | Reverse video, as upstream (default without `O_NERD`) |
 | `pill` | Reverse video with rounded caps in the neighbouring cells (default with `O_NERD`; falls back to `reverse` without caps or with `NNN_PILL=0`) |
+| `icon` | Clock icon (U+F017) in the spare cell before the time, no highlight; the column width is unchanged (needs `O_NERD`, ignored otherwise) |
 | `none` | No highlight |
 
 The status-line time pill is already reversed, so it gets no extra highlight. `-Z` skips the highlight for entries modified today.
