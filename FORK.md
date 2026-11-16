@@ -129,8 +129,8 @@ Timestamps of entries modified in the last 5 minutes are highlighted. `NNN_YOUNG
 | Value | Style |
 | --- | --- |
 | `reverse` | Reverse video, as upstream (default without `O_NERD`) |
-| `pill` | Reverse video with rounded caps in the neighbouring cells (default with `O_NERD`; falls back to `reverse` without caps or with `NNN_PILL=0`) |
-| `icon` | Clock icon (U+F017) in the spare cell before the time, no highlight; the column width is unchanged (needs `O_NERD`, ignored otherwise) |
+| `pill` | Reverse video with rounded caps in the neighbouring cells (falls back to `reverse` without caps or with `NNN_PILL=0`) |
+| `icon` | Clock icon (U+F017) in the spare cell before the time, no highlight; the column width is unchanged (default with `O_NERD`; ignored otherwise) |
 | `none` | No highlight |
 
 The status-line time pill is already reversed, so it gets no extra highlight. `-Z` skips the highlight for entries modified today.

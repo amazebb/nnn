@@ -518,7 +518,7 @@ static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 #define YOUNG_ICON      3 /* clock icon in the spare cell before the time (needs O_NERD) */
 #define CLOCK_ICON "\xef\x80\x97" /* U+F017 nf-fa-clock_o */
 #ifdef NERD
-static uchar_t youngstyle = YOUNG_PILL;
+static uchar_t youngstyle = YOUNG_ICON;
 #else
 static uchar_t youngstyle = YOUNG_REVERSE;
 #endif
