@@ -41,7 +41,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Empty `p` (copy) / `v` (move): floating help in the same style as `f`, then the editor.
 - `;p` / quit: close the Ghostty preview surface by recorded id; leftover id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
 - `C` / `^B`: copy name(s) / full path(s) of the selection (else hovered) to the clipboard; `^G` (`^Y` is swallowed by the macOS tty DSUSP) in `xreadline` prompts pastes the first entry from `yankbuf`.
-- `O_NERD` builds: cursor highlight and status-line selection counter use U+E0B6/U+E0B4 caps (`PILL_L`/`PILL_R`, `pill` in `nnn.c`); `NNN_PILL=0` disables. `printent` clears to end of line on other rows to erase a stale trailing cap.
+- `O_NERD` builds: cursor highlight, status-line selection counter and `printmsg()` messages/prompts use U+E0B6/U+E0B4 caps (`PILL_L`/`PILL_R`, `pill` in `nnn.c`); `NNN_PILL=0` disables. `printent` clears to end of line on other rows to erase a stale trailing cap.
 - Sort `t`/`s`/`e`: set the key (no xor-off). `t` `T` is reverse time; `t` `c` clears.
 
 ## Commits

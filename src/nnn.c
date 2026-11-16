@@ -1675,7 +1675,19 @@ static void attroff_curctx(void)
 static void printmsg(const char *msg)
 {
 	attron_curctx();
-	printmsg_nc(msg);
+	if (pill && msg[0] && !g_state.oldcolor) {
+		/* Rounded pill in the context color; the trailing space keeps prompt input off the cap */
+		tolastln();
+		addstr(PILL_L);
+		attron(A_REVERSE);
+		addch(' ');
+		addstr(msg);
+		addch(' ');
+		attroff(A_REVERSE);
+		addstr(PILL_R " ");
+		clrtoeol();
+	} else
+		printmsg_nc(msg);
 	attroff_curctx();
 }
 
