@@ -3106,6 +3106,7 @@ finish:
 
 static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile);
 static bool fw_confirm; /* Enter confirms (returns TRUE); q/Esc returns FALSE */
+static const char *fw_title; /* Optional title on the top border of non-per-file popups */
 
 static bool cpmvrm_selection(enum action sel, char *path)
 {
@@ -3113,8 +3114,6 @@ static bool cpmvrm_selection(enum action sel, char *path)
 
 	if ((sel == SEL_CP || sel == SEL_MV) && isselfileempty()) {
 		static const char empty_sel_help[] =
-			"Nothing selected\n"
-			"\n"
 			"Space selects files, then p copies (v moves) them here.\n"
 			"\n"
 			"Press Enter to start editing a blank path list (q/Esc cancels).\n"
@@ -3122,9 +3121,11 @@ static bool cpmvrm_selection(enum action sel, char *path)
 			"Leave the file empty (or don't save) to cancel.\n";
 
 		fw_confirm = TRUE;
+		fw_title = (sel == SEL_CP) ? "Copy: nothing selected" : "Move: nothing selected";
 		r = show_content_in_floating_window((char *)empty_sel_help,
 						   xstrlen(empty_sel_help), NULL, FALSE);
 		fw_confirm = FALSE;
+		fw_title = NULL;
 		if (!r) {
 			printmsg(messages[MSG_CANCEL]);
 			return FALSE;
@@ -6176,9 +6177,45 @@ static bool buffer_command_output(char * const cmds[], char *arg1, char *arg2, s
  */
 static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile)
 {
+	/* Count total lines once */
+	int line_count = 0;
+	for (size_t i = 0; i < content_len; i++) {
+		if (content[i] == '\n')
+			line_count++;
+	}
+	if (content_len > 0 && content[content_len - 1] != '\n')
+		line_count++;
+
+	int max_line_width = 0; /* Maximum line width in content */
+	char *line_ptr = content;
+	while (line_ptr < content + content_len) {
+		char *next = strchr(line_ptr, '\n');
+		size_t line_len = next ? (size_t)(next - line_ptr) : content_len - (line_ptr - content);
+		if (line_len > (size_t)max_line_width)
+			max_line_width = (int)line_len;
+		if (next)
+			line_ptr = next + 1;
+		else
+			break;
+	}
+
+	const char *footer = fw_confirm ? "Enter:edit  q/ESC:cancel  arrows:scroll"
+					: "q/ESC:close  arrows:scroll";
+	int footer_width = (int)xstrlen(footer) + (perfile ? 21 : 0);
+
 	/* Calculate window dimensions */
 	int win_height = MIN(20, xlines - 4);
 	int win_width = (xcols * 3) / 4; /* 75% of terminal width */
+
+	/* Messages (not per-file popups) shrink to fit their content and footer */
+	if (!perfile) {
+		int title_width = fw_title ? (int)xstrlen(fw_title) + 6 : 0;
+		int fit_width = MAX(MAX(max_line_width, footer_width) + 4, title_width);
+		int fit_height = line_count + 4; /* border, blank, content, spare row, footer */
+
+		win_width = MIN(win_width, fit_width);
+		win_height = MIN(win_height, fit_height);
+	}
 
 	/* Ensure minimum window size */
 	if (win_height < 5)
@@ -6196,41 +6233,26 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 
 	keypad(win, TRUE); /* Enable special keys */
 
-	/* Count total lines once */
-	int line_count = 0;
-	for (size_t i = 0; i < content_len; i++) {
-		if (content[i] == '\n')
-			line_count++;
-	}
-	if (content_len > 0 && content[content_len - 1] != '\n')
-		line_count++;
-
 	/* Display content with scrolling */
 	int max_lines = win_height - 3; /* Account for border and help line */
 	int max_display_width = win_width - 2; /* Account for border */
 	int scroll_offset = 0;
 	int hscroll_offset = 0; /* Horizontal scroll offset */
-	int max_line_width = 0; /* Maximum line width in content */
 	int ret, x;
 	wint_t ch;
 	bool done = FALSE, entered = FALSE;
 
-	/* Calculate maximum line width */
-	char *line_ptr = content;
-	while (line_ptr < content + content_len) {
-		char *next = strchr(line_ptr, '\n');
-		size_t line_len = next ? (size_t)(next - line_ptr) : content_len - (line_ptr - content);
-		if (line_len > (size_t)max_line_width)
-			max_line_width = (int)line_len;
-		if (next)
-			line_ptr = next + 1;
-		else
-			break;
-	}
-
 	while (!done) {
 		werase(win);
 		box(win, 0, 0);
+
+		if (!perfile && fw_title) {
+			mvwaddch(win, 0, 2, ' ');
+			wattron(win, A_BOLD);
+			waddnstr(win, fw_title, max_display_width - 4);
+			wattroff(win, A_BOLD);
+			waddch(win, ' ');
+		}
 
 		if (perfile && ndents)
 		{
@@ -6304,9 +6326,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 		}
 
 		/* Show help hint */
-		mvwaddstr(win, win_height - 1, 1, fw_confirm
-			  ? "Enter:edit  q/ESC:cancel  arrows:scroll"
-			  : "q/ESC:close  arrows:scroll");
+		mvwaddstr(win, win_height - 1, 1, footer);
 		if (perfile)
 			waddstr(win, "  n/j:next  p/k:prev");
 
