@@ -509,6 +509,8 @@ static bool pill = TRUE;
 #define pill FALSE
 #endif
 
+static bool msgcolor; /* Message pill color pair is set up (256 colors) */
+
 /* How timestamps of recently modified ("young") entries stand out; NNN_YOUNG selects */
 #define YOUNG_REVERSE   0 /* reverse video (as upstream) */
 #define YOUNG_PILL      1 /* reverse video with rounded caps (needs pill support) */
@@ -944,6 +946,7 @@ static const char * const patterns[] = {
 #define C_UND (C_SOC + 1)   /* Unknown OR 0B regular/exe file: Red1 */
 #define C_TIM (C_UND + 1)   /* Detail time (falls back to C_MIS): Blue */
 #define C_SIZ (C_TIM + 1)   /* Detail size (falls back to C_MIS): LightGoldenrod3 */
+#define C_MSG (C_SIZ + 1)   /* Message pill, orange (NNN_MSGCOLOR); icon pairs start at +2, and COLOR_PAIR() only holds 0-255 */
 
 static const char gcolors[] = "c1e2272e006033f7c6d6abc404b3";
 static uint_t fcolors[C_SIZ + 1] = {0};
@@ -1704,9 +1707,13 @@ static void printmsg(const char *msg)
 	if (pill && msg[0] && !g_state.oldcolor) {
 		/* Rounded pill in the context color; the trailing space keeps prompt input off the cap */
 		tolastln();
+		if (msgcolor)
+			attron(COLOR_PAIR(C_MSG));
 		pill_open();
 		addstr(msg);
 		pill_close();
+		if (msgcolor)
+			attroff(COLOR_PAIR(C_MSG));
 		clrtoeol();
 	} else
 		printmsg_nc(msg);
@@ -2599,6 +2606,15 @@ static bool initcurses(void *oldmask)
 			init_pair(C_SIZ + 1 + init_colors[i], init_colors[i], -1);
 	}
 #endif
+
+	/* Message pills get their own color so they stand out from the status pills */
+	if (!g_state.oldcolor && COLORS >= COLOR_256 && COLOR_PAIRS > C_MSG) {
+		const char *env = getenv("NNN_MSGCOLOR");
+		int mc = (env && *env) ? atoi(env) : 208;
+
+		init_pair(C_MSG, (mc >= 0 && mc < COLOR_256) ? mc : 208, -1);
+		msgcolor = TRUE;
+	}
 
 	settimeout(); /* One second */
 	set_escdelay(25);
