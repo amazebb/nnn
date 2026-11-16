@@ -6183,6 +6183,39 @@ static bool buffer_command_output(char * const cmds[], char *arg1, char *arg2, s
 	return TRUE;
 }
 
+/* Footer entry of a floating window as a pill; def uses the message color, others the context color */
+static bool fw_caps(void)
+{
+	return pill && !g_state.oldcolor;
+}
+
+static int fw_pill_width(const char *key, const char *label)
+{
+	return (int)xstrlen(key) + 1 + (int)xstrlen(label) + 2 + (fw_caps() ? 2 : 0) + 1;
+}
+
+static void fw_pill(WINDOW *win, const char *key, const char *label, bool def)
+{
+	int pair = (def && msgcolor) ? C_MSG : cfg.curctx + 1;
+
+	wattron(win, COLOR_PAIR(pair));
+	if (fw_caps())
+		waddstr(win, PILL_L);
+	wattron(win, A_REVERSE);
+	waddch(win, ' ');
+	wattron(win, A_BOLD);
+	waddstr(win, key);
+	wattroff(win, A_BOLD);
+	waddch(win, ' ');
+	waddstr(win, label);
+	waddch(win, ' ');
+	wattroff(win, A_REVERSE);
+	if (fw_caps())
+		waddstr(win, PILL_R);
+	wattroff(win, COLOR_PAIR(pair));
+	waddch(win, ' ');
+}
+
 /*
  * Shows the content of a buffer in a floating window.
  * Helps with navigating the entries in the directory.
@@ -6211,9 +6244,23 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 			break;
 	}
 
-	const char *footer = fw_confirm ? "Enter:edit  q/ESC:cancel"
-					: "q/ESC:close";
-	int footer_width = (int)xstrlen(footer) + (perfile ? 21 : 0);
+	const char *fkey[4], *flabel[4];
+	int nfooter = 0, footer_width = 0;
+
+	if (fw_confirm) {
+		fkey[nfooter] = "Enter";
+		flabel[nfooter++] = "Edit";
+	}
+	fkey[nfooter] = "q/Esc";
+	flabel[nfooter++] = fw_confirm ? "Cancel" : "Close";
+	if (perfile) {
+		fkey[nfooter] = "n/j";
+		flabel[nfooter++] = "Next";
+		fkey[nfooter] = "p/k";
+		flabel[nfooter++] = "Prev";
+	}
+	for (int i = 0; i < nfooter; i++)
+		footer_width += fw_pill_width(fkey[i], flabel[i]);
 
 	/* Calculate window dimensions */
 	int win_height = MIN(20, xlines - 4);
@@ -6346,9 +6393,9 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 		}
 
 		/* Show help hint */
-		mvwaddstr(win, win_height - 1, 1, footer);
-		if (perfile)
-			waddstr(win, "  n/j:next  p/k:prev");
+		wmove(win, win_height - 1, 2); /* Aligned with the header */
+		for (int i = 0; i < nfooter; i++)
+			fw_pill(win, fkey[i], flabel[i], fw_confirm && i == 0);
 
 		wrefresh(win);
 
