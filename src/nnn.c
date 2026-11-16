@@ -8664,10 +8664,16 @@ static void statusbar(char *path)
 	tocursor();
 }
 
+/* Arrowhead before the hovered entry in detail mode; off unless NNN_HOVERMARK=1 */
+static bool hovermark;
+
 static inline void markhovered(void)
 {
-	if (cfg.showdetail && ndents) { /* Bold forward arrowhead */
+	if (cfg.showdetail && ndents) {
 		tocursor();
+		if (!hovermark)
+			return;
+		/* Bold forward arrowhead */
 #if defined(NOBRAILLE) && defined(ICONS_ENABLED)
 		addstr("▌");
 #else
@@ -11546,6 +11552,8 @@ int main(int argc, char *argv[])
 	if (xgetenv("NNN_PILL", "1")[0] == '0')
 		pill = FALSE;
 #endif
+
+	hovermark = (xgetenv("NNN_HOVERMARK", "0")[0] == '1');
 
 	{
 		const char *young = xgetenv("NNN_YOUNG", "");
