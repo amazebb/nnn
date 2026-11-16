@@ -44,6 +44,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - `O_NERD` builds: cursor highlight, status-line segments (`pill_open`/`pill_close` in `statusbar()`, one pill each for counter, selection, sort/filter flags (only when set), time, perms, owner, size, file name for non-symlinks in place of the extension; only at `xcols >= 80`) and `printmsg()` messages/prompts (own color pair `C_MSG`, xterm 208, `NNN_MSGCOLOR`) use U+E0B6/U+E0B4 caps (`PILL_L`/`PILL_R`, `pill` in `nnn.c`); `NNN_PILL=0` disables. `printent` clears to end of line on other rows to erase a stale trailing cap.
 - `NNN_YOUNG=reverse|pill|none` (default `pill` with `O_NERD`, else `reverse`) styles timestamps of young entries (`youngstyle`, `print_time(..., inpill)`); `pill` puts caps in the neighbouring detail cells (`printent`), the status pill gets no young highlight (already reversed).
 - The `>` hover marker in detail mode (`markhovered()`) is off by default; `NNN_HOVERMARK=1` shows it.
+- Top line: the current context number is a pill (`ctxpill`, `mincol` in `redraw()`: path width accounts for the 2 extra columns).
 - Choice prompts (`is_choice_prompt()` list in `nnn.c`) render the existing `'k'ey/[default]` message strings as pills via `printchoices()`; add a message id to that list to opt in.
 - Sort `t`/`s`/`e`: set the key (no xor-off). `t` `T` is reverse time; `t` `c` clears.
 

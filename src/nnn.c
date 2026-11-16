@@ -9138,10 +9138,22 @@ static void redraw(char *path)
 	//DPRINTF_D(cur);
 	DPRINTF_S(path);
 
+	/* The current context is a pill (2 more columns) when caps are available */
+	bool ctxpill = pill && !g_state.oldcolor;
+	int mincol = MIN_DISPLAY_COL + (ctxpill ? 2 : 0);
+
 	for (i = 0; i < CTX_MAX; ++i) { /* 8 chars printed for contexts - "1 2 3 4 " */
 		if (!g_ctx[i].c_cfg.ctxactive)
 			addch(i + '1');
-		else
+		else if (ctxpill && cfg.curctx == i) {
+			attron(COLOR_PAIR(i + 1) | A_BOLD);
+			addstr(PILL_L);
+			attron(A_REVERSE);
+			addch(i + '1');
+			attroff(A_REVERSE);
+			addstr(PILL_R);
+			attroff(COLOR_PAIR(i + 1) | A_BOLD);
+		} else
 			addch((i + '1') | (COLOR_PAIR(i + 1) | A_BOLD
 				/* active: underline, current: reverse */
 				| ((cfg.curctx != i) ? A_UNDERLINE : A_REVERSE)));
@@ -9156,8 +9168,8 @@ static void redraw(char *path)
 	char *ptr = in_home ? &path[homelen - 1] : path;
 
 	i = (int)xstrlen(ptr);
-	if ((i + MIN_DISPLAY_COL) <= ncols)
-		addnstr(ptr, ncols - MIN_DISPLAY_COL);
+	if ((i + mincol) <= ncols)
+		addnstr(ptr, ncols - mincol);
 	else {
 		char *base = xmemrchr((uchar_t *)ptr, '/', i);
 
@@ -9172,7 +9184,7 @@ static void redraw(char *path)
 			while (ptr < base) {
 				if (*ptr == '/') {
 					i += 2; /* 2 characters added */
-					if (ncols < i + MIN_DISPLAY_COL) {
+					if (ncols < i + mincol) {
 						base = NULL; /* Can't print more characters */
 						break;
 					}
@@ -9185,7 +9197,7 @@ static void redraw(char *path)
 		}
 
 		if (base)
-			addnstr(base, ncols - (MIN_DISPLAY_COL + i));
+			addnstr(base, ncols - (mincol + i));
 	}
 
 	if (in_home)
