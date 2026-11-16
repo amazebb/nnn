@@ -8537,13 +8537,22 @@ static void statusbar(char *path)
 	} else { /* light or detail mode */
 		char sort[] = "\0\0\0\0\0";
 
-		if (cfg.filtermode)
-			addch('F');
+		bool hassort = getorderstr(sort);
 
-		if (getorderstr(sort))
-			addstr(sort);
-		else if (!segs)
-			addch(' '); /* The pill gap already separates segments */
+		if (segs) { /* Filter mode and sort flags share one pill, shown only when set */
+			if (cfg.filtermode || hassort) {
+				pill_open();
+				if (cfg.filtermode)
+					addch('F');
+				if (hassort)
+					addstr(sort);
+				pill_close();
+			}
+		} else {
+			if (cfg.filtermode)
+				addch('F');
+			hassort ? addstr(sort) : addch(' ');
+		}
 
 		/* Timestamp */
 		if (segs)
