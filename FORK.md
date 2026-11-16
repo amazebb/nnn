@@ -183,7 +183,7 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 ### zoxide
 
-Directories you visit in nnn are recorded with `zoxide add` (in the background, only if `zoxide` is on `PATH`; `NNN_ZOXIDE=0` disables), since zoxide's shell hook never sees nnn's `cd`. Upstream does not record them. The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query. It wraps `~/.local/share/scripts/bin/nnn-z`.
+With `NNN_ZOXIDE=1` (off by default), directories you visit in nnn are recorded with `zoxide add` (in the background, only if `zoxide` is on `PATH`), since zoxide's shell hook never sees nnn's `cd`. Upstream does not record them. The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query. It wraps `~/.local/share/scripts/bin/nnn-z`.
 
 ### Plugin updates
 

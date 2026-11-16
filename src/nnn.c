@@ -9413,7 +9413,7 @@ static void showselsize(const char *path)
 	printmsg(coolsize(cfg.blkorder ? sz << blk_shift : sz));
 }
 
-/* zoxide: record directories visited in nnn (its shell hook never sees them); NNN_ZOXIDE=0 disables */
+/* zoxide: record directories visited in nnn (its shell hook never sees them); NNN_ZOXIDE=1 enables (off by default) */
 static bool zoxide_on;
 static char zoxide_last[PATH_MAX];
 
@@ -11827,7 +11827,7 @@ int main(int argc, char *argv[])
 		pill = FALSE;
 #endif
 
-	zoxide_on = xgetenv("NNN_ZOXIDE", "1")[0] != '0' && in_path("zoxide");
+	zoxide_on = xgetenv("NNN_ZOXIDE", "0")[0] == '1' && in_path("zoxide");
 
 	{
 		const char *hm = xgetenv("NNN_HOVERMARK", "");
