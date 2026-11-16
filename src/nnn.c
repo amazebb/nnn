@@ -509,6 +509,16 @@ static bool pill = TRUE;
 #define pill FALSE
 #endif
 
+/* How timestamps of recently modified ("young") entries stand out; NNN_YOUNG selects */
+#define YOUNG_REVERSE   0 /* reverse video (as upstream) */
+#define YOUNG_PILL      1 /* reverse video with rounded caps (needs pill support) */
+#define YOUNG_NONE      2
+#ifdef NERD
+static uchar_t youngstyle = YOUNG_PILL;
+#else
+static uchar_t youngstyle = YOUNG_REVERSE;
+#endif
+
 /* Status line segment as a pill: cap, reversed padded text, cap, gap */
 static void pill_open(void)
 {
@@ -5261,14 +5271,27 @@ static void print_time_compact(const struct tm *t)
 		       t->tm_year + 1900);
 }
 
-static void print_time(const time_t *timep, const uchar_t flags)
+/* Entries 5 minutes young get highlighted (not in -Z mode, where the weekday stands out) */
+static bool young_entry(const time_t *timep, const uchar_t flags)
+{
+	struct tm t;
+
+	if (!(flags & FILE_YOUNG))
+		return FALSE;
+
+	localtime_r(timep, &t);
+	return !(cfg.todaytime && istoday(&t));
+}
+
+/* inpill: the text is already inside a reversed pill, so it gets no extra highlight */
+static void print_time(const time_t *timep, const uchar_t flags, bool inpill)
 {
 	struct tm t;
 
 	localtime_r(timep, &t);
 
-	/* Highlight timestamp for entries 5 minutes young (not in -Z mode, where the weekday stands out) */
-	bool young = (flags & FILE_YOUNG) && !(cfg.todaytime && istoday(&t));
+	/* Reverse video for both the plain and the pill style (caps are printed by the caller) */
+	bool young = !inpill && youngstyle != YOUNG_NONE && young_entry(timep, flags);
 
 	if (young)
 		attron(A_REVERSE);
@@ -5471,7 +5494,21 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		int type = ent->mode & S_IFMT;
 		const char *sz;
 
-		addch(' ');
+		if (type == S_IFDIR && cfg.nodirsize && !cfg.blkorder)
+			sz = "";
+		else if (type == S_IFREG || type == S_IFDIR)
+			sz = coolsize(cfg.blkorder ? (blkcnt_t)ent->blocks << blk_shift
+						   : ent->size);
+		else
+			sz = (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type);
+
+		/* Rounded caps replace the spaces around the time; the right one needs a spare cell */
+		bool ypill = youngstyle == YOUNG_PILL && pill && !g_state.oldcolor
+			     && (!cfg.noperms || xstrlen(sz) <= 8)
+			     && young_entry(&ent->sec, ent->flags);
+
+		if (!ypill)
+			addch(' ');
 		attrs = g_state.oldcolor ? (resetdircolor(ent->flags), A_DIM)
 					 : (fcolors[C_MIS] ? COLOR_PAIR(C_MIS) : 0);
 		/* Time and size colors fall back to the details color */
@@ -5481,17 +5518,14 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		/* Print details */
 		if (tattrs)
 			attron(tattrs);
-		print_time(&ent->sec, ent->flags);
+		if (ypill)
+			addstr(PILL_L);
+		print_time(&ent->sec, ent->flags, FALSE);
+		if (ypill)
+			addstr(PILL_R);
 		if (tattrs)
 			attroff(tattrs);
 
-		if (type == S_IFDIR && cfg.nodirsize && !cfg.blkorder)
-			sz = "";
-		else if (type == S_IFREG || type == S_IFDIR)
-			sz = coolsize(cfg.blkorder ? (blkcnt_t)ent->blocks << blk_shift
-						   : ent->size);
-		else
-			sz = (type = (uchar_t)get_detail_ind(ent->mode), (char *)&type);
 		if (!cfg.noperms) {
 			char perms[6] = {' ', ' ', (char)('0' + ((ent->mode >> 6) & 7)),
 					(char)('0' + ((ent->mode >> 3) & 7)),
@@ -5499,14 +5533,14 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 
 			if (attrs)
 				attron(attrs);
-			addstr(perms);
+			addstr(ypill ? perms + 1 : perms);
 			if (attrs)
 				attroff(attrs);
 		}
 
 		if (sattrs)
 			attron(sattrs);
-		printw("%9s", sz);
+		printw((ypill && cfg.noperms) ? "%8s" : "%9s", sz);
 		if (sattrs)
 			attroff(sattrs);
 		addch(' ');
@@ -8557,10 +8591,9 @@ static void statusbar(char *path)
 		/* Timestamp */
 		if (segs)
 			pill_open();
-		print_time(&pent->sec, pent->flags);
+		print_time(&pent->sec, pent->flags, segs);
 
 		if (segs) {
-			attron(A_REVERSE); /* print_time clears it after a young highlight */
 			pill_close();
 			pill_open();
 			addstr(get_lsperms(pent->mode));
@@ -11513,6 +11546,17 @@ int main(int argc, char *argv[])
 	if (xgetenv("NNN_PILL", "1")[0] == '0')
 		pill = FALSE;
 #endif
+
+	{
+		const char *young = xgetenv("NNN_YOUNG", "");
+
+		if (!strcmp(young, "reverse"))
+			youngstyle = YOUNG_REVERSE;
+		else if (!strcmp(young, "pill"))
+			youngstyle = YOUNG_PILL;
+		else if (!strcmp(young, "none"))
+			youngstyle = YOUNG_NONE;
+	}
 
 	fifopath = xgetenv("NNN_FIFO", NULL);
 	if (fifopath) {

@@ -115,6 +115,18 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
 In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills when the terminal is at least 80 columns wide) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier.
 
+### Recently modified timestamps
+
+Timestamps of entries modified in the last 5 minutes are highlighted. `NNN_YOUNG` picks the style:
+
+| Value | Style |
+| --- | --- |
+| `reverse` | Reverse video, as upstream (default without `O_NERD`) |
+| `pill` | Reverse video with rounded caps in the neighbouring cells (default with `O_NERD`; falls back to `reverse` without caps or with `NNN_PILL=0`) |
+| `none` | No highlight |
+
+The status-line time pill is already reversed, so it gets no extra highlight. `-Z` skips the highlight for entries modified today.
+
 ### Git status
 
 Built into `nnn.c` (not applied as a compile-time patch).
