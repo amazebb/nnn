@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+
+# Description: Jump to a zoxide directory (empty query opens the picker)
+#
+# Thin wrapper: the logic lives in ~/.local/share/scripts/bin/nnn-z
+
+exec "$HOME/.local/share/scripts/bin/nnn-z" "$@"

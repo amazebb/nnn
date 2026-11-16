@@ -9413,6 +9413,38 @@ static void showselsize(const char *path)
 	printmsg(coolsize(cfg.blkorder ? sz << blk_shift : sz));
 }
 
+/* zoxide: record directories visited in nnn (its shell hook never sees them); NNN_ZOXIDE=0 disables */
+static bool zoxide_on;
+static char zoxide_last[PATH_MAX];
+
+static bool in_path(const char *name)
+{
+	char *dirs = getenv("PATH"), *dup, *dir, *save = NULL;
+	char buf[PATH_MAX];
+	bool found = FALSE;
+
+	if (!dirs || !(dup = xstrdup(dirs)))
+		return FALSE;
+
+	for (dir = strtok_r(dup, ":", &save); dir && !found; dir = strtok_r(NULL, ":", &save)) {
+		snprintf(buf, sizeof(buf), "%s/%s", dir, name);
+		found = (access(buf, X_OK) == 0);
+	}
+
+	free(dup);
+	return found;
+}
+
+/* Runs in the background; skips redraws of the directory already recorded */
+static void zoxide_add(const char *path)
+{
+	if (!zoxide_on || !strcmp(path, zoxide_last))
+		return;
+
+	xstrsncpy(zoxide_last, path, PATH_MAX);
+	spawn("zoxide", "add", "--", (char *)path, F_NOWAIT | F_NOTRACE);
+}
+
 static bool init_browse_context(char *ipath, char **path, char **lastdir, char **lastname)
 {
 #ifndef NOSSN
@@ -9508,6 +9540,8 @@ begin:
 #ifndef NOX11
 	xterm_cfg(path);
 #endif
+
+	zoxide_add(path);
 
 #ifdef LINUX_INOTIFY
 	if ((presel == FILTER || watch) && inotify_wd >= 0) {
@@ -11792,6 +11826,8 @@ int main(int argc, char *argv[])
 	if (xgetenv("NNN_PILL", "1")[0] == '0')
 		pill = FALSE;
 #endif
+
+	zoxide_on = xgetenv("NNN_ZOXIDE", "1")[0] != '0' && in_path("zoxide");
 
 	{
 		const char *hm = xgetenv("NNN_HOVERMARK", "");

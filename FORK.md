@@ -181,6 +181,10 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 `p` (copy) and `v` (move) show a floating help window (same style as `f`) first. Enter opens the editor on a blank path list; q/Esc cancels without opening it. Upstream opens the editor straight away. The popup is titled and sized to its text. Floating windows have rounded corners and nerd font scroll carets (`^v<>` without `O_NERD`). Footer key hints are pills with a bold key.
 
+### zoxide
+
+Directories you visit in nnn are recorded with `zoxide add` (in the background, only if `zoxide` is on `PATH`; `NNN_ZOXIDE=0` disables), since zoxide's shell hook never sees nnn's `cd`. Upstream does not record them. The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query. It wraps `~/.local/share/scripts/bin/nnn-z`.
+
 ### Plugin updates
 
 Once the fork is in sync with upstream, just copy the plugins folder:
