@@ -1922,6 +1922,81 @@ static uint_t entries_in_file(int fd, char *buf, size_t buflen, const char delim
 	return ((len < 0) ? 0 : ((delim != NUL_CHAR) ? count : ++count));
 }
 
+static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile);
+static bool fw_yesno; /* y confirms (returns TRUE); n/q/Esc returns FALSE */
+static const char *fw_title; /* Optional title on the top border of non-per-file popups */
+static const char *fw_yes_label; /* Footer label of the y entry */
+
+/* Lists the selection in a floating window; returns 'y' to proceed, else 'n' */
+static char confirm_list(bool use_trash)
+{
+	char title[64];
+	struct stat sb;
+	char *buf;
+	char ret = 'n';
+	int fd = open(selpath, O_RDONLY);
+
+	if (fd == -1)
+		return ret;
+
+	if (fstat(fd, &sb) == -1 || sb.st_size <= 0 || !(buf = malloc((size_t)sb.st_size + 1))) {
+		close(fd);
+		return ret;
+	}
+
+	ssize_t len = read(fd, buf, (size_t)sb.st_size);
+
+	close(fd);
+	if (len <= 0) {
+		free(buf);
+		return ret;
+	}
+
+	/* Entries are NUL separated: show one per line, relative to the current directory */
+	char cwd[PATH_MAX];
+	size_t cwdlen = getcwd(cwd, sizeof(cwd)) ? xstrlen(cwd) : 0;
+	char *out = malloc((size_t)len + 1), *o = out;
+
+	if (!out) {
+		free(buf);
+		return ret;
+	}
+
+	for (ssize_t i = 0; i < len; ) {
+		char *e = buf + i;
+		size_t elen = strnlen(e, (size_t)(len - i));
+
+		if (cwdlen && !strncmp(e, cwd, cwdlen) && (cwdlen == 1 || e[cwdlen] == '/')) {
+			size_t skip = (cwdlen == 1) ? 1 : cwdlen + 1;
+
+			if (elen > skip) {
+				e += skip;
+				elen -= skip;
+			}
+		}
+		memcpy(o, e, elen);
+		o += elen;
+		*o++ = '\n';
+		i += (ssize_t)strnlen(buf + i, (size_t)(len - i)) + 1;
+	}
+	*o = '\0';
+	free(buf);
+	buf = out;
+	len = o - out;
+
+	snprintf(title, sizeof(title), "%s %d file(s)?", use_trash ? "Trash" : "Delete (rm -rf)", nselected);
+	fw_yesno = TRUE;
+	fw_title = title;
+	fw_yes_label = use_trash ? "Trash" : "Delete";
+	if (show_content_in_floating_window(buf, (size_t)len, NULL, FALSE))
+		ret = 'y';
+	fw_yesno = FALSE;
+	fw_title = NULL;
+
+	free(buf);
+	return ret;
+}
+
 static char confirm_force(bool selection, bool use_trash)
 {
 	char str[300];
@@ -1943,8 +2018,7 @@ static char confirm_force(bool selection, bool use_trash)
 	int r = snprintf(str, 20, "%s", use_trash ? utils[UTIL_GIO_TRASH] + 4 : "rm -rf");
 
 	if (selection) {
-		snprintf(str + r, 280, " %d file(s)?", nselected);
-		r = get_input(str);
+		r = confirm_list(use_trash);
 
 		/* Double confirm on removal of more than 10 files */
 		if (!use_trash && (nselected > RM_RECONFIRM) && (r == 'y' || r == 'Y')) {
@@ -1952,7 +2026,7 @@ static char confirm_force(bool selection, bool use_trash)
 			r = get_input(str);
 		}
 	} else {
-		snprintf(str + r, 280, " '%s'?", pdents[cur].name);
+		snprintf(str + r, 280, " '%s'? [y/n]", pdents[cur].name);
 		r = get_input(str);
 	}
 
@@ -3118,7 +3192,6 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 #define FW_RIGHT ">"
 #endif
 static bool fw_confirm; /* Enter confirms (returns TRUE); q/Esc returns FALSE */
-static const char *fw_title; /* Optional title on the top border of non-per-file popups */
 
 static bool cpmvrm_selection(enum action sel, char *path)
 {
@@ -6250,9 +6323,12 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 	if (fw_confirm) {
 		fkey[nfooter] = "Enter";
 		flabel[nfooter++] = "Edit";
+	} else if (fw_yesno) {
+		fkey[nfooter] = "y";
+		flabel[nfooter++] = fw_yes_label;
 	}
-	fkey[nfooter] = "q/Esc";
-	flabel[nfooter++] = fw_confirm ? "Cancel" : "Close";
+	fkey[nfooter] = fw_yesno ? "n/q/Esc" : "q/Esc";
+	flabel[nfooter++] = (fw_confirm || fw_yesno) ? "Cancel" : "Close";
 	if (perfile) {
 		fkey[nfooter] = "n/j";
 		flabel[nfooter++] = "Next";
@@ -6395,7 +6471,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 		/* Show help hint */
 		wmove(win, win_height - 1, 2); /* Aligned with the header */
 		for (int i = 0; i < nfooter; i++)
-			fw_pill(win, fkey[i], flabel[i], fw_confirm && i == 0);
+			fw_pill(win, fkey[i], flabel[i], (fw_confirm || fw_yesno) && i == 0);
 
 		wrefresh(win);
 
@@ -6417,8 +6493,19 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 				done = TRUE;
 			}
 			break;
+		case 'y':
+		case 'Y':
+			if (fw_yesno) {
+				entered = TRUE;
+				done = TRUE;
+			}
+			break;
 		case 'j':
 		case 'n':
+			if (fw_yesno) {
+				done = TRUE;
+				break;
+			}
 			if (perfile && action) {
 				*action = SEL_NEXT;
 				done = TRUE;
@@ -6474,7 +6561,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 	 * (e.g. spawning the editor) does not restore this popup. */
 	redrawwin(stdscr);
 	refresh();
-	return fw_confirm ? entered : TRUE;
+	return (fw_confirm || fw_yesno) ? entered : TRUE;
 }
 
 /*

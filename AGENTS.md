@@ -46,6 +46,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Hover marker in detail mode (`markhovered()`, `hovermark`): `NNN_HOVERMARK=triangle` U+F0DA (default with `O_NERD`), `1` `>` (default otherwise), `0` off.
 - Top line: the current context number is a pill (`ctxpill`, `mincol` in `redraw()`: path width accounts for the 2 extra columns).
 - Choice prompts (`is_choice_prompt()` list in `nnn.c`) render the existing `'k'ey/[default]` message strings as pills via `printchoices()`; add a message id to that list to opt in.
+- `x`/`X` delete confirmation: single file prompt ends with `[y/n]`; a selection is listed in the floating window (`confirm_list()`, `fw_yesno`, `fw_yes_label`): `y` proceeds, `n`/`q`/Esc cancels. The >10-file `Are you sure?` double confirm for `rm` stays a status-line prompt.
 - zoxide: `zoxide_add()` in `browse()` (`begin:`) runs `zoxide add -- <dir>` detached on each new directory, deduped against the last one (`zoxide_last`); only with `NNN_ZOXIDE=1` (off by default) and `zoxide` on `PATH` at startup. Plugin `bb-z` (`;z`, bound in `n3`) wraps `~/.local/share/scripts/bin/nnn-z`: empty prompt = `zoxide query -i`, else `zoxide query -- <words>`, result sent as `0c<dir>` to `NNN_PIPE`.
 - Sort `t`/`s`/`e`: set the key (no xor-off). `t` `T` is reverse time; `t` `c` clears.
 

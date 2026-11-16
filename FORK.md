@@ -185,6 +185,10 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 With `NNN_ZOXIDE=1` (off by default), directories you visit in nnn are recorded with `zoxide add` (in the background, only if `zoxide` is on `PATH`), since zoxide's shell hook never sees nnn's `cd`. Upstream does not record them. The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query. It wraps `~/.local/share/scripts/bin/nnn-z`.
 
+### Delete confirmation
+
+`x` / `X` on a single file ends the prompt with `[y/n]`. With a selection, the files are listed in a floating window titled with the count, where `y` deletes (or trashes) and `n`/`q`/Esc cancels. Upstream asks `rm -rf N file(s)?` on the status line.
+
 ### Plugin updates
 
 Once the fork is in sync with upstream, just copy the plugins folder:
