@@ -511,6 +511,12 @@ static bool pill = TRUE;
 
 static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 
+/* Git segment pairs, above the icon pairs (<= 245): cap into the segment, text, closing cap; clean (green) / changed (red) */
+#define C_GIT 246 /* + 3 * changed: +0 cap in (set per redraw), +1 text, +2 cap out */
+static bool gitpairs, gitrgb;
+static char gitbranch[128];
+static bool gittrack; /* Folder is tracked by the bare ~/.dotfiles repo */
+
 /* How timestamps of recently modified ("young") entries stand out; NNN_YOUNG selects */
 #define YOUNG_REVERSE   0 /* reverse video (as upstream) */
 #define YOUNG_PILL      1 /* reverse video with rounded caps (needs pill support) */
@@ -2776,6 +2782,29 @@ static bool initcurses(void *oldmask)
 
 		init_pair(C_MSG, (mc >= 0 && mc < COLOR_256) ? mc : 208, -1);
 		msgcolor = TRUE;
+	}
+
+	/* zsh-prompt colours for the top line git segment: white on #008400 (clean) / #d6000c (changes) */
+	if (!g_state.oldcolor && COLORS >= COLOR_256 && COLOR_PAIRS > C_GIT + 5) {
+		/* Redefine three unused greys to the exact prompt colours when the terminal allows (themes remap the palette) */
+		int white = 15, bgs[2] = {28, 160};
+
+		if (can_change_color()) {
+			init_color(232, 1000, 1000, 1000);
+			init_color(233, 0, 518, 0);
+			init_color(234, 842, 0, 48);
+			white = 232;
+			bgs[0] = 233;
+			bgs[1] = 234;
+			gitrgb = TRUE;
+		}
+		for (int k = 0; k < 2; ++k) {
+			int bg = bgs[k];
+
+			init_pair(C_GIT + 3 * k + 1, white, bg);
+			init_pair(C_GIT + 3 * k + 2, bg, -1);
+		}
+		gitpairs = TRUE;
 	}
 
 	settimeout(); /* One second */
@@ -9354,6 +9383,18 @@ static void redraw(char *path)
 	/* The current context and the path are pills (2 more columns each) when caps are available */
 	bool ctxpill = pill && !g_state.oldcolor;
 	int mincol = MIN_DISPLAY_COL + (ctxpill ? 4 : 0);
+	int brcols = 0;
+
+	/* Git segment as in zsh-prompt: cap into it, " <git><branch>  <summary> ", closing cap; only if the path still has room */
+	if (ctxpill && gitbranch[0]) {
+		brcols = 8;
+		for (char *c = gitbranch; *c; ++c) /* display columns: skip UTF-8 continuation bytes */
+			brcols += ((*c & 0xC0) != 0x80);
+		if (mincol + brcols + 10 > ncols)
+			brcols = 0;
+		else
+			mincol += brcols;
+	}
 
 	for (i = 0; i < CTX_MAX; ++i) { /* 8 chars printed for contexts - "1 2 3 4 " */
 		if (!g_ctx[i].c_cfg.ctxactive)
@@ -9420,7 +9461,27 @@ static void redraw(char *path)
 		reset_tilde_in_path(path);
 
 	attroff(A_REVERSE | A_BOLD | A_UNDERLINE);
-	if (ctxpill)
+	if (brcols) {
+		/* Changes: a " +", " ~" or " ?" entry in the summary (same test as zsh-prompt) */
+		int k = (strstr(gitbranch, " +") || strstr(gitbranch, " ~") || strstr(gitbranch, " ?")) ? 1 : 0;
+		short cf, cb;
+
+		pair_content(cfg.curctx + 1, &cf, &cb);
+		init_pair(C_GIT + 3 * k, cf, gitrgb ? 233 + k : (k ? 160 : 28));
+		attroff(COLOR_PAIR(cfg.curctx + 1));
+		attron(COLOR_PAIR(C_GIT + 3 * k));
+		addstr(PILL_R); /* seamless: path colour on the segment colour */
+		attroff(COLOR_PAIR(C_GIT + 3 * k));
+		attron(COLOR_PAIR(C_GIT + 3 * k + 1) | A_BOLD);
+		addstr(gittrack ? " \xee\x97\xbb" : " \xee\x99\x9d"); /* U+E5FB dotfiles / U+E65D git */
+		addstr(" \xee\x9c\xa5  "); /* U+E725 branch */
+		addstr(gitbranch);
+		addch(' ');
+		attroff(COLOR_PAIR(C_GIT + 3 * k + 1) | A_BOLD);
+		attron(COLOR_PAIR(C_GIT + 3 * k + 2));
+		addstr(PILL_R);
+		attroff(COLOR_PAIR(C_GIT + 3 * k + 2));
+	} else if (ctxpill)
 		addstr(PILL_R);
 	attroff(COLOR_PAIR(cfg.curctx + 1));
 
@@ -9538,6 +9599,70 @@ static void zoxide_add(const char *path)
 	spawn("zoxide", "add", "--", (char *)path, F_NOWAIT | F_NOTRACE);
 }
 
+/* Top line pill text, the same summary as the zsh prompt ("branch +s ~u !c ?n ↑a ↓b"), from the
+ * dotfiles function (which picks ~/.dotfiles for tracked folders); without it there is no segment.
+ * NNN_GITBRANCH=0 disables. No shell string is built: argv only, paths are never interpolated. */
+static bool gitbranch_on = TRUE;
+
+static void git_branch_update(const char *path)
+{
+	char df[PATH_MAX];
+	int fd[2];
+
+	(void)path;
+	gitbranch[0] = '\0';
+	gittrack = FALSE;
+	if (!gitbranch_on || !gitpairs || !pill || g_state.oldcolor || !home)
+		return;
+
+	snprintf(df, sizeof df, "%s/.local/share/zsh/site-functions/dotfiles/dotfiles", home);
+	if (access(df, R_OK) != 0)
+		return;
+
+	if (pipe(fd) < 0)
+		return;
+
+	pid_t pid = fork();
+
+	if (pid < 0) {
+		close(fd[0]);
+		close(fd[1]);
+		return;
+	}
+
+	if (pid == 0) {
+		dup2(fd[1], STDOUT_FILENO);
+		if (devnullfd >= 0) {
+			dup2(devnullfd, STDIN_FILENO);
+			dup2(devnullfd, STDERR_FILENO);
+		}
+		close(fd[0]);
+		close(fd[1]);
+		execlp("zsh", "zsh", "-f", "-c", "source \"$1\" --print-status", "zsh", df, (char *)NULL);
+		_exit(127);
+	}
+
+	close(fd[1]);
+
+	FILE *fp = fdopen(fd[0], "r");
+	char line[PATH_MAX + 64];
+
+	if (!fp) {
+		close(fd[0]);
+		waitpid(pid, NULL, 0);
+		return;
+	}
+
+	/* line 1: summary, line 2: tracked flag */
+	if (fgets(gitbranch, sizeof gitbranch, fp)) {
+		gitbranch[strcspn(gitbranch, "\n")] = '\0';
+		gittrack = fgets(line, sizeof line, fp) && line[0] == '1';
+	}
+
+	fclose(fp);
+	waitpid(pid, NULL, 0);
+}
+
 static bool init_browse_context(char *ipath, char **path, char **lastdir, char **lastname)
 {
 #ifndef NOSSN
@@ -9635,6 +9760,7 @@ begin:
 #endif
 
 	zoxide_add(path);
+	git_branch_update(path);
 
 #ifdef LINUX_INOTIFY
 	if ((presel == FILTER || watch) && inotify_wd >= 0) {
@@ -11920,6 +12046,7 @@ int main(int argc, char *argv[])
 		pill = FALSE;
 #endif
 
+	gitbranch_on = xgetenv("NNN_GITBRANCH", "1")[0] != '0';
 	zoxide_on = xgetenv("NNN_ZOXIDE", "0")[0] == '1' && in_path("zoxide");
 
 	{

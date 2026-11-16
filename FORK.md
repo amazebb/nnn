@@ -13,6 +13,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
   - [Directory sizes](#directory-sizes)
   - [Detail colors](#detail-colors)
   - [Git status](#git-status)
+  - [Git segment (top line)](#git-segment-top-line)
   - [macOS `stat`](#macos-stat)
   - [Preview (Ghostty)](#preview-ghostty)
   - [Sort keys (`t` / `s` / `e`)](#sort-keys-t--s--e)
@@ -114,6 +115,10 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 ### Rounded highlight
 
 In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills when the terminal is at least 80 columns wide) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. The current context number and the whole path in the top line are pills too (two columns wider each, the path shortens to match); other contexts keep their colored digits. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
+
+### Git segment (top line)
+
+In `O_NERD` builds with pills and a 256-color terminal, a git segment follows the path pill, drawn like the zsh prompt's: a cap in the path color blends into the segment, then ` <git glyph> <branch glyph>  <summary> ` in white on green (`#008400`, clean) or red (`#d6000c`, a ` +`, ` ~` or ` ?` entry), and a closing cap. The git glyph is the dotfiles one in folders tracked by the bare `~/.dotfiles` repo. The summary is `branch +staged ~unstaged !conflicts ?untracked ↑ahead ↓behind`, read on each directory change by running `dotfiles --print-status` (`~/.local/share/zsh/site-functions/dotfiles/dotfiles`) in `zsh -f` via fork/exec with no shell string; without that file there is no segment. The exact colors use terminal palette slots 232-234 (redefined while nnn runs) when the terminal allows it. Hidden if the path would not fit. On by default; `NNN_GITBRANCH=0` turns it off.
 
 ### Choice prompts
 
