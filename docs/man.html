@@ -3,21 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>nnn(1) manual: nnn amazebb</title>
-  <meta name="description" content="The nnn(1) man page of the amazebb fork of nnn.">
-  <link rel="stylesheet" href="style.css?v=2">
+  <title>nnn(1) manual: n3</title>
+  <meta name="description" content="The nnn(1) man page of n3, the amazebb fork of nnn.">
+  <link rel="stylesheet" href="style.css?v=6">
+  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
 <main>
 
   <nav>
-    <a class="brand" href="index.html">nnn&#8209;amazebb</a>
+    <a class="brand" href="index.html">n3</a>
     <a href="index.html#features">Features</a>
     <a href="index.html#keys">Keys</a>
     <a href="index.html#options">Options</a>
     <a href="index.html#install">Install</a>
     <a href="man.html">Manual</a>
-    <a href="https://github.com/amazebb/nnn">GitHub</a>
+    <a class="gh" href="https://github.com/amazebb/nnn"><svg width="16" height="16" aria-hidden="true"><use href="img/icons.svg#github"/></svg>GitHub</a>
+    <a href="https://github.com/amazebb/nnn/blob/amazebb/LICENSE">BSD-2</a>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"><svg class="i-sun" width="18" height="18" aria-hidden="true"><use href="img/icons.svg#sun"/></svg><svg class="i-moon" width="18" height="18" aria-hidden="true"><use href="img/icons.svg#moon"/></svg></button>
   </nav>
 
   <section id="manual">
@@ -986,12 +989,6 @@ _____________________ + ___________________________________________________</pre
 
     export NNN_HOVERMARK=0</pre>
 </div>
-<p class="Pp"><b>NNN_ZOXIDE:</b> set to <b>1</b> to record every directory
-    visited in nnn with <b>zoxide add</b> (off by default; needs <b>zoxide</b>
-    in PATH). See the <b>bb-z</b> plugin for jumping to a match.</p>
-<div class="Bd Pp Li">
-<pre>    export NNN_ZOXIDE=1</pre>
-</div>
 <p class="Pp"><b>NNN_GITBRANCH:</b> set to <b>0</b> to hide the git segment
     after the path in the top line (on by default; needs the rounded pills and a
     256-color terminal). The segment shows the branch and the same summary as
@@ -1040,14 +1037,8 @@ _____________________ + ___________________________________________________</pre
     </div>
   </section>
 
-  <footer>
-    <a href="https://github.com/amazebb/nnn">This fork</a>
-    <a href="https://github.com/jarun/nnn">Upstream nnn</a>
-    <a href="https://github.com/amazebb/nnn/blob/amazebb/FORK.md">Full change list</a>
-    <p>A personal fork of <a href="https://github.com/jarun/nnn">jarun/nnn</a>, released under the BSD 2-Clause license like the original. Not affiliated with the upstream project.</p>
-  </footer>
 
 </main>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>

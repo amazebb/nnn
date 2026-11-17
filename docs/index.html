@@ -3,26 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>nnn amazebb: a refined fork of nnn</title>
-  <meta name="description" content="A personal fork of the nnn file manager with rounded pills, floating popups, git status, native previews and zoxide support.">
-  <link rel="stylesheet" href="style.css?v=2">
+  <title>n3: nnn, with a fin3r finish</title>
+  <meta name="description" content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
+  <link rel="stylesheet" href="style.css?v=9">
+  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
 <main>
 
   <nav>
-    <a class="brand" href="#top">nnn&#8209;amazebb</a>
+    <a class="brand" href="#top">n3</a>
     <a href="#features">Features</a>
     <a href="#keys">Keys</a>
     <a href="#options">Options</a>
     <a href="#install">Install</a>
     <a href="man.html">Manual</a>
-    <a href="https://github.com/amazebb/nnn">GitHub</a>
+    <a class="gh" href="https://github.com/amazebb/nnn"><svg width="16" height="16" aria-hidden="true"><use href="img/icons.svg#github"/></svg>GitHub</a>
+    <a href="https://github.com/amazebb/nnn/blob/amazebb/LICENSE">BSD-2</a>
+    <button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"><svg class="i-sun" width="18" height="18" aria-hidden="true"><use href="img/icons.svg#sun"/></svg><svg class="i-moon" width="18" height="18" aria-hidden="true"><use href="img/icons.svg#moon"/></svg></button>
   </nav>
 
   <header id="top">
-    <h1>nnn, with a <em>finer</em> finish.</h1>
-    <p><strong>nnn</strong> is the fastest terminal file manager. This fork keeps everything upstream does and adds a polished interface: rounded pills, floating popups, git status, native image previews and zoxide jumping.</p>
+    <h1>n3: nnn, with a <em>fin<span class="flip"><span class="f">3</span><span class="b" aria-hidden="true">e</span></span>r</em> finish.</h1>
+    <p><strong>nnn</strong> is a fast, lightweight terminal file manager. This fork keeps everything <a href="https://github.com/jarun/nnn">upstream</a> does and adds a polished interface: rounded pills, floating popups, git status. Everything else, such as image and video previews, is a plugin, and nnn&rsquo;s plugin system lets you write or customise your own.</p>
     <div class="cta">
       <a class="btn primary" href="#install">Install</a>
       <a class="btn" href="https://github.com/amazebb/nnn">View on GitHub</a>
@@ -30,18 +33,19 @@
   </header>
 
   <figure class="shot" id="shot">
-    <div class="theme-switch" role="group" aria-label="Screenshot theme">
+    <!-- split Dark|Light switch for the screenshots only, unused for now (script.js and style.css still support it):
+    <div class="theme-switch" role="group" aria-label="Screenshot theme, for every screenshot on the page">
       <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
       <button type="button" data-theme="light" aria-pressed="false">Light</button>
     </div>
-    <img class="shot-light" src="img/nnn-list-light.png" width="750" height="413" alt="nnn listing the repo root in a light terminal theme, with the context and path pills on top and the pill status bar below">
-    <img class="shot-dark" src="img/nnn-list-dark.png" width="750" height="413" alt="nnn listing the repo root in a dark terminal theme, with the context and path pills on top and the pill status bar below">
+    -->
+    <img class="th-light" src="img/nnn-list-light.png" width="750" height="413" alt="nnn listing the repo root in a light terminal theme, with the context and path pills on top and the pill status bar below">
+    <img class="th-dark" src="img/nnn-list-dark.png" width="750" height="413" alt="nnn listing the repo root in a dark terminal theme, with the context and path pills on top and the pill status bar below">
     <figcaption>Looks best in a terminal with a <a href="https://www.nerdfonts.com/">Nerd Font</a> compatible font; the pills and icons need one.</figcaption>
   </figure>
 
   <div class="facts">
     <div><b>5.3</b><span>base <a href="https://github.com/jarun/nnn">nnn</a> version</span></div>
-    <div><b>BSD-2</b><span>open source <a href="https://github.com/amazebb/nnn/blob/amazebb/LICENSE">license</a></span></div>
     <div><b>One file</b><span>nnn.c, under 200 KB binary</span></div>
     <div><b>Plugins</b><span>extend it with your own plugins</span></div>
   </div>
@@ -72,13 +76,15 @@
         <h3>Safer deletes</h3>
         <p>Deleting one file ends the prompt with <code>[y/n]</code>. With a selection, the files are listed in a popup, relative to where you are, before you confirm with <kbd>y</kbd>.</p>
         <p>Set <code>NNN_TRASH=trash</code> and <kbd>x</kbd> sends files to the macOS Trash while <kbd>X</kbd> stays permanent (<code>rm -rf</code>, no Trash).</p>
-        <img class="pop" src="img/nnn-trash.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills">
+        <img class="pop th-light" src="img/nnn-trash-light.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills, in a light terminal theme">
+        <img class="pop th-dark" src="img/nnn-trash-dark.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills, in a dark terminal theme">
       </div>
 
       <div class="card">
         <h3>Copy and move, nothing selected</h3>
         <p>Pressing <kbd>p</kbd> or <kbd>v</kbd> with nothing selected explains what happens first. <kbd>Enter</kbd> opens the editor on a blank path list, <kbd>q</kbd> or <kbd>Esc</kbd> cancels without opening it.</p>
-        <img class="pop" src="img/nnn-copy.png" width="750" height="270" alt="The Copy: nothing selected popup with Edit and Cancel pills">
+        <img class="pop th-light" src="img/nnn-copy-light.png" width="750" height="270" alt="The Copy: nothing selected popup with Edit and Cancel pills, in a light terminal theme">
+        <img class="pop th-dark" src="img/nnn-copy-dark.png" width="750" height="270" alt="The Copy: nothing selected popup with Edit and Cancel pills, in a dark terminal theme">
       </div>
 
       <div class="card">
@@ -98,15 +104,15 @@
       </div>
 
       <div class="card wide">
-        <h3>Native previews</h3>
-        <p>The <code>preview-tui</code> plugin opens a real Ghostty or Rex split instead of wrapping nnn in tmux, and closes it again by id so other panes are never touched.</p>
+        <h3>Previews as plugins</h3>
+        <p>The <code>preview-tui</code> plugin shows the preview in a split next to nnn: a native Ghostty, Rex, kitty or WezTerm split, an iTerm2 pane, or tmux.</p>
         <p>Images render with chafa or viu, with an EXIF caption underneath. Camera RAW files show their embedded JPEG, and video plays through mpv.</p>
-        <div class="tags"><span>Ghostty split</span><span>Rex split</span><span>chafa</span><span>viu</span><span>EXIF caption</span><span>RAW preview</span><span>mpv video</span></div>
+        <div class="tags"><span>Ghostty</span><span>Rex</span><span>kitty</span><span>WezTerm</span><span>iTerm2</span><span>tmux</span><span>chafa</span><span>viu</span><span>EXIF caption</span><span>RAW preview</span><span>mpv video</span></div>
       </div>
 
       <div class="card">
         <h3>zoxide jumping</h3>
-        <p>Directories you visit in nnn can be recorded with <code>zoxide add</code>, which the shell hook never sees. <kbd>;</kbd><kbd>z</kbd> jumps: an empty prompt opens the picker, anything else is the query.</p>
+        <p>The <code>bb-z</code> plugin: <kbd>;</kbd><kbd>z</kbd> jumps: an empty prompt opens the picker, anything else is the query. The directory you jump to is recorded with <code>zoxide add</code>.</p>
       </div>
 
       <div class="card">
@@ -155,7 +161,6 @@
           <tr><td><code>NNN_HOVERMARK</code></td><td>Hovered entry marker: <code>triangle</code>, <code>1</code> for <code>&gt;</code>, <code>0</code> for none</td></tr>
           <tr><td><code>NNN_IMGVIEWER</code></td><td>Image previews with <code>chafa</code> (default) or <code>viu</code></td></tr>
           <tr><td><code>NNN_PREVIEWEXIF=0</code></td><td>Hide the EXIF caption under image previews</td></tr>
-          <tr><td><code>NNN_ZOXIDE=1</code></td><td>Record visited directories with zoxide (off by default)</td></tr>
           <tr><td><code>NNN_TRASH</code></td><td>Command used by <kbd>x</kbd> to trash instead of delete, for example <code>trash</code></td></tr>
         </tbody>
       </table>
@@ -176,7 +181,7 @@
 <span class="c"># install the plugins, including the previews</span>
 <span class="line">rsync -a plugins/ ~/.config/nnn/plugins/</span></pre>
     </div>
-    <p class="note"><code>nnn -V</code> should report <code>5.3-amazebb</code>. The binary goes to <code>~/.local/bin/nnn</code> with the previous copy kept as <code>nnn.bak</code>, so make sure that folder is on your <code>PATH</code>. Previews also need Ghostty 1.3+ or Rex, and chafa or viu.</p>
+    <p class="note"><code>nnn -V</code> should report <code>5.3-amazebb</code>. The binary goes to <code>~/.local/bin/nnn</code> with the previous copy kept as <code>nnn.bak</code>, so make sure that folder is on your <code>PATH</code>. Previews also need a supported terminal (Ghostty 1.3+, Rex, kitty, WezTerm, iTerm2 or tmux) and chafa or viu.</p>
   </section>
 
   <section id="manual">
@@ -184,14 +189,8 @@
     <p class="lede">Every key, option and environment variable is in the <a href="man.html"><code>nnn(1)</code> man page</a>, generated from <code>nnn.1</code>.</p>
   </section>
 
-  <footer>
-    <a href="https://github.com/amazebb/nnn">This fork</a>
-    <a href="https://github.com/jarun/nnn">Upstream nnn</a>
-    <a href="https://github.com/amazebb/nnn/blob/amazebb/FORK.md">Full change list</a>
-    <p>A personal fork of <a href="https://github.com/jarun/nnn">jarun/nnn</a>, released under the BSD 2-Clause license like the original. Not affiliated with the upstream project.</p>
-  </footer>
 
 </main>
-<script src="script.js?v=2"></script>
+<script src="script.js?v=9"></script>
 </body>
 </html>
