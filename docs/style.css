@@ -280,7 +280,7 @@ details.reqs summary:hover { color: var(--ink); }
 .man-body .Bl-tag dt { font-family: var(--mono); font-size: 14px; margin-top: 8px; }
 .man-body .Bl-tag dd { margin: 2px 0 0 18px; }
 .man-body a { color: var(--accent); text-underline-offset: 3px; overflow-wrap: anywhere; }
-.man-sub { margin: 0 18px 8px 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+.man-sub { margin: 0 18px 8px 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); overflow: hidden; }
 .man-sub:last-child { margin-bottom: 18px; }
 .man-sub summary { padding: 10px 14px; font-size: 14.5px; }
 .man-sub .man-body { padding: 4px 14px 14px; }
