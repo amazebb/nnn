@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>n3: nnn, with a fin3r finish</title>
   <meta name="description" content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
-  <link rel="stylesheet" href="style.css?v=27">
+  <link rel="stylesheet" href="style.css?v=28">
   <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -72,9 +72,8 @@
       </div>
 
       <div class="card">
-        <h3>Safer deletes</h3>
-        <p>Deleting one file ends the prompt with <code>[y/n]</code>. With a selection, the files are listed in a popup, relative to where you are, before you confirm with <kbd>y</kbd>.</p>
-        <p>Set <a href="man.html#NNN_TRASH"><code>NNN_TRASH=trash</code></a> and <kbd>x</kbd> sends files to the macOS Trash while <kbd>X</kbd> stays permanent (<code>rm -rf</code>, no Trash).</p>
+        <h3>Delete confirmation</h3>
+        <p>Deleting one file ends the prompt with <code>[y/n]</code>. With a selection, the files are listed in a popup, relative to where you are, before you confirm with <kbd>y</kbd>. <a href="man.html#floating-windows">See manual</a>.</p>
         <img class="pop th-light" src="img/nnn-trash-light.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills, in a light terminal theme">
         <img class="pop th-dark" src="img/nnn-trash-dark.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills, in a dark terminal theme">
       </div>
@@ -157,7 +156,6 @@
           <tr><td><a href="man.html#NNN_HOVERMARK"><code>NNN_HOVERMARK</code></a></td><td>Hovered entry marker: <code>triangle</code>, <code>1</code> for <code>&gt;</code>, <code>0</code> for none</td></tr>
           <tr><td><code>NNN_IMGVIEWER</code></td><td>Image previews with <code>chafa</code> (default) or <code>viu</code></td></tr>
           <tr><td><code>NNN_PREVIEWEXIF=0</code></td><td>Hide the EXIF caption under image previews</td></tr>
-          <tr><td><a href="man.html#NNN_TRASH"><code>NNN_TRASH</code></a></td><td>Command used by <kbd>x</kbd> to trash instead of delete, for example <code>trash</code></td></tr>
         </tbody>
       </table>
     </div>
@@ -187,6 +185,6 @@
 
 
 </main>
-<script src="script.js?v=27"></script>
+<script src="script.js?v=28"></script>
 </body>
 </html>
