@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>n3: nnn, with a fin3r finish</title>
   <meta name="description" content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=17">
   <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -125,21 +125,30 @@
   </section>
 
   <section id="keys">
-    <h2>New keys</h2>
-    <p class="lede">Bindings this fork adds. Everything else works as upstream.</p>
+    <h2>Keys</h2>
+    <p class="lede">New keys this fork adds. Everything else works as upstream. The Section column is the heading each key has in the <kbd>?</kbd> help.</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Key</th><th>Action</th></tr></thead>
+        <thead><tr><th>Key</th><th>Section</th><th>Action</th></tr></thead>
         <tbody>
-          <tr><td><kbd>i</kbd></td><td>Toggle the git status column</td></tr>
-          <tr><td><kbd>M</kbd></td><td>Toggle octal permissions in detail mode</td></tr>
-          <tr><td><kbd>I</kbd></td><td>Toggle directory sizes in detail mode</td></tr>
-          <tr><td><kbd>y</kbd></td><td>Cycle the timestamp format: ISO, eza, US, eza with today</td></tr>
-          <tr><td><kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Copy file names / full paths of the selection (else the hovered entry) to the clipboard</td></tr>
-          <tr><td><kbd>;</kbd><kbd>;</kbd> / <kbd>Ctrl</kbd>+<kbd>Space</kbd></td><td>macOS Quick Look of the hovered file</td></tr>
-          <tr><td><kbd>t</kbd> then <kbd>T</kbd></td><td>Sort by time, oldest first</td></tr>
-          <tr><td><kbd>t</kbd> then <kbd>c</kbd></td><td>Clear every sort key</td></tr>
-          <tr><td><kbd>;</kbd> then <kbd>z</kbd></td><td>Jump to a zoxide match (bound in your launcher)</td></tr>
+          <tr><td><kbd>i</kbd></td><td>Display</td><td>Toggle the git status column on/off (same as the <code>-G</code> option; reloads the directory)</td></tr>
+          <tr><td><kbd>M</kbd></td><td>Display</td><td>Toggle octal permissions in detail mode (same as <code>-m</code>)</td></tr>
+          <tr><td><kbd>y</kbd></td><td>Display</td><td>Cycle the detail timestamp format: ISO, eza (<code>-y</code>), US (<code>-Y</code>), eza + today (<code>-Z</code>), back to ISO</td></tr>
+          <tr><td><kbd>I</kbd></td><td>Display</td><td>Toggle directory sizes in detail mode (same as the <code>-I</code> option)</td></tr>
+          <tr><td><kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Files</td><td>Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (<code>pbcopy</code>; <code>wl-copy</code>/<code>xclip</code>/<code>xsel</code> elsewhere), newline separated. <code>Ctrl+G</code> (lowercase g; or <code>Ctrl+Y</code> where the tty delivers it) in any prompt (e.g. <code>n</code>) pastes the first copied entry.</td></tr>
+          <tr><td><kbd>;</kbd><kbd>;</kbd></td><td>Files</td><td>macOS Quick Look of the hovered file (<code>qlmanage -p</code>), raised in front of the terminal. First use may prompt for Automation permission (System Events).</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="sub">Changed behavior of existing keys</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Key</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td><kbd>t</kbd> then <kbd>t</kbd> / <kbd>s</kbd> / <kbd>e</kbd></td><td>Sets that sort key instead of toggling it off</td></tr>
+          <tr><td><kbd>t</kbd> then <kbd>T</kbd></td><td>Reverse time (oldest first); <code>t</code> then <code>c</code> resets to the default sort (see <a href="https://github.com/amazebb/nnn/blob/amazebb/FORK.md#sort-keys-t--s--e">Sort keys</a>)</td></tr>
+          <tr><td><kbd>p</kbd> / <kbd>v</kbd> with nothing selected</td><td>Floating help; Enter opens the editor, q/Esc cancels</td></tr>
+          <tr><td><kbd>f</kbd> popup, <kbd>j</kbd> <kbd>n</kbd> / <kbd>k</kbd> <kbd>p</kbd></td><td>Listing highlight follows the hovered file</td></tr>
         </tbody>
       </table>
     </div>
@@ -191,6 +200,6 @@
 
 
 </main>
-<script src="script.js?v=14"></script>
+<script src="script.js?v=17"></script>
 </body>
 </html>

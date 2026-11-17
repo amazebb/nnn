@@ -208,6 +208,7 @@ svg.cap { vertical-align: -0.2em; color: var(--pill); }
 }
 
 /* ---------- tables ---------- */
+h3.sub { font: 600 19px/1.25 var(--serif); margin: 32px 0 12px; }
 .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
 table { width: 100%; border-collapse: collapse; font-size: 15px; }
 th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }

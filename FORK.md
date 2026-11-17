@@ -67,14 +67,14 @@ Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
 New keys (not bound upstream):
 
-| Key | Action |
-| --- | --- |
-| `i` | Toggle the git status column on/off (same as the `-G` option; reloads the directory) |
-| `M` | Toggle octal permissions in detail mode (same as `-m`) |
-| `y` | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
-| `I` | Toggle directory sizes in detail mode (same as the `-I` option) |
-| `C` / `Ctrl+B` | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (`pbcopy`; `wl-copy`/`xclip`/`xsel` elsewhere), newline separated. `Ctrl+G` (lowercase g; or `Ctrl+Y` where the tty delivers it) in any prompt (e.g. `n`) pastes the first copied entry. |
-| `;;` | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
+| Key | Section | Action |
+| --- | --- | --- |
+| `i` | Display | Toggle the git status column on/off (same as the `-G` option; reloads the directory) |
+| `M` | Display | Toggle octal permissions in detail mode (same as `-m`) |
+| `y` | Display | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
+| `I` | Display | Toggle directory sizes in detail mode (same as the `-I` option) |
+| `C` / `Ctrl+B` | Files | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (`pbcopy`; `wl-copy`/`xclip`/`xsel` elsewhere), newline separated. `Ctrl+G` (lowercase g; or `Ctrl+Y` where the tty delivers it) in any prompt (e.g. `n`) pastes the first copied entry. |
+| `;;` | Files | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
 
 Changed behavior of existing keys:
 
@@ -84,7 +84,6 @@ Changed behavior of existing keys:
 | `t` then `T` | Reverse time (oldest first); `t` then `c` resets to the default sort (see [Sort keys](#sort-keys-t--s--e)) |
 | `p` / `v` with nothing selected | Floating help; Enter opens the editor, q/Esc cancels |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
-| `;` then `p` | Closes the Ghostty preview split by recorded id |
 
 ### Timestamps
 
@@ -162,11 +161,11 @@ Checked-in helpers live in `plugins/ghostty/` (copy that folder and `preview-tui
 
 - `plugins/ghostty/preview-ghostty-split.applescript` — create the split and record its terminal id
 - `plugins/ghostty/preview-ghostty-run.sh` — command run in that surface
-- `plugins/ghostty/preview-ghostty-close.applescript` — close the surface on `;p` or nnn quit
+- `plugins/ghostty/preview-ghostty-close.applescript` — close the surface when the preview is toggled off or nnn quits
 
 The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`n3 -t`** / **`N3_TMUX=1`** keeps the old tmux wrap.
 
-- Toggle preview: `;` then `p` (closes the Ghostty pane).
+- Toggling the preview off closes the Ghostty pane.
 - Images: **chafa** by default; set `NNN_IMGVIEWER=viu` to use **viu** instead (the other is the fallback, then `kitty icat` only if kitty runs). viu was dropped as the default because the `viuer` library leaks escape codes and decodes few formats. `NNN_PREVIEWIMGPROG` still overrides both. Fits the pane after the split size settles.
 - EXIF caption: in Ghostty/Rex, image previews print a dim 1-2 line caption on the bottom rows (camera, lens, focal length / aperture, shutter, ISO, date; other images show size and file size) from the original file via `exiftool`. The image is shrunk by those rows. `NNN_PREVIEWEXIF=0` turns it off.
 - Camera RAW (ARW, CR2/CR3, NEF, DNG, ORF, RAF, RW2 and more): the embedded JPEG is extracted with `exiftool` (about 0.1 s, cached in `NNN_PREVIEWDIR`), falling back to `sips`, then shown with the viewer above.
@@ -174,7 +173,7 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 
 #### Rex
 
-When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` on `;p`. No helper scripts are needed. Images follow `NNN_IMGVIEWER` (chafa runs as `chafa -f kitty` because it does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
+When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` when the preview is toggled off. No helper scripts are needed. Images follow `NNN_IMGVIEWER` (chafa runs as `chafa -f kitty` because it does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
 
 Rex fades unfocused panes, which mutes the image colors. Set Settings > Interface > Active Pane > **Fade inactive panes** to *surface* (not content) so the preview stays at full color. It is a global setting; Rex has no per-pane control.
 
