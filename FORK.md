@@ -81,7 +81,8 @@ Changed behavior of existing keys:
 | Key | Change |
 | --- | --- |
 | `t` then `t` / `s` / `e` | Sets that sort key instead of toggling it off |
-| `t` then `T` | Reverse time (oldest first); `t` then `c` resets to the default sort (see [Sort keys](#sort-keys-t--s--e)) |
+| `t` then `T` / `S` / `E` | Sets that sort key reversed (`T` is oldest first; see [Sort keys](#sort-keys-t--s--e)) |
+| `t` then `c` | Resets to the default sort order |
 | `p` / `v` with nothing selected | Floating help; Enter opens the editor, q/Esc cancels |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
 
@@ -179,7 +180,7 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 ### Sort keys (`t` / `s` / `e`)
 
-`t` then `t` / `s` / `e` **sets** that key (does not toggle it off). Uppercase keeps the key and reverses: `t` then `T` is oldest first. Clear with `t` then `c`: it drops every sort key (time, size, extension, disk usage), reverse and version sort, so the listing is back to the default name order.
+`t` then `t` / `s` / `e` **sets** that key (does not toggle it off). A capital (`T` / `S` / `E`) sets the key reversed: `t` then `T` is oldest first. Clear with `t` then `c`: it drops every sort key (time, size, extension, disk usage), reverse and version sort, so the listing is back to the default name order.
 
 ### Copy / move with nothing selected
 

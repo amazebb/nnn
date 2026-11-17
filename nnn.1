@@ -605,6 +605,27 @@ There are 2 ways (can be used together) to manage bookmarks.
 On entering a bookmark, the directory where the select bookmark key was
 pressed is set as the previous directory. Press \fB-\fR to return to it.
 .Pp
+.Sh CHOICE PROMPTS
+Prompts with options (new file/dir/symlink/hardlink, copy/move as, current/selection,
+GUI/CLI, session, remote and archive open) show one pill per option. The default
+option, the one \fBEnter\fR picks, is the filled message pill and the others use the context color.
+The key to press is capitalised and underlined (\f(BIF\fBile\fR, \f(BID\fBir\fR, \fBe\f(BIX\fBtract\fR).
+A final \fBEsc\fR pill shows that any other key cancels.
+.Pp
+Needs the rounded pills and at least 60 columns, otherwise the plain
+\fB'f'ile/'d'ir\fR text is shown. \fBNNN_PILL=0\fR turns the pills off.
+.Sh FLOATING WINDOWS
+Help, file stats (\fBf\fR) and confirmations open in rounded, titled popups that
+fit their content. Scroll indicators are nerd font carets (\fB^v<>\fR without nerd font
+support) and the key hints along the bottom are pills with a bold key.
+.Pp
+\fBp\fR (copy) and \fBv\fR (move) with nothing selected show a popup first:
+\fBEnter\fR opens the editor on a blank path list, \fBq\fR or \fBEsc\fR cancels
+without opening it.
+.Pp
+\fBx\fR and \fBX\fR on a single file end the prompt with \fB[y/n]\fR. With a selection,
+the files are listed in a popup titled with the count: \fBy\fR deletes (or trashes with
+\fBNNN_TRASH\fR), \fBn\fR, \fBq\fR or \fBEsc\fR cancels.
 .Sh UNITS
 The minimum file size unit is byte (B). The rest are K, M, G, T, P, E, Z, Y
 (powers of 1024), same as the default units in \fBls\fR.

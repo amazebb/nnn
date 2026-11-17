@@ -27,13 +27,13 @@
     <h2>Manual</h2>
     <p class="lede">The full <code>nnn(1)</code> man page, generated from <code>nnn.1</code> by <code>man2html</code>. Open a section, or <button class="linkbtn" id="man-all" type="button">expand everything</button> to search it with the browser.</p>
     <div class="man">
-      <details class="man-sec" open>
+      <details class="man-sec" id="name" open>
         <summary>Name</summary>
         <div class="man-body"><p class="Pp"><code class="Nm">nnn</code> &#x2014; <span class="Nd">The
     unorthodox terminal file manager.</span></p></div>
 
       </details>
-      <details class="man-sec" open>
+      <details class="man-sec" id="synopsis" open>
         <summary>Synopsis</summary>
         <div class="man-body"><table class="Nm">
   <tr>
@@ -48,7 +48,7 @@
 </table></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="description">
         <summary>Description</summary>
         <div class="man-body"><p class="Pp"><code class="Nm">nnn</code> (Nnn's Not Noice) is a
     performance-optimized, feature-packed fork of noice
@@ -70,13 +70,13 @@
     the new file in it with the base filename.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="keybinds">
         <summary>Keybinds</summary>
         <div class="man-body"><p class="Pp">Press &#x2018;<code class="Li"><b>?</b></code>&#x2019; in
     <code class="Nm">nnn</code> for a one-line summary of the keybinds. This
     section describes them in full. Keys shown as <b>^X</b> are Ctrl+X. Keys
     separated by commas are aliases.</p></div>
-        <details class="man-sub">
+        <details class="man-sub" id="navigation">
           <summary>Navigation</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
@@ -117,7 +117,7 @@ _____________________ + ___________________________________________________</pre
 </div></div>
 
         </details>
-        <details class="man-sub">
+        <details class="man-sub" id="filter-prompt">
           <summary>Filter
   &amp; Prompt</summary>
           <div class="man-body"><div class="Bd Li">
@@ -146,7 +146,7 @@ _____________________ + ___________________________________________________</pre
 </div></div>
 
         </details>
-        <details class="man-sub">
+        <details class="man-sub" id="display">
           <summary>Display</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
@@ -160,7 +160,7 @@ _____________________ + ___________________________________________________</pre
 </div></div>
 
         </details>
-        <details class="man-sub">
+        <details class="man-sub" id="files">
           <summary>Files</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
@@ -202,7 +202,7 @@ _____________________ + ___________________________________________________</pre
     terminal passes it through, but macOS reserves it, so use <b>^g</b>.</p></div>
 
         </details>
-        <details class="man-sub">
+        <details class="man-sub" id="misc">
           <summary>Misc</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
@@ -229,43 +229,43 @@ _____________________ + ___________________________________________________</pre
         </details>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="options">
         <summary>Options</summary>
         <div class="man-body"><p class="Pp"><code class="Nm">nnn</code> supports the following options:</p>
-<p class="Pp"><code class="Fl">-a</code>
+<p class="Pp" id="opt-a"><code class="Fl">-a</code>
   <br/>
    auto-setup temporary <b>NNN_FIFO</b> (refer to the <b>ENVIRONMENT</b>
     section)</p>
-<p class="Pp"><code class="Fl">-A</code>
+<p class="Pp" id="opt-A"><code class="Fl">-A</code>
   <br/>
    disable directory auto-enter on unique filter match</p>
 <p class="Pp"><code class="Fl">-b key</code>
   <br/>
    specify bookmark key to open</p>
-<p class="Pp"><code class="Fl">-B</code>
+<p class="Pp" id="opt-B"><code class="Fl">-B</code>
   <br/>
    use bsdtar for archives (default: atool)</p>
-<p class="Pp"><code class="Fl">-c</code>
+<p class="Pp" id="opt-c"><code class="Fl">-c</code>
   <br/>
    indicates that NNN_OPENER is a cli-only opener (overrides <b>-e</b>)
   <br/>
    openers invoking GUI applications should suppress their stdout/stderr</p>
-<p class="Pp"><code class="Fl">-C</code>
+<p class="Pp" id="opt-C"><code class="Fl">-C</code>
   <br/>
    8-color scheme - color directories by context, disable file colors</p>
-<p class="Pp"><code class="Fl">-d</code>
+<p class="Pp" id="opt-d"><code class="Fl">-d</code>
   <br/>
    detail mode</p>
-<p class="Pp"><code class="Fl">-D</code>
+<p class="Pp" id="opt-D"><code class="Fl">-D</code>
   <br/>
    show directories in context color with <b>NNN_FCOLORS</b> set</p>
-<p class="Pp"><code class="Fl">-e</code>
+<p class="Pp" id="opt-e"><code class="Fl">-e</code>
   <br/>
    open text files in $VISUAL (else $EDITOR, fallback vi) [preferably CLI]</p>
-<p class="Pp"><code class="Fl">-E</code>
+<p class="Pp" id="opt-E"><code class="Fl">-E</code>
   <br/>
    use $EDITOR for internal undetached edits</p>
-<p class="Pp"><code class="Fl">-f</code>
+<p class="Pp" id="opt-f"><code class="Fl">-f</code>
   <br/>
    use history file</p>
 <p class="Pp"><code class="Fl">-F val</code>
@@ -273,48 +273,48 @@ _____________________ + ___________________________________________________</pre
    fifo notification mode
   <br/>
    0: notify as previewer, 1: notify as explorer</p>
-<p class="Pp"><code class="Fl">-g</code>
+<p class="Pp" id="opt-g"><code class="Fl">-g</code>
   <br/>
    use regex filters instead of substring match</p>
-<p class="Pp"><code class="Fl">-G</code>
+<p class="Pp" id="opt-G"><code class="Fl">-G</code>
   <br/>
    query git and show the status column (detail and normal mode).
   <br/>
    Without <b>-G</b>, git is not run. Toggle with <b>i</b>.</p>
-<p class="Pp"><code class="Fl">-H</code>
+<p class="Pp" id="opt-H"><code class="Fl">-H</code>
   <br/>
    show hidden files</p>
-<p class="Pp"><code class="Fl">-i</code>
+<p class="Pp" id="opt-i"><code class="Fl">-i</code>
   <br/>
    show current file information in info bar (may be slow)</p>
-<p class="Pp"><code class="Fl">-I</code>
+<p class="Pp" id="opt-I"><code class="Fl">-I</code>
   <br/>
    hide directory sizes in detail mode (files still show size;
   <br/>
    disk-usage sort still shows directory totals). Toggle with <b>I</b>.</p>
-<p class="Pp"><code class="Fl">-J</code>
+<p class="Pp" id="opt-J"><code class="Fl">-J</code>
   <br/>
    disable auto-advance on selection
   <br/>
    (eg. selecting an entry will no longer move cursor to the next entry)</p>
-<p class="Pp"><code class="Fl">-K</code>
+<p class="Pp" id="opt-K"><code class="Fl">-K</code>
   <br/>
    test for keybind collision and exit</p>
 <p class="Pp"><code class="Fl">-l val</code>
   <br/>
    number of lines to move per mouse wheel scroll</p>
-<p class="Pp"><code class="Fl">-m</code>
+<p class="Pp" id="opt-m"><code class="Fl">-m</code>
   <br/>
    hide octal permissions in detail mode (status bar still shows
   <br/>
    <b>ls</b>-style perms). Toggle with <b>M</b>.</p>
-<p class="Pp"><code class="Fl">-n</code>
+<p class="Pp" id="opt-n"><code class="Fl">-n</code>
   <br/>
    start in type-to-nav mode</p>
-<p class="Pp"><code class="Fl">-N</code>
+<p class="Pp" id="opt-N"><code class="Fl">-N</code>
   <br/>
    use native prompt (instead of readline)</p>
-<p class="Pp"><code class="Fl">-o</code>
+<p class="Pp" id="opt-o"><code class="Fl">-o</code>
   <br/>
    open files only on Enter key</p>
 <p class="Pp"><code class="Fl">-p file</code>
@@ -323,16 +323,16 @@ _____________________ + ___________________________________________________</pre
 <p class="Pp"><code class="Fl">-P key</code>
   <br/>
    specify plugin key to run</p>
-<p class="Pp"><code class="Fl">-Q</code>
+<p class="Pp" id="opt-Q"><code class="Fl">-Q</code>
   <br/>
    disable confirmation on quit with multiple contexts active</p>
-<p class="Pp"><code class="Fl">-r</code>
+<p class="Pp" id="opt-r"><code class="Fl">-r</code>
   <br/>
    show cp, mv progress
   <br/>
    (Linux-only, needs <i>advcpmv</i>; <b>^T</b> shows the progress on
   BSD/macOS)</p>
-<p class="Pp"><code class="Fl">-R</code>
+<p class="Pp" id="opt-R"><code class="Fl">-R</code>
   <br/>
    disable rollover at edges (eg. pressing <b>down</b> while on the last
   <br/>
@@ -340,7 +340,7 @@ _____________________ + ___________________________________________________</pre
 <p class="Pp"><code class="Fl">-s name</code>
   <br/>
    load a session by name</p>
-<p class="Pp"><code class="Fl">-S</code>
+<p class="Pp" id="opt-S"><code class="Fl">-S</code>
   <br/>
    persistent session</p>
 <p class="Pp"><code class="Fl">-t secs</code>
@@ -354,17 +354,17 @@ _____________________ + ___________________________________________________</pre
     / 't'ime / 'v'ersion
   <br/>
    capitalize to reverse (except 'r')</p>
-<p class="Pp"><code class="Fl">-u</code>
+<p class="Pp" id="opt-u"><code class="Fl">-u</code>
   <br/>
    use selection if available, don't prompt to choose between selection and
     hovered entry</p>
-<p class="Pp"><code class="Fl">-U</code>
+<p class="Pp" id="opt-U"><code class="Fl">-U</code>
   <br/>
    show user and group names in status bar</p>
-<p class="Pp"><code class="Fl">-V</code>
+<p class="Pp" id="opt-V"><code class="Fl">-V</code>
   <br/>
    show version and exit</p>
-<p class="Pp"><code class="Fl">-x</code>
+<p class="Pp" id="opt-x"><code class="Fl">-x</code>
   <br/>
    show notifications on selection cp, mv, rm completion (requires the
     <b>.ntfy</b> plugin)
@@ -372,19 +372,19 @@ _____________________ + ___________________________________________________</pre
    copy path to system clipboard on selection (requires the <b>.cbcp</b> plugin)
   <br/>
    show xterm title (if non-picker mode)</p>
-<p class="Pp"><code class="Fl">-y</code>
+<p class="Pp" id="opt-y"><code class="Fl">-y</code>
   <br/>
    compact timestamps in the eza default style (fixed 12 columns):
   <br/>
    this year as <b>DD MMM HH:MM</b>, earlier years as <b>DD MMM YYYY</b>.
   <br/>
    <b>y</b> cycles ISO, eza, US and eza + today formats.</p>
-<p class="Pp"><code class="Fl">-Y</code>
+<p class="Pp" id="opt-Y"><code class="Fl">-Y</code>
   <br/>
    compact timestamps in US style (fixed 12 columns):
   <br/>
    this year as <b>MMM DD HH:MM</b>, earlier years as <b>MMM DD YYYY</b></p>
-<p class="Pp"><code class="Fl">-Z</code>
+<p class="Pp" id="opt-Z"><code class="Fl">-Z</code>
   <br/>
    eza style (see <b>-y</b>), but entries modified today show
   <br/>
@@ -392,19 +392,19 @@ _____________________ + ___________________________________________________</pre
     highlight used for
   <br/>
    entries changed in the last 5 minutes (fixed 12 columns)</p>
-<p class="Pp"><code class="Fl">-z</code>
+<p class="Pp" id="opt-z"><code class="Fl">-z</code>
   <br/>
    use fuzzy filters (fuzzy match: all characters in filter appear in order)</p>
-<p class="Pp"><code class="Fl">-0</code>
+<p class="Pp" id="opt-0"><code class="Fl">-0</code>
   <br/>
    use null separator (instead of newline) to separate file paths in picker mode
     outout</p>
-<p class="Pp"><code class="Fl">-h</code>
+<p class="Pp" id="opt-h"><code class="Fl">-h</code>
   <br/>
    show program help and exit</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="configuration">
         <summary>Configuration</summary>
         <div class="man-body"><p class="Pp">There is no configuration file. Associated files are at</p>
 <p class="Pp"><span class="Pa">${XDG_CONFIG_HOME:-$HOME/.config}/nnn/</span></p>
@@ -416,7 +416,7 @@ _____________________ + ___________________________________________________</pre
     opener. Refer to the <b>ENVIRONMENT</b> section.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="contexts">
         <summary>Contexts</summary>
         <div class="man-body"><p class="Pp">Open multiple locations with 8 contexts. The status is shown in
     the top left corner:</p>
@@ -429,7 +429,7 @@ _____________________ + ___________________________________________________</pre
     context can have its own color. Refer to the <b>ENVIRONMENT</b> section.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="sessions">
         <summary>Sessions</summary>
         <div class="man-body"><p class="Pp">Sessions are a way to save and restore states of work. A session
     stores the settings and contexts. Sessions can be loaded at runtime or with
@@ -452,7 +452,7 @@ _____________________ + ___________________________________________________</pre
 <p class="Pp">&quot;@&quot; is the &quot;auto session&quot; file.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="filters">
         <summary>Filters</summary>
         <div class="man-body"><p class="Pp">Filters are strings (or regex patterns) to find matching entries
     in the current directory instantly (<i>search-as-you-type</i>). Matches are
@@ -520,7 +520,7 @@ _____________________ + ___________________________________________________</pre
 </div></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="sorting">
         <summary>Sorting</summary>
         <div class="man-body"><p class="Pp"><code class="Nm">nnn</code> will always show the directories
     first, followed by the files. String order is always case-insensitive.</p>
@@ -572,7 +572,7 @@ _____________________ + ___________________________________________________</pre
     <b>E</b>.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="selection">
         <summary>Selection</summary>
         <div class="man-body"><p class="Pp"><code class="Nm">nnn</code> allows file selection across
     directories and contexts!</p>
@@ -610,7 +610,7 @@ _____________________ + ___________________________________________________</pre
     of a directory, sort by disk usage (aka du mode).</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="find-and-list">
         <summary>Find
   And List</summary>
         <div class="man-body"><p class="Pp">There are two ways to search and list:</p>
@@ -651,7 +651,7 @@ _____________________ + ___________________________________________________</pre
     (option -p) selected entries from the listed results.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="bookmarks">
         <summary>Bookmarks</summary>
         <div class="man-body"><p class="Pp">There are 2 ways (can be used together) to manage bookmarks.</p>
 <p class="Pp">(1) Bookmark keys: See <b>NNN_BMS</b> under <b>ENVIRONMENT</b>
@@ -679,18 +679,49 @@ _____________________ + ___________________________________________________</pre
     to it.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="choice-prompts">
+        <summary>Choice
+  Prompts</summary>
+        <div class="man-body"><p class="Pp">Prompts with options (new file/dir/symlink/hardlink, copy/move as,
+    current/selection, GUI/CLI, session, remote and archive open) show one pill
+    per option. The default option, the one <b>Enter</b> picks, is the filled
+    message pill and the others use the context color. The key to press is
+    capitalised and underlined (<b><u>F</u></b><b>ile</b>,
+    <b><u>D</u></b><b>ir</b>, <b>e</b><b><u>X</u></b><b>tract</b>). A final
+    <b>Esc</b> pill shows that any other key cancels.</p>
+<p class="Pp">Needs the rounded pills and at least 60 columns, otherwise the
+    plain <b>'f'ile/'d'ir</b> text is shown. <b>NNN_PILL=0</b> turns the pills
+    off.</p></div>
+
+      </details>
+      <details class="man-sec" id="floating-windows">
+        <summary>Floating
+  Windows</summary>
+        <div class="man-body"><p class="Pp">Help, file stats (<b>f</b>) and confirmations open in rounded,
+    titled popups that fit their content. Scroll indicators are nerd font carets
+    (<b>^v&lt;&gt;</b> without nerd font support) and the key hints along the
+    bottom are pills with a bold key.</p>
+<p class="Pp"><b>p</b> (copy) and <b>v</b> (move) with nothing selected show a
+    popup first: <b>Enter</b> opens the editor on a blank path list, <b>q</b> or
+    <b>Esc</b> cancels without opening it.</p>
+<p class="Pp"><b>x</b> and <b>X</b> on a single file end the prompt with
+    <b>[y/n]</b>. With a selection, the files are listed in a popup titled with
+    the count: <b>y</b> deletes (or trashes with <b>NNN_TRASH</b>), <b>n</b>,
+    <b>q</b> or <b>Esc</b> cancels.</p></div>
+
+      </details>
+      <details class="man-sec" id="units">
         <summary>Units</summary>
         <div class="man-body"><p class="Pp">The minimum file size unit is byte (B). The rest are K, M, G, T,
     P, E, Z, Y (powers of 1024), same as the default units in <b>ls</b>.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="environment">
         <summary>Environment</summary>
         <div class="man-body"><p class="Pp">The SHELL, VISUAL (else EDITOR) and PAGER environment variables
     are used. A single combination of arguments is supported for SHELL and
     PAGER.</p>
-<p class="Pp"><b>NNN_OPTS:</b> options to <code class="Nm">nnn</code> , parsed
+<p class="Pp" id="NNN_OPTS"><b>NNN_OPTS:</b> options to <code class="Nm">nnn</code> , parsed
     like the command line. The leading '-' is optional. Options passed on the
     command line override NNN_OPTS.</p>
 <div class="Bd Pp Li">
@@ -698,13 +729,13 @@ _____________________ + ___________________________________________________</pre
     export NNN_OPTS=&quot;cEnrx -T t&quot;
     export NNN_OPTS=&quot;-HdT t&quot;</pre>
 </div>
-<p class="Pp"><b>NNN_OPENER:</b> specify a custom file opener.</p>
+<p class="Pp" id="NNN_OPENER"><b>NNN_OPENER:</b> specify a custom file opener.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_OPENER=nuke
 
     NOTE: <b>nuke</b> is a file opener available in the plugin repository.</pre>
 </div>
-<p class="Pp"><b>NNN_BMS:</b> bookmark string as <i>key_char:location</i> pairs
+<p class="Pp" id="NNN_BMS"><b>NNN_BMS:</b> bookmark string as <i>key_char:location</i> pairs
     separated by <b>;</b>:</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_BMS=&quot;d:$HOME/Docs;u:/home/user/Cam Uploads;D:$HOME/Downloads/&quot;</pre>
@@ -712,7 +743,7 @@ _____________________ + ___________________________________________________</pre
 <p class="Pp">
   <br/>
    These bookmarks are listed in the help and config screen (key <b>?</b>).</p>
-<p class="Pp"><b>NNN_PLUG:</b> directly executable plugins as
+<p class="Pp" id="NNN_PLUG"><b>NNN_PLUG:</b> directly executable plugins as
     <i>key_char:plugin</i> pairs separated by <b>;</b>:</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview'
@@ -825,7 +856,7 @@ _____________________ + ___________________________________________________</pre
 
     Online docs: <a href="https://github.com/jarun/nnn/tree/master/plugins" target="_blank" rel="noopener">https://github.com/jarun/nnn/tree/master/plugins</a></pre>
 </div>
-<p class="Pp"><b>NNN_ORDER:</b> directory-specific sort key.</p>
+<p class="Pp" id="NNN_ORDER"><b>NNN_ORDER:</b> directory-specific sort key.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_ORDER='t:/home/user/Downloads;S:/tmp'
 
@@ -835,7 +866,7 @@ _____________________ + ___________________________________________________</pre
 
     Timestamps of entries modified/created within 5 minutes are shown in reverse.</pre>
 </div>
-<p class="Pp"><b>NNN_COLORS:</b> string of color numbers for each context,
+<p class="Pp" id="NNN_COLORS"><b>NNN_COLORS:</b> string of color numbers for each context,
   e.g.:</p>
 <div class="Bd Pp Li">
 <pre>    # 8 color numbers:
@@ -854,7 +885,7 @@ _____________________ + ___________________________________________________</pre
 
     NOTE: If only 256 colors are specified and the terminal doesn't support, default is used.</pre>
 </div>
-<p class="Pp"><b>NNN_FCOLORS:</b> specify file-type specific colors:</p>
+<p class="Pp" id="NNN_FCOLORS"><b>NNN_FCOLORS:</b> specify file-type specific colors:</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
@@ -886,31 +917,31 @@ _____________________ + ___________________________________________________</pre
     To force the 8-color scheme use option -C.
     If xterm 256 colors aren't supported, 8-color scheme will be used.</pre>
 </div>
-<p class="Pp"><b>NNN_ARCHIVE:</b> archive extensions to be handled silently
+<p class="Pp" id="NNN_ARCHIVE"><b>NNN_ARCHIVE:</b> archive extensions to be handled silently
     (default: bzip2, (g)zip, tar).</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_ARCHIVE=&quot;\\.(7z|bz2|gz|tar|tgz|zip)$&quot;
 
     NOTE: Non-default formats may require a third-party utility.</pre>
 </div>
-<p class="Pp"><b>NNN_ARCHMNT:</b> optional archive mounter utility (default:
+<p class="Pp" id="NNN_ARCHMNT"><b>NNN_ARCHMNT:</b> optional archive mounter utility (default:
     archivemount).</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_ARCHIVE='fuse-archive'</pre>
 </div>
-<p class="Pp"><b>NNN_SSHFS:</b> specify custom sshfs command with options:</p>
+<p class="Pp" id="NNN_SSHFS"><b>NNN_SSHFS:</b> specify custom sshfs command with options:</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_SSHFS='sshfs -o reconnect,idmap=user,cache_timeout=3600'
 
     NOTE: The options must be comma-separated without any space between them.</pre>
 </div>
-<p class="Pp"><b>NNN_RCLONE:</b> pass additional options to rclone command:</p>
+<p class="Pp" id="NNN_RCLONE"><b>NNN_RCLONE:</b> pass additional options to rclone command:</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_RCLONE='rclone mount --read-only --no-checksum'
 
     NOTE: The options must be preceded by &quot;rclone&quot; and max 5 flags are supported.</pre>
 </div>
-<p class="Pp"><b>NNN_TRASH:</b> trash (instead of <b>rm -rf</b>) files to
+<p class="Pp" id="NNN_TRASH"><b>NNN_TRASH:</b> trash (instead of <b>rm -rf</b>) files to
     desktop Trash.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_TRASH=cmd
@@ -922,11 +953,11 @@ _____________________ + ___________________________________________________</pre
         2. Special value &quot;1&quot; and &quot;2&quot; for cmd will use 'trash-cli' and
            'gio trash' respectively.</pre>
 </div>
-<p class="Pp"><b>NNN_SEL:</b> absolute path to custom selection file.</p>
+<p class="Pp" id="NNN_SEL"><b>NNN_SEL:</b> absolute path to custom selection file.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_SEL='/tmp/.sel'</pre>
 </div>
-<p class="Pp"><b>NNN_FIFO:</b> path of a named pipe to write the hovered file
+<p class="Pp" id="NNN_FIFO"><b>NNN_FIFO:</b> path of a named pipe to write the hovered file
     path:</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_FIFO='/tmp/nnn.fifo'
@@ -938,39 +969,39 @@ _____________________ + ___________________________________________________</pre
 
     Online docs: <a href="https://github.com/jarun/nnn/wiki/Live-previews" target="_blank" rel="noopener">https://github.com/jarun/nnn/wiki/Live-previews</a></pre>
 </div>
-<p class="Pp"><b>NNN_LOCKER:</b> terminal locker program.</p>
+<p class="Pp" id="NNN_LOCKER"><b>NNN_LOCKER:</b> terminal locker program.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_LOCKER='bmon -p wlp1s0'
     export NNN_LOCKER='cmatrix'</pre>
 </div>
-<p class="Pp"><b>NNN_TMPFILE:</b> <i>always</i> cd on quit and write the command
+<p class="Pp" id="NNN_TMPFILE"><b>NNN_TMPFILE:</b> <i>always</i> cd on quit and write the command
     in the file specified.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_TMPFILE='/tmp/.lastd'</pre>
 </div>
-<p class="Pp"><b>NNN_HELP:</b> run a program and show the output on top of the
+<p class="Pp" id="NNN_HELP"><b>NNN_HELP:</b> run a program and show the output on top of the
     program help page.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_HELP='fortune'</pre>
 </div>
-<p class="Pp"><b>NNN_MCLICK:</b> key emulated by a middle mouse click.</p>
+<p class="Pp" id="NNN_MCLICK"><b>NNN_MCLICK:</b> key emulated by a middle mouse click.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_MCLICK='^R'
 
     NOTE: Only the first character is considered if not a <b>Ctrl+key</b> combo.</pre>
 </div>
-<p class="Pp"><b>NNN_PILL:</b> set to <b>0</b> to turn off the rounded caps
+<p class="Pp" id="NNN_PILL"><b>NNN_PILL:</b> set to <b>0</b> to turn off the rounded caps
     (pills) on the hovered entry, status line, top line and prompts (on by
     default; needs a nerd font build, <b>O_NERD</b>).</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_PILL=0</pre>
 </div>
-<p class="Pp"><b>NNN_MSGCOLOR:</b> xterm color number (0-255) of the message and
+<p class="Pp" id="NNN_MSGCOLOR"><b>NNN_MSGCOLOR:</b> xterm color number (0-255) of the message and
     prompt pills (default: 208, orange). Needs a 256-color terminal.</p>
 <div class="Bd Pp Li">
 <pre>    export NNN_MSGCOLOR=141</pre>
 </div>
-<p class="Pp"><b>NNN_YOUNG:</b> highlight style of timestamps modified in the
+<p class="Pp" id="NNN_YOUNG"><b>NNN_YOUNG:</b> highlight style of timestamps modified in the
     last 5 minutes.</p>
 <div class="Bd Pp Li">
 <pre>    reverse    reverse video (default without O_NERD)
@@ -980,7 +1011,7 @@ _____________________ + ___________________________________________________</pre
 
     export NNN_YOUNG=pill</pre>
 </div>
-<p class="Pp"><b>NNN_HOVERMARK:</b> marker before the time column of the hovered
+<p class="Pp" id="NNN_HOVERMARK"><b>NNN_HOVERMARK:</b> marker before the time column of the hovered
     entry in detail mode.</p>
 <div class="Bd Pp Li">
 <pre>    triangle   filled caret (default with O_NERD)
@@ -989,7 +1020,7 @@ _____________________ + ___________________________________________________</pre
 
     export NNN_HOVERMARK=0</pre>
 </div>
-<p class="Pp"><b>NNN_GITBRANCH:</b> set to <b>0</b> to hide the git segment
+<p class="Pp" id="NNN_GITBRANCH"><b>NNN_GITBRANCH:</b> set to <b>0</b> to hide the git segment
     after the path in the top line (on by default; needs the rounded pills and a
     256-color terminal). The segment shows the branch and the same summary as
     the zsh prompt (<b>+</b>staged <b>~</b>unstaged <b>!</b>conflicts
@@ -1005,11 +1036,11 @@ _____________________ + ___________________________________________________</pre
 <div class="Bd Pp Li">
 <pre>    Set to the hovered file name before starting the command prompt or spawning a shell.</pre>
 </div>
-<p class="Pp"><b>NO_COLOR:</b> disable ANSI color output (overridden by
+<p class="Pp" id="NO_COLOR"><b>NO_COLOR:</b> disable ANSI color output (overridden by
     <b>NNN_COLORS</b>).</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="authors">
         <summary>Authors</summary>
         <div class="man-body"><p class="Pp">nnn is written by <span class="An">Arun Prakash Jana</span>
     &lt;<a class="Mt" href="mailto:engineerarun@gmail.com">engineerarun@gmail.com</a>&gt;,
@@ -1026,7 +1057,7 @@ _____________________ + ___________________________________________________</pre
   <span class="An">amazebb</span>.</p></div>
 
       </details>
-      <details class="man-sec">
+      <details class="man-sec" id="home">
         <summary>Home</summary>
         <div class="man-body"><p class="Pp">This fork:
     <i class="Em"><a href="https://github.com/amazebb/nnn" target="_blank" rel="noopener">https://github.com/amazebb/nnn</a></i></p>
