@@ -9565,38 +9565,6 @@ static void showselsize(const char *path)
 	printmsg(coolsize(cfg.blkorder ? sz << blk_shift : sz));
 }
 
-/* zoxide: record directories visited in nnn (its shell hook never sees them); NNN_ZOXIDE=1 enables (off by default) */
-static bool zoxide_on;
-static char zoxide_last[PATH_MAX];
-
-static bool in_path(const char *name)
-{
-	char *dirs = getenv("PATH"), *dup, *dir, *save = NULL;
-	char buf[PATH_MAX];
-	bool found = FALSE;
-
-	if (!dirs || !(dup = xstrdup(dirs)))
-		return FALSE;
-
-	for (dir = strtok_r(dup, ":", &save); dir && !found; dir = strtok_r(NULL, ":", &save)) {
-		snprintf(buf, sizeof(buf), "%s/%s", dir, name);
-		found = (access(buf, X_OK) == 0);
-	}
-
-	free(dup);
-	return found;
-}
-
-/* Runs in the background; skips redraws of the directory already recorded */
-static void zoxide_add(const char *path)
-{
-	if (!zoxide_on || !strcmp(path, zoxide_last))
-		return;
-
-	xstrsncpy(zoxide_last, path, PATH_MAX);
-	spawn("zoxide", "add", "--", (char *)path, F_NOWAIT | F_NOTRACE);
-}
-
 /* Top line pill text, the same summary as the zsh prompt ("branch +s ~u !c ?n ↑a ↓b"), from the
  * dotfiles function (which picks ~/.dotfiles for tracked folders); without it there is no segment.
  * NNN_GITBRANCH=0 disables. No shell string is built: argv only, paths are never interpolated. */
@@ -9757,7 +9725,6 @@ begin:
 	xterm_cfg(path);
 #endif
 
-	zoxide_add(path);
 	git_branch_update(path);
 
 #ifdef LINUX_INOTIFY
@@ -12039,7 +12006,6 @@ int main(int argc, char *argv[])
 #endif
 
 	gitbranch_on = xgetenv("NNN_GITBRANCH", "1")[0] != '0';
-	zoxide_on = xgetenv("NNN_ZOXIDE", "0")[0] == '1' && in_path("zoxide");
 
 	{
 		const char *hm = xgetenv("NNN_HOVERMARK", "");
