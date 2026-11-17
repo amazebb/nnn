@@ -255,6 +255,11 @@ td:first-child { white-space: nowrap; }
   .btn { flex: 1 1 100%; text-align: center; }
 }
 
+code.nowrap { white-space: nowrap; }
+details.reqs { margin: 18px 0 8px; }
+details.reqs summary { cursor: pointer; color: var(--muted); font-size: 15px; margin-bottom: 12px; }
+details.reqs summary:hover { color: var(--ink); }
+
 /* ---------- manual ---------- */
 .linkbtn { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .man { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); overflow: hidden; }

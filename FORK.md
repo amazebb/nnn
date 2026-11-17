@@ -62,6 +62,29 @@ After the merge:
 
 Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
+#### Requirements
+
+No binary is provided: `make deploy` builds from source. It needs `make`, a C11 compiler, `git` (to clone), the ncurses headers, the standard `install`, `cp`, `grep` and `cut`, and a Nerd Font for the pill and icon glyphs. `pkg-config` is optional.
+
+| Tool | Used for |
+| --- | --- |
+| `make` | runs the build |
+| C compiler (`cc`, C11) | builds `src/nnn.c` |
+| `grep`, `cut` | read the version string from `src/nnn.c` |
+| ncurses with headers (`pkg-config` optional) | linking; without `pkg-config` the `Makefile` falls back to `-lncurses` |
+| `pthread` | linked in; part of the system libc |
+| `install` | copies the binary, `nnn.1` and the zsh completion |
+| `cp` | keeps the previous binary as `nnn.bak` |
+
+Readline is off by default (`O_NORL=1`), so it is not needed.
+
+On macOS, Apple's Command Line Tools supply `make`, `cc`, `git` and the ncurses headers, so the only extra step is a Nerd Font:
+
+```sh
+xcode-select --install
+brew install font-symbols-only-nerd-font
+```
+
 ## Changes from master
 
 ### Keys

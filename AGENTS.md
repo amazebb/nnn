@@ -11,6 +11,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 
 - Source of truth is this git tree (`src/nnn.c`, `src/nnn.h`, `plugins/`, `Makefile`).
 - Install: `make deploy` → `PREFIX=$HOME/.local`, `O_NERD=1`. Binary `~/.local/bin/nnn` (previous copy `nnn.bak`), man + zsh completion under `~/.local/share/`.
+- No binary is provided; `make deploy` builds from source and needs `make`, a C11 compiler, `git`, ncurses headers, `install`/`cp`/`grep`/`cut` (`pkg-config` optional) and a Nerd Font. On macOS: `xcode-select --install` and `brew install font-symbols-only-nerd-font`. Keep this in `FORK.md` (Requirements) and the page Install section.
 - nnn does **not** load plugins from this tree. After editing `plugins/preview-tui` or `plugins/ghostty/preview-ghostty-*`, copy them to `~/.config/nnn/plugins/` (keep the `ghostty/` subdir).
 - `plugins/` keeps the full upstream set; our own plugins go in the same folder with a **`bb-`** prefix (thin wrappers around `~/.local/share/scripts/bin`, never copies). Install: `rsync -a plugins/ ~/.config/nnn/plugins/`.
 - Launcher **`n3` is not in this repo.** Edit only `/Users/boris/.local/share/scripts/bin/n3` (symlink `~/.local/bin/n3`). Alias `n='source …/n3'` so zsh `NOMATCH` applies — never unmatched globs in sourced `n3`.

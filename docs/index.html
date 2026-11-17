@@ -7,7 +7,7 @@
     <title>n3: nnn, with a fin3r finish</title>
     <meta name="description"
         content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
-    <link rel="stylesheet" href="style.css?v=28">
+    <link rel="stylesheet" href="style.css?v=30">
     <script>try {var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t} catch (e) { }</script>
 </head>
 
@@ -310,6 +310,34 @@
             <p class="lede">Build from source. The pills need a Nerd Font in your terminal; without <code>O_NERD</code>
                 the interface falls back to plain characters.</p>
 
+            <h3 class="sub">Requirements</h3>
+            <p>There is no binary to download: <code>make deploy</code> builds from source. It needs <code>make</code>, a C11 compiler, <code>git</code>, the ncurses headers and a Nerd Font for the glyphs. On macOS the Command Line Tools cover everything but the font:</p>
+            <div class="codeblock">
+                <button class="copy" type="button">Copy</button>
+                <pre><span class="line">xcode-select --install</span>
+<span class="line">brew install font-symbols-only-nerd-font</span></pre>
+            </div>
+
+            <details class="reqs">
+                <summary>What <code>make deploy</code> needs</summary>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tool</th><th>Used for</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>make</code></td><td>runs the build</td></tr>
+                            <tr><td>C compiler (<code>cc</code>, C11)</td><td>builds <code>src/nnn.c</code></td></tr>
+                            <tr><td><code>grep</code>, <code>cut</code></td><td>read the version string from <code>src/nnn.c</code></td></tr>
+                            <tr><td>ncurses with headers (<code>pkg-config</code> optional)</td><td>linking; without <code>pkg-config</code> the <code>Makefile</code> falls back to <code class="nowrap">-lncurses</code></td></tr>
+                            <tr><td><code>pthread</code></td><td>linked in; part of the system libc</td></tr>
+                            <tr><td><code>install</code></td><td>copies the binary, <code>nnn.1</code> and the zsh completion</td></tr>
+                            <tr><td><code>cp</code></td><td>keeps the previous binary as <code>nnn.bak</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="note">Readline is off by default, so it is not needed.</p>
+            </details>
+
+            <h3 class="sub">Build</h3>
             <div class="codeblock">
                 <button class="copy" type="button">Copy</button>
                 <pre><span class="c"># get the fork</span>
@@ -334,7 +362,7 @@
 
 
     </main>
-    <script src="script.js?v=28"></script>
+    <script src="script.js?v=30"></script>
 </body>
 
 </html>
