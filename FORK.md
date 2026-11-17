@@ -76,8 +76,6 @@ No binary is provided: `make deploy` builds from source. It needs `make`, a C11 
 | `install` | copies the binary, `nnn.1` and the zsh completion |
 | `cp` | keeps the previous binary as `nnn.bak` |
 
-Readline is off by default (`O_NORL=1`), so it is not needed.
-
 On macOS, Apple's Command Line Tools supply `make`, `cc`, `git` and the ncurses headers, so the only extra step is a Nerd Font:
 
 ```sh
