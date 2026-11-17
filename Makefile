@@ -272,11 +272,14 @@ install: $(INSTALL_DEPS)
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(ZSHCOMPDIR)
 	$(INSTALL) -m 0644 misc/auto-completion/zsh/_nnn $(DESTDIR)$(ZSHCOMPDIR)/_nnn
 
-# Regenerate the web pages: docs/man.html from nnn.1, docs/index.html from docs/index.md
-SCRIPTS ?= $(HOME)/.local/share/scripts/bin
+# Regenerate the web pages (docs/man.html from nnn.1, docs/index.html from docs/index.md) with the
+# sitegen tools, and refresh docs/style.css, script.js and img/icons.svg from its theme
+SITEGEN ?= $(HOME)/Code/GitHub/amazebb/sitegen
 docs:
-	$(SCRIPTS)/man2html -T docs/man.template.html -o docs/man.html nnn.1
-	$(SCRIPTS)/md2html -T docs/index.template.html -a docs/man.html -o docs/index.html docs/index.md
+	cp $(SITEGEN)/theme/style.css $(SITEGEN)/theme/script.js docs/
+	cp $(SITEGEN)/theme/icons.svg docs/img/icons.svg
+	$(SITEGEN)/bin/man2html -T docs/man.template.html -o docs/man.html nnn.1
+	$(SITEGEN)/bin/md2html -T docs/index.template.html -a docs/man.html -o docs/index.html docs/index.md
 
 # Personal install: ~/.local/bin, man page, zsh completion (nerd fonts)
 deploy:

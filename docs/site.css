@@ -1,0 +1,27 @@
+/* n3 site styles: everything the shared sitegen theme (style.css) does not cover. Loaded after it. */
+
+/* "fi" and "r" of fin3r: lighter and narrower, so the eye lands on the 3 */
+header h1 .thin { font-weight: 300; display: inline-block; transform: scaleX(0.9); transform-origin: left; margin-right: -0.05em; }
+/* the 3 in fin3r flips over to an e on hover */
+header h1 .flip { display: inline-grid; transform-style: preserve-3d; transition: transform 0.6s; }
+header h1 .flip > span { grid-area: 1 / 1; backface-visibility: hidden; text-align: center; }
+header h1 .flip .b { transform: rotateY(180deg); }
+header h1 em:hover .flip { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) { header h1 .flip { transition: none; } }
+
+/* ---------- facts ---------- */
+.facts {
+  margin-top: 44px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+}
+.facts div { padding: 16px 12px 16px 0; border-bottom: 1px solid var(--line); }
+.facts b { display: block; font: 600 22px var(--serif); }
+.facts span { font-size: 13px; color: var(--muted); }
+.facts a { color: inherit; }
+
+@media (max-width: 640px) {
+  .facts { grid-template-columns: 1fr; }
+}
+
