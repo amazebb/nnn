@@ -228,7 +228,7 @@ Rex fades unfocused panes, which mutes the image colors. Set Settings > Interfac
 
 ### zoxide
 
-The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query, and the directory jumped to is recorded with `zoxide add`. It wraps `~/.local/share/scripts/bin/nnn-z`.
+The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query, and the directory jumped to is recorded with `zoxide add`.
 
 ### Delete confirmation
 
@@ -242,7 +242,7 @@ Once the fork is in sync with upstream, just copy the plugins folder:
 rsync -a plugins/ ~/.config/nnn/plugins/
 ```
 
-`plugins/` keeps the full upstream set untouched. Our own plugins live in the same folder with a **`bb-`** prefix, so they never clash with upstream names or merges and are easy to find (`ls plugins/bb-*`, or type `bb-` in `;f` fzplug). Wrap scripts from `~/.local/share/scripts/bin` instead of copying them, so there is one source of truth:
+`plugins/` keeps the full upstream set untouched. Our own plugins live in the same folder with a **`bb-`** prefix, so they never clash with upstream names or merges and are easy to find (`ls plugins/bb-*`, or type `bb-` in `;f` fzplug). A plugin is a self-contained `sh` script (`bb-z` is one). To reuse a script that already lives in `~/.local/share/scripts/bin`, make the plugin a thin wrapper instead of copying it, so there is one source of truth:
 
 ```sh
 #!/usr/bin/env sh

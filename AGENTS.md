@@ -13,7 +13,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Install: `make deploy` → `PREFIX=$HOME/.local`, `O_NERD=1`. Binary `~/.local/bin/nnn` (previous copy `nnn.bak`), man + zsh completion under `~/.local/share/`.
 - No binary is provided; `make deploy` builds from source and needs `make`, a C11 compiler, `git`, ncurses headers, `install`/`cp`/`grep`/`cut` (`pkg-config` optional) and a Nerd Font. On macOS: `xcode-select --install` and `brew install font-symbols-only-nerd-font`. Keep this in `FORK.md` (Requirements) and the page Install section.
 - nnn does **not** load plugins from this tree. After editing `plugins/preview-tui` or `plugins/ghostty/preview-ghostty-*`, copy them to `~/.config/nnn/plugins/` (keep the `ghostty/` subdir).
-- `plugins/` keeps the full upstream set; our own plugins go in the same folder with a **`bb-`** prefix (thin wrappers around `~/.local/share/scripts/bin`, never copies). Install: `rsync -a plugins/ ~/.config/nnn/plugins/`.
+- `plugins/` keeps the full upstream set; our own plugins go in the same folder with a **`bb-`** prefix (self-contained `sh` scripts, like `bb-z`; to reuse a script from `~/.local/share/scripts/bin` as a plugin, make `plugins/bb-name` a thin wrapper that `exec`s it, so there is one source of truth). Install: `rsync -a plugins/ ~/.config/nnn/plugins/`.
 - Launcher **`n3` is not in this repo.** Edit only `/Users/boris/.local/share/scripts/bin/n3` (symlink `~/.local/bin/n3`). Alias `n='source …/n3'` so zsh `NOMATCH` applies — never unmatched globs in sourced `n3`.
 - `n3` default: `nnn -dmIyG` with `NNN_FIFO=$TMPDIR/nnn-fifo.$$` (number suffix: `preview-tui` keys its state files on it). **`n3 -t`** / **`N3_TMUX=1`** wraps tmux; otherwise Ghostty native split.
 
@@ -50,7 +50,7 @@ This file is the session brief. Keep it current: when a durable project fact cha
 - Top line git segment (`gitbranch`, `gittrack`, `git_branch_update()` in `browse()`; pairs `C_GIT`+): follows the path pill like zsh-prompt: seamless cap in the path colour, ` <git/dotfiles glyph> <branch glyph>  <summary>` white on #008400 (clean) / #d6000c (a ` +`/` ~`/` ?` entry), closing cap. Summary (`branch +s ~u !c ?n ↑a ↓b`) and tracked flag come from `zsh -f -c 'source …/site-functions/dotfiles/dotfiles --print-status'` via fork/exec argv (no segment if that file is missing). `NNN_GITBRANCH=0` disables (on by default); needs pills and 256 colors; hidden if the path would not fit.
 - Choice prompts (`is_choice_prompt()` list in `nnn.c`) render the existing `'k'ey/[default]` message strings as pills via `printchoices()`; add a message id to that list to opt in.
 - `x`/`X` delete confirmation: single file prompt ends with `[y/n]`; a selection is listed in the floating window (`confirm_list()`, `fw_yesno`, `fw_yes_label`): `y` proceeds, `n`/`q`/Esc cancels. The >10-file `Are you sure?` double confirm for `rm` stays a status-line prompt.
-- zoxide: plugin `bb-z` (`;z`, bound in `n3`) wraps `~/.local/share/scripts/bin/nnn-z`: empty prompt = `zoxide query -i`, else `zoxide query -- <words>`; the chosen dir is recorded with `zoxide add` and sent as `0c<dir>` to `NNN_PIPE`.
+- zoxide: plugin `bb-z` (`;z`, bound in `n3`), self-contained: empty prompt = `zoxide query -i`, else `zoxide query -- <words>`; the chosen dir is recorded with `zoxide add` and sent as `0c<dir>` to `NNN_PIPE`.
 - Sort `t`/`s`/`e`: set the key (no xor-off). `t` `T` is reverse time; `t` `c` clears.
 
 ## Commits

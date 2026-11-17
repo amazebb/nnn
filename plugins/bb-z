@@ -2,7 +2,24 @@
 
 # Description: Jump to a zoxide directory (empty query opens the picker)
 #
-# nnn passes the hovered file and directory as arguments; they are not a query.
-# Thin wrapper: the logic lives in ~/.local/share/scripts/bin/nnn-z
+# An empty reply opens "zoxide query -i"; anything else is the query. The directory jumped to is
+# recorded with "zoxide add". nnn passes the hovered file and directory as arguments; they are
+# not a query.
 
-exec "$HOME/.local/share/scripts/bin/nnn-z"
+[ -p "$NNN_PIPE" ] || { echo "bb-z: run this as an nnn plugin" >&2; exit 1; }
+command -v zoxide >/dev/null || { printf 'zoxide is not installed. Press Enter ' >&2; read -r _; exit 1; }
+
+set -f # the query words are split, never globbed
+printf 'z (Enter: pick from list, or type a query): ' >&2
+read -r query
+[ -t 0 ] && printf '\033[1A\r\033[2K' >&2 # erase the prompt line
+
+if [ -n "$query" ]; then
+	# shellcheck disable=SC2086
+	dir=$(zoxide query -- $query) || { printf 'Press Enter to continue ' >&2; read -r _; exit 1; }
+else
+	dir=$(zoxide query -i --) || exit 0
+fi
+
+[ -d "$dir" ] && zoxide add -- "$dir"
+printf '0c%s' "$dir" >"$NNN_PIPE"
