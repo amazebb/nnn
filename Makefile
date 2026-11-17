@@ -272,6 +272,12 @@ install: $(INSTALL_DEPS)
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(ZSHCOMPDIR)
 	$(INSTALL) -m 0644 misc/auto-completion/zsh/_nnn $(DESTDIR)$(ZSHCOMPDIR)/_nnn
 
+# Regenerate the web pages: docs/man.html from nnn.1, docs/index.html from docs/index.md
+SCRIPTS ?= $(HOME)/.local/share/scripts/bin
+docs:
+	$(SCRIPTS)/man2html -T docs/man.template.html -o docs/man.html nnn.1
+	$(SCRIPTS)/md2html -T docs/index.template.html -a docs/man.html -o docs/index.html docs/index.md
+
 # Personal install: ~/.local/bin, man page, zsh completion (nerd fonts)
 deploy:
 	$(MAKE) PREFIX=$(DEPLOY_PREFIX) O_NERD=1 install
@@ -410,4 +416,4 @@ endif
 
 skip: ;
 
-.PHONY: all install deploy uninstall strip static dist sign upload-local clean install-desktop uninstall-desktop
+.PHONY: all install deploy docs uninstall strip static dist sign upload-local clean install-desktop uninstall-desktop

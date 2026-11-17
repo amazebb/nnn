@@ -10,6 +10,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
 - [Changes from master](#changes-from-master)
   - [Keys](#keys)
   - [Appearance](#appearance)
+  - [Options](#options)
   - [Timestamps](#timestamps)
   - [Directory sizes](#directory-sizes)
   - [Detail colors](#detail-colors)
@@ -87,7 +88,7 @@ brew install font-symbols-only-nerd-font
 
 ### Keys
 
-New keys (not bound upstream):
+#### New keys
 
 | Key | Section | Action |
 | --- | --- | --- |
@@ -98,12 +99,12 @@ New keys (not bound upstream):
 | `C` / `Ctrl+B` | Files | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (`pbcopy`; `wl-copy`/`xclip`/`xsel` elsewhere), newline separated. `Ctrl+G` (lowercase g; or `Ctrl+Y` where the tty delivers it) in any prompt (e.g. `n`) pastes the first copied entry. |
 | `;;` | Files | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
 
-Changed behavior of existing keys:
+#### Changed behavior of existing keys
 
 | Key | Change |
 | --- | --- |
 | `t` then `t` / `s` / `e` | Sets that sort key instead of toggling it off |
-| `t` then `T` / `S` / `E` | Sets that sort key reversed (`T` is oldest first; see [Sort keys](#sort-keys-t--s--e)) |
+| `t` then `T` / `S` / `E` | Sets that sort key reversed (`T` is oldest first) |
 | `t` then `c` | Resets to the default sort order |
 | `p` / `v` with nothing selected | Floating help; Enter opens the editor, q/Esc cancels |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
@@ -111,6 +112,19 @@ Changed behavior of existing keys:
 ### Appearance
 
 With `O_NERD`, nnn draws its interface as rounded pills with a few small visual touches that make the listing easier to scan: pills for the hovered entry, status line segments, the context number and path, and every message and prompt (`NNN_PILL=0` disables them); the git branch after the path ([Git segment](#git-segment-top-line)); a triangle on the hovered entry (`NNN_HOVERMARK`); a clock icon on recently modified entries (`NNN_YOUNG`); compact timestamps ([Timestamps](#timestamps)); [choice prompts](#choice-prompts) and floating windows ([Copy / move with nothing selected](#copy--move-with-nothing-selected)). The manual's APPEARANCE section is the reference.
+
+### Options
+
+| Setting | Effect |
+| --- | --- |
+| `-G` | Query git and show the status column |
+| `-y` `-Y` `-Z` | Compact eza, US, or eza-with-weekday timestamps (the last one wins) |
+| `-I` `-m` | Hide directory sizes, hide octal permissions |
+| `NNN_PILL=0` | Turn off the rounded caps |
+| `NNN_GITBRANCH=0` | Hide the git branch segment after the path in the top line |
+| `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
+| `NNN_YOUNG` | Style for recent files: `icon`, `reverse`, `pill` or `none` |
+| `NNN_HOVERMARK` | Hovered entry marker: `triangle`, `1` for `>`, `0` for none |
 
 ### Timestamps
 
