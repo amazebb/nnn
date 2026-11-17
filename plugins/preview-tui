@@ -291,6 +291,7 @@ EOF
 
 toggle_preview() {
     export "${ENVVARS[@]}"
+    closed=
     if exists QuickLook.exe; then
         QLPATH="QuickLook.exe"
     elif exists Bridge.exe; then
@@ -300,12 +301,16 @@ toggle_preview() {
         plugdir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
         osascript "$plugdir/ghostty/preview-ghostty-close.applescript" "$(tr -d '\n' <"$GHOSTTY_TERMID")" >/dev/null 2>&1
         rm -f "$GHOSTTY_TERMID"
+        closed=1
     fi
     if [ -s "${REX_PREVIEW_BLOCKID:-}" ]; then
-        rex block close ${REX_SESSION:+-s "$REX_SESSION"} "$(tr -d '\n' <"$REX_PREVIEW_BLOCKID")" >/dev/null 2>&1
+        rex block close ${REX_SESSION:+-s "$REX_SESSION"} "$(tr -d '\n' <"$REX_PREVIEW_BLOCKID")" >/dev/null 2>&1 && closed=1
         rm -f "$REX_PREVIEW_BLOCKID"
     fi
-    if pidkill "$FIFOPID"; then
+    # Closing the split ends the previewer, whose exit trap removes FIFOPID before pidkill
+    # can find it: count a closed split as "was running", else the toggle would reopen it
+    pidkill "$FIFOPID" && closed=1
+    if [ -n "$closed" ]; then
         [ -p "$NNN_PPIPE" ] && printf "0" >"$NNN_PPIPE"
         pidkill "$PREVIEWPID"
         pkill -f "tail --follow $FIFO_UEBERZUG"
