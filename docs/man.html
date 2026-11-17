@@ -679,6 +679,35 @@ _____________________ + ___________________________________________________</pre
     to it.</p></div>
 
       </details>
+      <details class="man-sec" id="appearance">
+        <summary>Appearance</summary>
+        <div class="man-body"><p class="Pp">With a nerd font build (<b>O_NERD</b>) the interface is drawn with
+    rounded pills and a few small visual touches that make the listing easier to
+    scan:</p>
+<p class="Pp">- the hovered entry, the status line segments (counter, selection,
+    sort and filter flags, time, permissions, owner, size, file name), the
+    context number and path in the top line, and every message and prompt are
+    pills with rounded caps; <b>NNN_PILL=0</b> turns them off,
+    <b>NNN_MSGCOLOR</b> sets the message color
+  <br/>
+  - the git branch and its summary follow the path in the top line (see
+    <b>NNN_GITBRANCH</b>)
+  <br/>
+  - a triangle marks the hovered entry in the detail view (<b>NNN_HOVERMARK</b>)
+  <br/>
+  - recently modified entries get a clock icon before the time
+    (<b>NNN_YOUNG</b>)
+  <br/>
+  - timestamps can be compact (<b>-y</b>, <b>-Y</b>, <b>-Z</b>, key <b>y</b>)
+    and the time and size columns have their own colors (<b>NNN_FCOLORS</b>)
+  <br/>
+  - choice prompts and floating windows are described in the next two
+  sections</p>
+<p class="Pp">Without a nerd font build there are no pills, the hovered entry is
+    marked with <b>&gt;</b> and recently modified timestamps are shown in
+    reverse video.</p></div>
+
+      </details>
       <details class="man-sec" id="choice-prompts">
         <summary>Choice
   Prompts</summary>

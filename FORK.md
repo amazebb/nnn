@@ -9,6 +9,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
 - [Build and Install](#build-and-install)
 - [Changes from master](#changes-from-master)
   - [Keys](#keys)
+  - [Appearance](#appearance)
   - [Timestamps](#timestamps)
   - [Directory sizes](#directory-sizes)
   - [Detail colors](#detail-colors)
@@ -85,6 +86,10 @@ Changed behavior of existing keys:
 | `t` then `c` | Resets to the default sort order |
 | `p` / `v` with nothing selected | Floating help; Enter opens the editor, q/Esc cancels |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
+
+### Appearance
+
+With `O_NERD`, nnn draws its interface as rounded pills with a few small visual touches that make the listing easier to scan: pills for the hovered entry, status line segments, the context number and path, and every message and prompt (`NNN_PILL=0` disables them); the git branch after the path ([Git segment](#git-segment-top-line)); a triangle on the hovered entry (`NNN_HOVERMARK`); a clock icon on recently modified entries (`NNN_YOUNG`); compact timestamps ([Timestamps](#timestamps)); [choice prompts](#choice-prompts) and floating windows ([Copy / move with nothing selected](#copy--move-with-nothing-selected)). The manual's APPEARANCE section is the reference.
 
 ### Timestamps
 

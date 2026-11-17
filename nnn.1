@@ -605,6 +605,29 @@ There are 2 ways (can be used together) to manage bookmarks.
 On entering a bookmark, the directory where the select bookmark key was
 pressed is set as the previous directory. Press \fB-\fR to return to it.
 .Pp
+.Sh APPEARANCE
+With a nerd font build (\fBO_NERD\fR) the interface is drawn with rounded pills
+and a few small visual touches that make the listing easier to scan:
+.Pp
+- the hovered entry, the status line segments (counter, selection, sort and
+filter flags, time, permissions, owner, size, file name), the context number
+and path in the top line, and every message and prompt are pills with rounded
+caps; \fBNNN_PILL=0\fR turns them off, \fBNNN_MSGCOLOR\fR sets the message color
+.br
+- the git branch and its summary follow the path in the top line
+(see \fBNNN_GITBRANCH\fR)
+.br
+- a triangle marks the hovered entry in the detail view (\fBNNN_HOVERMARK\fR)
+.br
+- recently modified entries get a clock icon before the time (\fBNNN_YOUNG\fR)
+.br
+- timestamps can be compact (\fB-y\fR, \fB-Y\fR, \fB-Z\fR, key \fBy\fR) and the
+time and size columns have their own colors (\fBNNN_FCOLORS\fR)
+.br
+- choice prompts and floating windows are described in the next two sections
+.Pp
+Without a nerd font build there are no pills, the hovered entry is marked with
+\fB>\fR and recently modified timestamps are shown in reverse video.
 .Sh CHOICE PROMPTS
 Prompts with options (new file/dir/symlink/hardlink, copy/move as, current/selection,
 GUI/CLI, session, remote and archive open) show one pill per option. The default
