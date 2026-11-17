@@ -252,14 +252,7 @@ _____________________ + ___________________________________________________
  -                    | Go to the last visited directory
  ^J                   | Toggle auto-advance to the next entry after opening
  .                    | Toggle hidden files
-_____________________ + ___________________________________________________</pre>
-</div></div>
-        </details>
-        <details class="man-sub">
-          <summary>Contexts, bookmarks, quit</summary>
-          <div class="man-body"><div class="Bd Li">
-<pre> Key                  | Function
-_____________________ + ___________________________________________________
+ d                    | Toggle detail mode (permissions, time, size)
  1-8                  | Go to context n, creating it if needed
  Tab, Shift+Tab       | Cycle contexts forward, backward
  q, Alt+Esc           | Quit the current context (quits at the last one)
@@ -268,38 +261,58 @@ _____________________ + ___________________________________________________
  b, ^/                | Prompt for a bookmark key and go to it; , goes to
                       | the marked directory, Enter to the bookmarks dir
  ,                    | Mark the current directory
- Esc, ^Q              | Quit
+ Esc Esc, ^Q          | Quit
  ^G                   | Quit and change directory (with the n3 launcher)
  Q                    | Quit with an error code (picker/cd-on-quit scripts)
 _____________________ + ___________________________________________________</pre>
 </div></div>
         </details>
         <details class="man-sub">
-          <summary>Filter and display</summary>
+          <summary>Filter &amp; Prompt</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
 _____________________ + ___________________________________________________
  /                    | Filter entries in the current directory
  ^N                   | Toggle type-to-nav mode
- d                    | Toggle detail mode (permissions, time, size)
+ ^L                   | Clear or apply the filter (type-to-nav and filter prompt)
+_____________________ + ___________________________________________________</pre>
+</div>
+<p class="Pp">These keys work in every text prompt (new, rename, open with,
+    ...):</p>
+<div class="Bd Pp Li">
+<pre> Key                  | Function
+_____________________ + ___________________________________________________
+ Enter                | Accept
+ Esc                  | Cancel
+ ^A, ^E               | Start, end of line
+ ^F, ^B               | Forward, back one character
+ ^W, ^U, ^K, ^L       | Delete word before cursor, before cursor, after
+                      | cursor, whole line
+ ^D                   | Delete character (cancels on an empty prompt)
+ Tab                  | Insert hovered file names, cycling on repeat
+ ^g                   | Paste the first entry copied with C or ^B
+_____________________ + ___________________________________________________</pre>
+</div></div>
+        </details>
+        <details class="man-sub">
+          <summary>Display</summary>
+          <div class="man-body"><div class="Bd Li">
+<pre> Key                  | Function
+_____________________ + ___________________________________________________
  i                    | Toggle the git status column
  M                    | Toggle octal permissions in detail mode
  y                    | Cycle the detail time format: ISO, eza, US, eza with
                       | weekday for files modified today
  I                    | Toggle directory sizes in detail mode
- T                    | Set the time type: access, change, modified
- t, ^T                | Sort toggles (see SORTING)
- P                    | Toggle the preview plugin
- ^L                   | Redraw the screen
- ;;, Ctrl+Space       | macOS Quick Look of the hovered file
 _____________________ + ___________________________________________________</pre>
 </div></div>
         </details>
         <details class="man-sub">
-          <summary>Selection and file operations</summary>
+          <summary>Files</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
 _____________________ + ___________________________________________________
+ P                    | Toggle the preview plugin
  Space, +             | Toggle selection of the hovered entry
  m, mm                | Start a range selection; press m again (or move
                       | and press m) to end it; mm clears the selection
@@ -325,6 +338,8 @@ _____________________ + ___________________________________________________
  f, ^F                | Show file details (stat, file, mime type)
  *                    | Toggle the executable bit
  &gt;                    | Export the file list of the directory to a file
+ Esc                  | Send the hovered path to NNN_FIFO; a second Esc quits
+ ;;                   | macOS Quick Look of the hovered file
 _____________________ + ___________________________________________________</pre>
 </div>
 <p class="Pp">C and ^B put one name or path per line on the clipboard. In any
@@ -334,26 +349,7 @@ _____________________ + ___________________________________________________</pre
     terminal passes it through, but macOS reserves it, so use <b>^g</b>.</p></div>
         </details>
         <details class="man-sub">
-          <summary>Prompt editing</summary>
-          <div class="man-body"><p class="Pp">These keys work in every text prompt (new, rename, open with,
-    ...):</p>
-<div class="Bd Pp Li">
-<pre> Key                  | Function
-_____________________ + ___________________________________________________
- Enter                | Accept
- Esc                  | Cancel
- ^A, ^E               | Start, end of line
- ^F, ^B               | Forward, back one character
- ^W, ^U, ^K, ^L       | Delete word before cursor, before cursor, after
-                      | cursor, whole line
- ^D                   | Delete character (cancels on an empty prompt)
- Tab                  | Insert hovered file names, cycling on repeat
- ^g                   | Paste the first entry copied with C or ^B
-_____________________ + ___________________________________________________</pre>
-</div></div>
-        </details>
-        <details class="man-sub">
-          <summary>Other</summary>
+          <summary>Misc</summary>
           <div class="man-body"><div class="Bd Li">
 <pre> Key                  | Function
 _____________________ + ___________________________________________________
@@ -364,15 +360,17 @@ _____________________ + ___________________________________________________
  ]                    | Command prompt
  c                    | Connect to a remote host over SSHFS
  u                    | Unmount a remote host or archive
+ t, ^T                | Sort toggles (see SORTING)
+ T                    | Set the time type: access, change, modified
  s                    | Manage sessions
  0                    | Lock the terminal
+ ^L                   | Redraw the screen
  ?                    | Show help and configuration
 _____________________ + ___________________________________________________</pre>
 </div>
-<p class="Pp">On macOS, <b>;;</b> (the plugin key twice) or <b>Ctrl+Space</b>
-    opens the hovered file in Quick Look (<b>qlmanage -p</b>) and brings its
-    window to the front. The first use may ask for Automation permission to
-    control System Events.</p></div>
+<p class="Pp">On macOS, <b>;;</b> (the plugin key twice) opens the hovered file
+    in Quick Look (<b>qlmanage -p</b>) and brings its window to the front. The
+    first use may ask for Automation permission to control System Events.</p></div>
         </details>
       </details>
       <details class="man-sec">
@@ -457,6 +455,9 @@ _____________________ + ___________________________________________________</pre
 <p class="Pp"><code class="Fl">-n</code>
   <br/>
    start in type-to-nav mode</p>
+<p class="Pp"><code class="Fl">-N</code>
+  <br/>
+   use native prompt (instead of readline)</p>
 <p class="Pp"><code class="Fl">-o</code>
   <br/>
    open files only on Enter key</p>
@@ -1100,6 +1101,54 @@ _____________________ + ___________________________________________________</pre
 <pre>    export NNN_MCLICK='^R'
 
     NOTE: Only the first character is considered if not a <b>Ctrl+key</b> combo.</pre>
+</div>
+<p class="Pp"><b>NNN_PILL:</b> set to <b>0</b> to turn off the rounded caps
+    (pills) on the hovered entry, status line, top line and prompts (on by
+    default; needs a nerd font build, <b>O_NERD</b>).</p>
+<div class="Bd Pp Li">
+<pre>    export NNN_PILL=0</pre>
+</div>
+<p class="Pp"><b>NNN_MSGCOLOR:</b> xterm color number (0-255) of the message and
+    prompt pills (default: 208, orange). Needs a 256-color terminal.</p>
+<div class="Bd Pp Li">
+<pre>    export NNN_MSGCOLOR=141</pre>
+</div>
+<p class="Pp"><b>NNN_YOUNG:</b> highlight style of timestamps modified in the
+    last 5 minutes.</p>
+<div class="Bd Pp Li">
+<pre>    reverse    reverse video (default without O_NERD)
+    pill       reverse video with rounded caps in the neighbouring cells
+    icon       clock icon before the time, no highlight (default with O_NERD)
+    none       no highlight
+
+    export NNN_YOUNG=pill</pre>
+</div>
+<p class="Pp"><b>NNN_HOVERMARK:</b> marker before the time column of the hovered
+    entry in detail mode.</p>
+<div class="Bd Pp Li">
+<pre>    triangle   filled caret (default with O_NERD)
+    1          '&gt;' (default without O_NERD)
+    0          no marker
+
+    export NNN_HOVERMARK=0</pre>
+</div>
+<p class="Pp"><b>NNN_ZOXIDE:</b> set to <b>1</b> to record every directory
+    visited in nnn with <b>zoxide add</b> (off by default; needs <b>zoxide</b>
+    in PATH). See the <b>bb-z</b> plugin for jumping to a match.</p>
+<div class="Bd Pp Li">
+<pre>    export NNN_ZOXIDE=1</pre>
+</div>
+<p class="Pp"><b>NNN_GITBRANCH:</b> set to <b>0</b> to hide the git segment
+    after the path in the top line (on by default; needs the rounded pills and a
+    256-color terminal). The segment shows the branch and the same summary as
+    the zsh prompt (<b>+</b>staged <b>~</b>unstaged <b>!</b>conflicts
+    <b>?</b>untracked <b>&#x2191;</b>ahead <b>&#x2193;</b>behind), green when
+    clean and red when there are changes. It is read from the <b>dotfiles</b>
+    zsh function in <b>~/.local/share/zsh/site-functions/dotfiles/dotfiles</b>
+    (which also selects the bare <b>~/.dotfiles</b> repository in tracked
+    folders); without that file nothing is shown.</p>
+<div class="Bd Pp Li">
+<pre>    export NNN_GITBRANCH=0</pre>
 </div>
 <p class="Pp"><b>nnn:</b> this is a special variable.</p>
 <div class="Bd Pp Li">
