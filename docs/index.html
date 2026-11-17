@@ -1,190 +1,350 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>n3: nnn, with a fin3r finish</title>
-  <meta name="description" content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
-  <link rel="stylesheet" href="style.css?v=28">
-  <script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>n3: nnn, with a fin3r finish</title>
+    <meta name="description"
+        content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
+    <link rel="stylesheet" href="style.css?v=28">
+    <script>try {var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t} catch (e) { }</script>
 </head>
+
 <body>
-<main>
+    <main>
 
-  <nav>
-    <a class="brand" href="#top">n3</a>
-    <a href="#features">Features</a>
-    <a href="#keys">Keys</a>
-    <a href="#options">Options</a>
-    <a href="#install">Install</a>
-    <a href="man.html">Manual</a>
-    <a class="gh" href="https://github.com/amazebb/nnn"><svg width="16" height="16" aria-hidden="true"><use href="img/icons.svg#github"/></svg>GitHub</a>
-    <a href="https://github.com/amazebb/nnn/blob/amazebb/LICENSE">BSD-2</a>
-    <button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"><svg class="i-sun" width="18" height="18" aria-hidden="true"><use href="img/icons.svg#sun"/></svg><svg class="i-moon" width="18" height="18" aria-hidden="true"><use href="img/icons.svg#moon"/></svg></button>
-  </nav>
+        <nav>
+            <a class="brand" href="#top">n3</a>
+            <a href="#features">Features</a>
+            <a href="#keys">Keys</a>
+            <a href="#options">Options</a>
+            <a href="#install">Install</a>
+            <a href="man.html">Manual</a>
+            <a class="gh" href="https://github.com/amazebb/nnn"><svg width="16" height="16" aria-hidden="true">
+                    <use href="img/icons.svg#github" />
+                </svg>GitHub</a>
+            <a href="https://github.com/amazebb/nnn/blob/amazebb/LICENSE">BSD-2</a>
+            <button class="theme-toggle" type="button" aria-label="Switch to light theme" title="Switch theme"><svg
+                    class="i-sun" width="18" height="18" aria-hidden="true">
+                    <use href="img/icons.svg#sun" />
+                </svg><svg class="i-moon" width="18" height="18" aria-hidden="true">
+                    <use href="img/icons.svg#moon" />
+                </svg></button>
+        </nav>
 
-  <header id="top">
-    <h1>n3: nnn, with a <em>fin<span class="flip"><span class="f">3</span><span class="b" aria-hidden="true">e</span></span>r</em> finish.</h1>
-    <p><strong>nnn</strong> is a fast, lightweight terminal file manager. This fork keeps everything <a href="https://github.com/jarun/nnn">upstream</a> does and adds a polished interface: rounded pills, floating popups, git status. Everything else, such as image and video previews, is a plugin, and nnn&rsquo;s plugin system lets you write or customise your own.</p>
-    <div class="cta">
-      <a class="btn primary" href="#install">Install</a>
-      <a class="btn" href="https://github.com/amazebb/nnn">View on GitHub</a>
-    </div>
-  </header>
+        <header id="top">
+            <h1>n3: nnn, with a <em>fin<span class="flip"><span class="f">3</span><span class="b"
+                            aria-hidden="true">e</span></span>r</em> finish.</h1>
+            <p><strong>nnn</strong> is a fast, lightweight terminal file manager. This fork keeps everything <a
+                    href="https://github.com/jarun/nnn">upstream</a> does and adds a polished interface: rounded pills,
+                floating popups, git status. Everything else, such as image and video previews, is a plugin, and
+                nnn&rsquo;s plugin system lets you write or customise your own.</p>
+            <div class="cta">
+                <a class="btn primary" href="#install">Install</a>
+                <a class="btn" href="https://github.com/amazebb/nnn">View on GitHub</a>
+            </div>
+        </header>
 
-  <figure class="shot" id="shot">
-    <!-- split Dark|Light switch for the screenshots only, unused for now (script.js and style.css still support it):
+        <figure class="shot" id="shot">
+            <!-- split Dark|Light switch for the screenshots only, unused for now (script.js and style.css still support it):
     <div class="theme-switch" role="group" aria-label="Screenshot theme, for every screenshot on the page">
       <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
       <button type="button" data-theme="light" aria-pressed="false">Light</button>
     </div>
     -->
-    <img class="th-light" src="img/nnn-list-light.png" width="750" height="413" alt="nnn listing the repo root in a light terminal theme, with the context and path pills on top and the pill status bar below">
-    <img class="th-dark" src="img/nnn-list-dark.png" width="750" height="413" alt="nnn listing the repo root in a dark terminal theme, with the context and path pills on top and the pill status bar below">
-    <figcaption>Looks best in a terminal with a <a href="https://www.nerdfonts.com/">Nerd Font</a> compatible font; the pills and icons need one.</figcaption>
-  </figure>
+            <img class="th-light" src="img/nnn-list-light.png" width="750" height="413"
+                alt="nnn listing the repo root in a light terminal theme, with the context and path pills on top and the pill status bar below">
+            <img class="th-dark" src="img/nnn-list-dark.png" width="750" height="413"
+                alt="nnn listing the repo root in a dark terminal theme, with the context and path pills on top and the pill status bar below">
+            <figcaption>Looks best in a terminal with a <a href="https://www.nerdfonts.com/">Nerd Font</a> compatible
+                font; the pills and icons need one.</figcaption>
+        </figure>
 
-  <div class="facts">
-    <div><b>5.3</b><span>base <a href="https://github.com/jarun/nnn">nnn</a> version</span></div>
-    <div><b>One file</b><span>nnn.c, under 200 KB binary</span></div>
-    <div><b>Plugins</b><span>extend it with your own plugins</span></div>
-  </div>
+        <div class="facts">
+            <div><b>5.3</b><span>base <a href="https://github.com/jarun/nnn">nnn</a> version</span></div>
+            <div><b>One file</b><span>nnn.c, under 200 KB binary</span></div>
+            <div><b>Plugins</b><span>extend it with your own plugins</span></div>
+        </div>
 
-  <section id="features">
-    <h2>What's new</h2>
-    <p class="lede">Every change is a small, optional layer on top of upstream nnn. Switch any of it off with a flag or an environment variable.</p>
+        <section id="features">
+            <h2>What's new</h2>
+            <p class="lede">Every change is a small, optional layer on top of upstream nnn. Switch any of it off with a
+                flag or an environment variable.</p>
 
-    <div class="cards">
+            <div class="cards">
 
-      <div class="card">
-        <h3>A modern look</h3>
-        <p>Small touches that make the listing easier to scan. The hover highlight, status-line segments, the context number, the whole top-line path and every message are drawn as rounded pills, and a triangle marks the hovered entry. Turn the pills off with <a href="man.html#NNN_PILL"><code>NNN_PILL=0</code></a>. <a href="man.html#appearance">See manual</a>.</p>
-      </div>
+                <div class="card">
+                    <h3>A modern look</h3>
+                    <p>Small touches that make the listing easier to scan. The hover highlight, status-line segments,
+                        the context number, the whole top-line path and every message are drawn as rounded pills, and a
+                        triangle marks the hovered entry. Turn the pills off with <a
+                            href="man.html#NNN_PILL"><code>NNN_PILL=0</code></a>. <a href="man.html#appearance">See
+                            manual</a>.</p>
+                </div>
 
-      <div class="card">
-        <h3>Choice prompts</h3>
-        <p>Prompts with options show one pill per choice. The default is filled, the key to press is capitalised and underlined, and a final <code>Esc</code> pill shows that any other key cancels. <a href="man.html#choice-prompts">See manual</a>.</p>
-      </div>
+                <div class="card">
+                    <h3>Choice prompts</h3>
+                    <p>Prompts with options show one pill per choice. The default is filled, the key to press is
+                        capitalised and underlined, and a final <code>Esc</code> pill shows that any other key cancels.
+                        <a href="man.html#choice-prompts">See manual</a>.
+                    </p>
+                </div>
 
-      <div class="card wide">
-        <h3>Floating windows</h3>
-        <p>Help, file stats and confirmations open in rounded, titled popups that fit their content, with pill key hints along the bottom. <a href="man.html#floating-windows">See manual</a>.</p>
-      </div>
+                <div class="card wide">
+                    <h3>Floating windows</h3>
+                    <p>Help, file stats and confirmations open in rounded, titled popups that fit their content, with
+                        pill key hints along the bottom. <a href="man.html#floating-windows">See manual</a>.</p>
+                </div>
 
-      <div class="card">
-        <h3>Delete confirmation</h3>
-        <p>Deleting one file ends the prompt with <code>[y/n]</code>. With a selection, the files are listed in a popup, relative to where you are, before you confirm with <kbd>y</kbd>. <a href="man.html#floating-windows">See manual</a>.</p>
-        <img class="pop th-light" src="img/nnn-trash-light.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills, in a light terminal theme">
-        <img class="pop th-dark" src="img/nnn-trash-dark.png" width="350" height="170" alt="The delete popup listing three selected files with Trash and Cancel pills, in a dark terminal theme">
-      </div>
+                <div class="card">
+                    <h3>Delete confirmation</h3>
+                    <p>Deleting one file ends the prompt with <code>[y/n]</code>. With a selection, the files are listed
+                        in a popup, relative to where you are, before you confirm with <kbd>y</kbd>. <a
+                            href="man.html#floating-windows">See manual</a>.</p>
+                    <img class="pop th-light" src="img/nnn-trash-light.png" width="350" height="170"
+                        alt="The delete popup listing three selected files with Trash and Cancel pills, in a light terminal theme">
+                    <img class="pop th-dark" src="img/nnn-trash-dark.png" width="350" height="170"
+                        alt="The delete popup listing three selected files with Trash and Cancel pills, in a dark terminal theme">
+                </div>
 
-      <div class="card">
-        <h3>Git status</h3>
-        <p>A status column built into nnn, not a patch. <a href="man.html#opt-G"><code>-G</code></a> turns it on, <kbd>i</kbd> toggles it live, and it only appears when the repo has changes. In <code>$HOME</code> it reads your bare <code>~/.dotfiles</code> repo.</p>
-      </div>
+                <div class="card">
+                    <h3>Git status</h3>
+                    <p>A status column built into nnn, not a patch. <a href="man.html#opt-G"><code>-G</code></a> turns
+                        it on, <kbd>i</kbd> toggles it live, and it only appears when the repo has changes. It also
+                        works with a bare dotfiles repo at <code>~/.dotfiles</code> when you are in your
+                        <code>$HOME</code> folder.
+                    </p>
+                </div>
 
-      <div class="card">
-        <h3>Readable timestamps</h3>
-        <p>Compact eza style (<a href="man.html#opt-y"><code>-y</code></a>), US style (<a href="man.html#opt-Y"><code>-Y</code></a>) or eza with the weekday for today's files (<a href="man.html#opt-Z"><code>-Z</code></a>). Press <kbd>y</kbd> to cycle them in a running session.</p>
-        <p>Recently changed files get a clock icon.</p>
-      </div>
+                <div class="card">
+                    <h3>Readable timestamps</h3>
+                    <p>Compact eza style, US style, or eza with the weekday for today's files, (<a
+                            href="man.html#opt-y"><code>-y</code></a> / <a href="man.html#opt-Y"><code>-Y</code></a> /
+                        <a href="man.html#opt-Z"><code>-Z</code></a>). Press <kbd>y</kbd> to cycle them in a running
+                        session.
+                    </p>
+                    <p>Recently changed files get a clock icon <a href="man.html#NNN_YOUNG"><code>NNN_YOUNG</code></a>.
+                    </p>
+                </div>
 
-      <div class="card wide">
-        <h3>Quieter detail view</h3>
-        <p>Hide directory sizes with <a href="man.html#opt-I"><code>-I</code></a> and octal permissions with <a href="man.html#opt-m"><code>-m</code></a>, or toggle them with <kbd>I</kbd> and <kbd>M</kbd>. Time and size columns have their own colors in <a href="man.html#NNN_FCOLORS"><code>NNN_FCOLORS</code></a>.</p>
-      </div>
+                <div class="card wide">
+                    <h3>Quieter detail view</h3>
+                    <p>Hide directory sizes with <a href="man.html#opt-I"><code>-I</code></a> and octal permissions with
+                        <a href="man.html#opt-m"><code>-m</code></a>, or toggle them with <kbd>I</kbd> and <kbd>M</kbd>.
+                        Time and size columns have their own colors in <a
+                            href="man.html#NNN_FCOLORS"><code>NNN_FCOLORS</code></a>.
+                    </p>
+                </div>
 
-      <div class="card wide">
-        <h3>Previews as plugins</h3>
-        <p>The <code>preview-tui</code> plugin shows the preview in a split next to nnn: a native Ghostty, Rex, kitty or WezTerm split, an iTerm2 pane, or tmux.</p>
-        <p>Images render with chafa or viu, with an EXIF caption underneath. Camera RAW files show their embedded JPEG, and video plays through mpv.</p>
-        <div class="tags"><span>Ghostty</span><span>Rex</span><span>kitty</span><span>WezTerm</span><span>iTerm2</span><span>tmux</span><span>chafa</span><span>viu</span><span>EXIF caption</span><span>RAW preview</span><span>mpv video</span></div>
-      </div>
+                <div class="card wide">
+                    <h3>Previews as plugins</h3>
+                    <p>The <code>preview-tui</code> plugin shows the preview in a split next to nnn: a native Ghostty,
+                        Rex, kitty or WezTerm split, an iTerm2 pane, or tmux.</p>
+                    <p>Images render with chafa or viu, with an EXIF caption underneath. Camera RAW files show their
+                        embedded JPEG, and video plays through mpv.</p>
+                    <div class="tags">
+                        <span>Ghostty</span><span>Rex</span><span>kitty</span><span>WezTerm</span><span>iTerm2</span><span>tmux</span><span>chafa</span><span>viu</span><span>EXIF
+                            caption</span><span>RAW preview</span><span>mpv video</span>
+                    </div>
+                </div>
 
-      <div class="card">
-        <h3>Everyday conveniences</h3>
-        <p>Quick Look the hovered file with <kbd>;</kbd><kbd>;</kbd>, copy names or paths to the clipboard, set and reverse sort keys, and more. <a href="#keys">See all the keys</a>.</p>
-      </div>
+                <div class="card">
+                    <h3>Everyday conveniences</h3>
+                    <p>Quick Look the hovered file with <kbd>;</kbd><kbd>;</kbd>, copy names or paths to the clipboard,
+                        set and reverse sort keys, and more. <a href="#keys">See all the keys</a>.</p>
+                </div>
 
-    </div>
-  </section>
+            </div>
+        </section>
 
-  <section id="keys">
-    <h2>Keys</h2>
-    <p class="lede">New keys this fork adds. Everything else works as upstream. The Section column is the heading each key has in the <kbd>?</kbd> help.</p>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Key</th><th>Section</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td><kbd>i</kbd></td><td>Display</td><td>Toggle the git status column on/off (same as the <a href="man.html#opt-G"><code>-G</code></a> option; reloads the directory)</td></tr>
-          <tr><td><kbd>M</kbd></td><td>Display</td><td>Toggle octal permissions in detail mode (same as <a href="man.html#opt-m"><code>-m</code></a>)</td></tr>
-          <tr><td><kbd>y</kbd></td><td>Display</td><td>Cycle the detail timestamp format: ISO, eza (<a href="man.html#opt-y"><code>-y</code></a>), US (<a href="man.html#opt-Y"><code>-Y</code></a>), eza + today (<a href="man.html#opt-Z"><code>-Z</code></a>), back to ISO</td></tr>
-          <tr><td><kbd>I</kbd></td><td>Display</td><td>Toggle directory sizes in detail mode (same as the <a href="man.html#opt-I"><code>-I</code></a> option)</td></tr>
-          <tr><td><kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd></td><td>Files</td><td>Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (<code>pbcopy</code>; <code>wl-copy</code>/<code>xclip</code>/<code>xsel</code> elsewhere), newline separated. <code>Ctrl+G</code> (lowercase g; or <code>Ctrl+Y</code> where the tty delivers it) in any prompt (e.g. <code>n</code>) pastes the first copied entry.</td></tr>
-          <tr><td><kbd>;</kbd><kbd>;</kbd></td><td>Files</td><td>macOS Quick Look of the hovered file (<code>qlmanage -p</code>), raised in front of the terminal. First use may prompt for Automation permission (System Events).</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <h3 class="sub">Changed behavior of existing keys</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Key</th><th>Change</th></tr></thead>
-        <tbody>
-          <tr><td><kbd>t</kbd> then <kbd>t</kbd> / <kbd>s</kbd> / <kbd>e</kbd></td><td>Sets that sort key instead of toggling it off</td></tr>
-          <tr><td><kbd>t</kbd> then <kbd>T</kbd> / <kbd>S</kbd> / <kbd>E</kbd></td><td>Sets that sort key reversed (<code>T</code> is oldest first)</td></tr>
-          <tr><td><kbd>t</kbd> then <kbd>c</kbd></td><td>Resets to the default sort order</td></tr>
-          <tr><td><kbd>p</kbd> / <kbd>v</kbd> with nothing selected</td><td>Floating help; Enter opens the editor, q/Esc cancels</td></tr>
-          <tr><td><kbd>f</kbd> popup, <kbd>j</kbd> <kbd>n</kbd> / <kbd>k</kbd> <kbd>p</kbd></td><td>Listing highlight follows the hovered file</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+        <section id="keys">
+            <h2>Keys</h2>
+            <p class="lede">New keys this fork adds. Everything else works as upstream. The Section column is the
+                heading each key has in the <kbd>?</kbd> help.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Section</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>i</kbd></td>
+                            <td>Display</td>
+                            <td>Toggle the git status column on/off (same as the <a
+                                    href="man.html#opt-G"><code>-G</code></a> option; reloads the directory)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>M</kbd></td>
+                            <td>Display</td>
+                            <td>Toggle octal permissions in detail mode (same as <a
+                                    href="man.html#opt-m"><code>-m</code></a>)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>y</kbd></td>
+                            <td>Display</td>
+                            <td>Cycle the detail timestamp format: ISO, eza (<a
+                                    href="man.html#opt-y"><code>-y</code></a>), US (<a
+                                    href="man.html#opt-Y"><code>-Y</code></a>), eza + today (<a
+                                    href="man.html#opt-Z"><code>-Z</code></a>), back to ISO</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>I</kbd></td>
+                            <td>Display</td>
+                            <td>Toggle directory sizes in detail mode (same as the <a
+                                    href="man.html#opt-I"><code>-I</code></a> option)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>B</kbd></td>
+                            <td>Files</td>
+                            <td>Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system
+                                clipboard (<code>pbcopy</code>;
+                                <code>wl-copy</code>/<code>xclip</code>/<code>xsel</code> elsewhere), newline separated.
+                                <code>Ctrl+G</code> (lowercase g; or <code>Ctrl+Y</code> where the tty delivers it) in
+                                any prompt (e.g. <code>n</code>) pastes the first copied entry.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><kbd>;</kbd><kbd>;</kbd></td>
+                            <td>Files</td>
+                            <td>macOS Quick Look of the hovered file (<code>qlmanage -p</code>), raised in front of the
+                                terminal. First use may prompt for Automation permission (System Events).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3 class="sub">Changed behavior of existing keys</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Change</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>t</kbd> then <kbd>t</kbd> / <kbd>s</kbd> / <kbd>e</kbd></td>
+                            <td>Sets that sort key instead of toggling it off</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>t</kbd> then <kbd>T</kbd> / <kbd>S</kbd> / <kbd>E</kbd></td>
+                            <td>Sets that sort key reversed (<code>T</code> is oldest first)</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>t</kbd> then <kbd>c</kbd></td>
+                            <td>Resets to the default sort order</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>p</kbd> / <kbd>v</kbd> with nothing selected</td>
+                            <td>Floating help; Enter opens the editor, q/Esc cancels</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>f</kbd> popup, <kbd>j</kbd> <kbd>n</kbd> / <kbd>k</kbd> <kbd>p</kbd></td>
+                            <td>Listing highlight follows the hovered file</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-  <section id="options">
-    <h2>Options</h2>
-    <p class="lede">Flags and environment variables. Add the letters to <a href="man.html#NNN_OPTS"><code>NNN_OPTS</code></a> to make them permanent.</p>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Setting</th><th>Effect</th></tr></thead>
-        <tbody>
-          <tr><td><a href="man.html#opt-G"><code>-G</code></a></td><td>Query git and show the status column</td></tr>
-          <tr><td><a href="man.html#opt-y"><code>-y</code></a> <a href="man.html#opt-Y"><code>-Y</code></a> <a href="man.html#opt-Z"><code>-Z</code></a></td><td>Compact eza, US, or eza-with-weekday timestamps (the last one wins)</td></tr>
-          <tr><td><a href="man.html#opt-I"><code>-I</code></a> <a href="man.html#opt-m"><code>-m</code></a></td><td>Hide directory sizes, hide octal permissions</td></tr>
-          <tr><td><a href="man.html#NNN_PILL"><code>NNN_PILL=0</code></a></td><td>Turn off the rounded caps</td></tr>
-          <tr><td><a href="man.html#NNN_MSGCOLOR"><code>NNN_MSGCOLOR</code></a></td><td>Message pill color, 0 to 255</td></tr>
-          <tr><td><a href="man.html#NNN_YOUNG"><code>NNN_YOUNG</code></a></td><td>Style for recent files: <code>icon</code>, <code>reverse</code>, <code>pill</code> or <code>none</code></td></tr>
-          <tr><td><a href="man.html#NNN_HOVERMARK"><code>NNN_HOVERMARK</code></a></td><td>Hovered entry marker: <code>triangle</code>, <code>1</code> for <code>&gt;</code>, <code>0</code> for none</td></tr>
-          <tr><td><code>NNN_IMGVIEWER</code></td><td>Image previews with <code>chafa</code> (default) or <code>viu</code></td></tr>
-          <tr><td><code>NNN_PREVIEWEXIF=0</code></td><td>Hide the EXIF caption under image previews</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+        <section id="options">
+            <h2>Options</h2>
+            <p class="lede">Flags and environment variables. Add the letters to <a
+                    href="man.html#NNN_OPTS"><code>NNN_OPTS</code></a> to make them permanent.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Setting</th>
+                            <th>Effect</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="man.html#opt-G"><code>-G</code></a></td>
+                            <td>Query git and show the status column</td>
+                        </tr>
+                        <tr>
+                            <td><a href="man.html#opt-y"><code>-y</code></a> <a
+                                    href="man.html#opt-Y"><code>-Y</code></a> <a
+                                    href="man.html#opt-Z"><code>-Z</code></a></td>
+                            <td>Compact eza, US, or eza-with-weekday timestamps (the last one wins)</td>
+                        </tr>
+                        <tr>
+                            <td><a href="man.html#opt-I"><code>-I</code></a> <a
+                                    href="man.html#opt-m"><code>-m</code></a></td>
+                            <td>Hide directory sizes, hide octal permissions</td>
+                        </tr>
+                        <tr>
+                            <td><a href="man.html#NNN_PILL"><code>NNN_PILL=0</code></a></td>
+                            <td>Turn off the rounded caps</td>
+                        </tr>
+                        <tr>
+                            <td><a href="man.html#NNN_MSGCOLOR"><code>NNN_MSGCOLOR</code></a></td>
+                            <td>Message pill color, 0 to 255</td>
+                        </tr>
+                        <tr>
+                            <td><a href="man.html#NNN_YOUNG"><code>NNN_YOUNG</code></a></td>
+                            <td>Style for recent files: <code>icon</code>, <code>reverse</code>, <code>pill</code> or
+                                <code>none</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><a href="man.html#NNN_HOVERMARK"><code>NNN_HOVERMARK</code></a></td>
+                            <td>Hovered entry marker: <code>triangle</code>, <code>1</code> for <code>&gt;</code>,
+                                <code>0</code> for none
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>NNN_IMGVIEWER</code></td>
+                            <td>Image previews with <code>chafa</code> (default) or <code>viu</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>NNN_PREVIEWEXIF=0</code></td>
+                            <td>Hide the EXIF caption under image previews</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-  <section id="install">
-    <h2>Install</h2>
-    <p class="lede">Build from source. The pills need a Nerd Font in your terminal; without <code>O_NERD</code> the interface falls back to plain characters.</p>
+        <section id="install">
+            <h2>Install</h2>
+            <p class="lede">Build from source. The pills need a Nerd Font in your terminal; without <code>O_NERD</code>
+                the interface falls back to plain characters.</p>
 
-    <div class="codeblock">
-      <button class="copy" type="button">Copy</button>
-<pre><span class="c"># get the fork</span>
-<span class="line">git clone -b amazebb https://github.com/amazebb/nnn.git</span>
-<span class="line">cd nnn</span>
-<span class="c"># build with Nerd Font support and install to ~/.local</span>
-<span class="line">make deploy</span>
-<span class="c"># install the plugins, including the previews</span>
-<span class="line">rsync -a plugins/ ~/.config/nnn/plugins/</span></pre>
-    </div>
-    <p class="note"><code>nnn -V</code> should report <code>5.3-amazebb</code>. The binary goes to <code>~/.local/bin/nnn</code> with the previous copy kept as <code>nnn.bak</code>, so make sure that folder is on your <code>PATH</code>. Previews also need a supported terminal (Ghostty 1.3+, Rex, kitty, WezTerm, iTerm2 or tmux) and chafa or viu.</p>
-  </section>
+            <div class="codeblock">
+                <button class="copy" type="button">Copy</button>
+                <pre><span class="c"># get the fork</span>
+                    <span class="line">git clone -b amazebb https://github.com/amazebb/nnn.git</span>
+                    <span class="line">cd nnn</span>
+                    <span class="c"># build with Nerd Font support and install to ~/.local</span>
+                    <span class="line">make deploy</span>
+                    <span class="c"># install the plugins, including the previews</span>
+                    <span class="line">rsync -a plugins/ ~/.config/nnn/plugins/</span>
+                </pre>
+            </div>
+            <p class="note"><code>nnn -V</code> should report <code>5.3-amazebb</code>. The binary goes to
+                <code>~/.local/bin/nnn</code> with the previous copy kept as <code>nnn.bak</code>, so make sure that
+                folder is on your <code>PATH</code>. Previews also need a supported terminal (Ghostty 1.3+, Rex, kitty,
+                WezTerm, iTerm2 or tmux) and chafa or viu.
+            </p>
+        </section>
 
-  <section id="manual">
-    <h2>Manual</h2>
-    <p class="lede">Every key, option and environment variable is in the <a href="man.html"><code>nnn(1)</code> man page</a>, generated from <code>nnn.1</code>.</p>
-  </section>
+        <section id="manual">
+            <h2>Manual</h2>
+            <p class="lede">Every key, option and environment variable is in the <a href="man.html"><code>nnn(1)</code>
+                    man page</a>, generated from <code>nnn.1</code>.</p>
+        </section>
 
 
-</main>
-<script src="script.js?v=28"></script>
+    </main>
+    <script src="script.js?v=28"></script>
 </body>
+
 </html>
