@@ -4,6 +4,7 @@
  * Copyright (C) 2014-2016, Lazaros Koromilas <lostd@2f30.org>
  * Copyright (C) 2014-2016, Dimitris Papastamos <sin@2f30.org>
  * Copyright (C) 2016-2026, Arun Prakash Jana <engineerarun@gmail.com>
+ * Copyright (C) 2026, amazebb
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

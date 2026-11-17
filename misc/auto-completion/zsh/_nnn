@@ -4,6 +4,7 @@
 #
 # Author:
 #   Arun Prakash Jana <engineerarun@gmail.com>
+#   amazebb <https://github.com/amazebb/nnn>
 #
 
 setopt localoptions noshwordsplit noksharrays
