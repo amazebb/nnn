@@ -90,6 +90,8 @@ header h1 {
   letter-spacing: -0.015em;
   margin: 0 0 16px;
 }
+/* "fi" and "r" of fin3r: lighter and narrower, so the eye lands on the 3 */
+header h1 .thin { font-weight: 300; display: inline-block; transform: scaleX(0.9); transform-origin: left; margin-right: -0.05em; }
 /* the 3 in fin3r flips over to an e on hover */
 header h1 .flip { display: inline-grid; transform-style: preserve-3d; transition: transform 0.6s; }
 header h1 .flip > span { grid-area: 1 / 1; backface-visibility: hidden; text-align: center; }
