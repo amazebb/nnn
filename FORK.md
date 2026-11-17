@@ -74,7 +74,7 @@ New keys (not bound upstream):
 | `y` | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
 | `I` | Toggle directory sizes in detail mode (same as the `-I` option) |
 | `C` / `Ctrl+B` | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (`pbcopy`; `wl-copy`/`xclip`/`xsel` elsewhere), newline separated. `Ctrl+G` (lowercase g; or `Ctrl+Y` where the tty delivers it) in any prompt (e.g. `n`) pastes the first copied entry. |
-| `;;` or `Ctrl+Space` | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
+| `;;` | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
 
 Changed behavior of existing keys:
 

@@ -4123,10 +4123,6 @@ try_quit:
 	} else
 		idle = 0;
 
-	/* Ctrl+Space is NUL (0); only a real key read counts, not an idle timeout */
-	if (c == 0 && i != ERR)
-		return SEL_QUICKLOOK;
-
 	for (i = 0; i < (int)ELEMENTS(bindings); ++i)
 		if (c == bindings[i].sym)
 			return bindings[i].act;
@@ -7209,9 +7205,10 @@ static void show_help(const char *path)
 	"1FILTER & PROMPT\n"
 		  "c/  Filter%17^N  Toggle type-to-nav\n"
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
-		  "ci  Toggle git status%07M  Toggle perms\n"
+	"0\n"
+	"1DISPLAY\n"
+		  "ci  Toggle git status%07M  Toggle permissions\n"
 		  "cy  Cycle time format%07I  Toggle dir sizes\n"
-		  "c;; ^Space  Quick Look (macOS)\n"
 	"0\n"
 	"1FILES\n"
 	       "9o ^O  Open with%15n  New/link (^g pastes)\n"
@@ -7226,6 +7223,7 @@ static void show_help(const char *path)
 	       "9x ^X  Delete or trash%09S  Listed sel size\n"
 		  "cX  Delete (rm -rf)%07Esc  Send to FIFO\n"
 		  "cC  Copy name%15^B Copy path\n"
+		  "b;;  Quick Look (macOS)\n"
 	"0\n"
 	"1MISC\n"
 	      "8Alt ;  Select plugin%11=  Launch app\n"
@@ -10402,12 +10400,6 @@ nochange:
 
 				ENTSORT(pdents, ndents, entrycmpfn);
 				move_cursor(ndents ? dentfind(lastname, ndents) : 0, 0);
-			}
-			continue;
-		case SEL_QUICKLOOK:
-			if (ndents) {
-				mkpath(path, pdents[cur].name, newpath);
-				quicklook(newpath);
 			}
 			continue;
 		case SEL_STATS: // fallthrough
