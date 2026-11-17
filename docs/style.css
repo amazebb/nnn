@@ -86,6 +86,32 @@ header p strong { color: var(--ink); font-weight: 600; }
 
 .pop { display: block; max-width: 100%; height: auto; margin-top: 14px; border-radius: 10px; }
 .shot { margin: 44px 0 0; }
+/* Dark | Light: two .btn-style halves of one button, split by a single divider */
+.theme-switch { display: inline-flex; margin-bottom: 14px; }
+.theme-switch button {
+  font: 600 15px var(--ui);
+  padding: 11px 22px;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--panel);
+  cursor: pointer;
+  position: relative;
+}
+.theme-switch button:first-child { border-radius: 10px 0 0 10px; }
+.theme-switch button:last-child { border-radius: 0 10px 10px 0; margin-left: -1px; }
+.theme-switch button:hover { border-color: var(--muted); z-index: 1; }
+.theme-switch button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); z-index: 2; }
+.theme-switch button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; z-index: 3; }
+/* one screenshot at a time; the page theme picks the default until a button is used */
+.shot .shot-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .shot:not([data-theme]) .shot-light { display: none; }
+  .shot:not([data-theme]) .shot-dark { display: block; }
+}
+.shot[data-theme="dark"] .shot-light { display: none; }
+.shot[data-theme="dark"] .shot-dark { display: block; }
+.shot[data-theme="light"] .shot-light { display: block; }
+.shot[data-theme="light"] .shot-dark { display: none; }
 .shot img {
   display: block;
   max-width: 100%;

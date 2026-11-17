@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nnn amazebb: a refined fork of nnn</title>
   <meta name="description" content="A personal fork of the nnn file manager with rounded pills, floating popups, git status, native previews and zoxide support.">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <main>
@@ -29,8 +29,13 @@
     </div>
   </header>
 
-  <figure class="shot">
-    <img src="img/nnn-list.png" width="750" height="413" alt="nnn listing the repo root, with the context and path pills on top and the pill status bar below">
+  <figure class="shot" id="shot">
+    <div class="theme-switch" role="group" aria-label="Screenshot theme">
+      <button type="button" data-theme="dark" aria-pressed="false">Dark</button>
+      <button type="button" data-theme="light" aria-pressed="false">Light</button>
+    </div>
+    <img class="shot-light" src="img/nnn-list-light.png" width="750" height="413" alt="nnn listing the repo root in a light terminal theme, with the context and path pills on top and the pill status bar below">
+    <img class="shot-dark" src="img/nnn-list-dark.png" width="750" height="413" alt="nnn listing the repo root in a dark terminal theme, with the context and path pills on top and the pill status bar below">
     <figcaption>Looks best in a terminal with a <a href="https://www.nerdfonts.com/">Nerd Font</a> compatible font; the pills and icons need one.</figcaption>
   </figure>
 
@@ -187,6 +192,6 @@
   </footer>
 
 </main>
-<script src="script.js"></script>
+<script src="script.js?v=2"></script>
 </body>
 </html>
