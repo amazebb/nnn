@@ -56,3 +56,15 @@ if (themeBtn) {
     label();
   });
 }
+
+// Deep links into the manual: open the collapsed sections around the target, then scroll to it.
+const openTarget = () => {
+  if (!location.hash) return;
+  let el = null;
+  try { el = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) {}
+  if (!el) return;
+  for (let d = el.closest('details'); d; d = d.parentElement && d.parentElement.closest('details')) d.open = true;
+  el.scrollIntoView();
+};
+openTarget();
+window.addEventListener('hashchange', openTarget);

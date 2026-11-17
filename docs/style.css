@@ -188,6 +188,7 @@ section > .lede { color: var(--muted); margin: 0 0 28px; max-width: 62ch; }
 .card p:last-child { margin-bottom: 0; }
 .card.wide { grid-column: 1 / -1; }
 
+a code { color: inherit; }
 code, kbd {
   font: 0.86em var(--mono);
   background: var(--code-bg);
