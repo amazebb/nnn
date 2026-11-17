@@ -7,7 +7,7 @@
     <title>n3: nnn, with a fin3r finish</title>
     <meta name="description"
         content="n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.">
-    <link rel="stylesheet" href="style.css?v=30">
+    <link rel="stylesheet" href="style.css?v=31">
     <script>try {var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t} catch (e) { }</script>
 </head>
 
@@ -34,8 +34,8 @@
         </nav>
 
         <header id="top">
-            <h1>n3: nnn, with a <em><span class="thin">fi</span>n<span class="flip"><span class="f">3</span><span class="b"
-                            aria-hidden="true">e</span></span><span class="thin">r</span></em> finish.</h1>
+            <h1>n3: nnn, with a <em><span class="thin">fi</span>n<span class="flip"><span class="f">3</span><span
+                            class="b" aria-hidden="true">e</span></span><span class="thin">r</span></em> finish.</h1>
             <p><strong>nnn</strong> is a fast, lightweight terminal file manager. This fork keeps everything <a
                     href="https://github.com/jarun/nnn">upstream</a> does and adds a polished interface: rounded pills,
                 floating popups, git status. Everything else, such as image and video previews, is a plugin, and
@@ -77,7 +77,8 @@
                 <div class="card">
                     <h3>A modern look</h3>
                     <p>Small touches that make the listing easier to scan. The hover highlight, status-line segments,
-                        the context number, the whole top-line path (followed by the git branch) and every message are drawn as
+                        the context number, the whole top-line path (followed by the git branch) and every message are
+                        drawn as
                         rounded pills, and a triangle marks the hovered entry. Turn the pills off with <a
                             href="man.html#NNN_PILL"><code>NNN_PILL=0</code></a>. <a href="man.html#appearance">See
                             manual</a>.</p>
@@ -135,7 +136,9 @@
 
                 <div class="card wide">
                     <h3>Updated preview plugin</h3>
-                    <p>The bundled <a href="https://github.com/amazebb/nnn/blob/amazebb/plugins/preview-tui"><code>preview-tui</code></a> plugin is updated to work with newer terminals: native
+                    <p>The bundled <a
+                            href="https://github.com/amazebb/nnn/blob/amazebb/plugins/preview-tui"><code>preview-tui</code></a>
+                        plugin is updated to work with newer terminals: native
                         splits in Ghostty 1.3+ and Rex, images through chafa or viu with an EXIF caption underneath, and
                         embedded JPEG previews for camera RAW files.</p>
                     <div class="tags">
@@ -311,26 +314,57 @@
                 the interface falls back to plain characters.</p>
 
             <h3 class="sub">Requirements</h3>
-            <p>There is no binary to download: <code>make deploy</code> builds from source. It needs <code>make</code>, a C11 compiler, <code>git</code>, the ncurses headers and a Nerd Font for the glyphs. On macOS the Command Line Tools cover everything but the font:</p>
+            <p><code>make deploy</code> builds from source. It needs <code>make</code>, a C11 compiler,
+                <code>git</code>, the ncurses headers and a Nerd Font for the glyphs. On macOS the Command Line Tools
+                cover everything but the font:
+            </p>
             <div class="codeblock">
                 <button class="copy" type="button">Copy</button>
-                <pre><span class="line">xcode-select --install</span>
-<span class="line">brew install font-symbols-only-nerd-font</span></pre>
+                <pre>xcode-select --install
+                    brew install font-symbols-only-nerd-font</pre>
             </div>
 
             <details class="reqs">
                 <summary>What <code>make deploy</code> needs</summary>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Tool</th><th>Used for</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Used for</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr><td><code>make</code></td><td>runs the build</td></tr>
-                            <tr><td>C compiler (<code>cc</code>, C11)</td><td>builds <code>src/nnn.c</code></td></tr>
-                            <tr><td><code>grep</code>, <code>cut</code></td><td>read the version string from <code>src/nnn.c</code></td></tr>
-                            <tr><td>ncurses with headers (<code>pkg-config</code> optional)</td><td>linking; without <code>pkg-config</code> the <code>Makefile</code> falls back to <code class="nowrap">-lncurses</code></td></tr>
-                            <tr><td><code>pthread</code></td><td>linked in; part of the system libc</td></tr>
-                            <tr><td><code>install</code></td><td>copies the binary, <code>nnn.1</code> and the zsh completion</td></tr>
-                            <tr><td><code>cp</code></td><td>keeps the previous binary as <code>nnn.bak</code></td></tr>
+                            <tr>
+                                <td><code>make</code></td>
+                                <td>runs the build</td>
+                            </tr>
+                            <tr>
+                                <td>C compiler (<code>cc</code>, C11)</td>
+                                <td>builds <code>src/nnn.c</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>grep</code>, <code>cut</code></td>
+                                <td>read the version string from <code>src/nnn.c</code></td>
+                            </tr>
+                            <tr>
+                                <td>ncurses with headers (<code>pkg-config</code> optional)</td>
+                                <td>linking; without <code>pkg-config</code> the <code>Makefile</code> falls back to
+                                    <code class="nowrap">-lncurses</code>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><code>pthread</code></td>
+                                <td>linked in; part of the system libc</td>
+                            </tr>
+                            <tr>
+                                <td><code>install</code></td>
+                                <td>copies the binary, <code>nnn.1</code> and the zsh completion</td>
+                            </tr>
+                            <tr>
+                                <td><code>cp</code></td>
+                                <td>keeps the previous binary as <code>nnn.bak</code></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -339,13 +373,13 @@
             <h3 class="sub">Build</h3>
             <div class="codeblock">
                 <button class="copy" type="button">Copy</button>
-                <pre><span class="c"># get the fork</span>
-<span class="line">git clone -b amazebb https://github.com/amazebb/nnn.git</span>
-<span class="line">cd nnn</span>
-<span class="c"># build with Nerd Font support and install to ~/.local</span>
-<span class="line">make deploy</span>
-<span class="c"># install the plugins, including the previews</span>
-<span class="line">rsync -a plugins/ ~/.config/nnn/plugins/</span></pre>
+                <pre># clone the repo
+                    git clone -b amazebb https://github.com/amazebb/nnn.git
+                    cd nnn
+                    # build with Nerd Font support and install to ~/.local/bin
+                    make deploy
+                    # install the plugins, including the previews
+                    rsync -a plugins/ ~/.config/nnn/plugins/</pre>
             </div>
             <p class="note"><code>nnn -V</code> should report <code>5.3-amazebb</code>. The binary goes to
                 <code>~/.local/bin/nnn</code> with the previous copy kept as <code>nnn.bak</code>, so make sure that
@@ -360,7 +394,7 @@
 
 
     </main>
-    <script src="script.js?v=30"></script>
+    <script src="script.js?v=31"></script>
 </body>
 
 </html>

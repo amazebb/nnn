@@ -1,3 +1,17 @@
+// Code blocks are plain text lines in the HTML (so a formatter cannot re-indent them). Mark each
+// line here: a leading # is a comment (coloured, not copied), anything else is a command (copied).
+document.querySelectorAll('.codeblock pre').forEach((pre) => {
+  const lines = pre.textContent.split('\n').map((l) => l.trim()).filter(Boolean);
+  pre.textContent = '';
+  lines.forEach((l, i) => {
+    const span = document.createElement('span');
+    span.className = l.startsWith('#') ? 'c' : 'line';
+    span.textContent = l;
+    pre.append(span);
+    if (i < lines.length - 1) pre.append('\n');
+  });
+});
+
 // Copy buttons for the install snippets.
 document.querySelectorAll('.copy').forEach((btn) => {
   btn.addEventListener('click', async () => {
