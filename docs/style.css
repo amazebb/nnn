@@ -7,6 +7,7 @@
   --accent: #c2570c;
   --accent-ink: #fff;
   --code-bg: #efe9dc;
+  --pill: #2e67d3; /* pill blue of the screenshots */
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -27,6 +28,7 @@
     --accent: #f08a3c;
     --accent-ink: #151412;
     --code-bg: #24211d;
+    --pill: #6ba4f8;
   }
 }
 :root[data-theme="dark"] {
@@ -38,6 +40,7 @@
   --accent: #f08a3c;
   --accent-ink: #151412;
   --code-bg: #24211d;
+  --pill: #6ba4f8;
 }
 
 * { box-sizing: border-box; }
@@ -193,6 +196,7 @@ code, kbd {
   color: var(--ink);
 }
 kbd { border: 1px solid var(--line); border-bottom-width: 2px; }
+svg.cap { vertical-align: -0.2em; color: var(--pill); }
 
 .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .tags span {
