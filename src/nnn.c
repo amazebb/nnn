@@ -9602,7 +9602,8 @@ static void git_branch_update(const char *path)
 	(void)path;
 	gitbranch[0] = '\0';
 	gittrack = FALSE;
-	if (!gitbranch_on || !gitpairs || !pill || g_state.oldcolor || !home)
+	/* The top line segment follows the status column: -G / i turn both on and off */
+	if (!cfg.normalgit || !gitbranch_on || !gitpairs || !pill || g_state.oldcolor || !home)
 		return;
 
 	snprintf(df, sizeof df, "%s/.local/share/zsh/site-functions/dotfiles/dotfiles", home);
