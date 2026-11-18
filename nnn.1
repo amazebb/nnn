@@ -50,8 +50,8 @@ the base filename.
 .Pp
 Press \fB?\fR in
 .Nm
-for a one-line summary of the keybinds. 
-Keys shown as \fB^X\fR are Ctrl+X, and commas separate 
+for a one-line summary of the keybinds.
+Keys shown as \fB^X\fR are Ctrl+X, and commas separate
 alternative keys for the same action.
 
 .Ss Navigation
@@ -157,7 +157,7 @@ _________ + ____________________________________________________________
           | unchanged)
  r        | Batch rename the entries of the current directory
  z        | Archive the selection or hovered entry
- e        | Edit the hovered file in $EDITOR
+ e        | Edit the hovered file in \fBEDITOR\fR
  o, ^O    | Open the hovered entry with a command you type
  f, ^F    | Show file details (stat, file, mime type)
  *        | Toggle the executable bit
@@ -227,10 +227,10 @@ supports the following options:
         show directories in context color with \fBNNN_FCOLORS\fR set
 .Pp
 .Fl e
-        open text files in $VISUAL (else $EDITOR, fallback vi) [preferably CLI]
+        open text files in \fBVISUAL\fR (else \fBEDITOR\fR, fallback vi) [preferably CLI]
 .Pp
 .Fl E
-        use $EDITOR for internal undetached edits
+        use \fBEDITOR\fR for internal undetached edits
 .Pp
 .Fl f
         use history file
@@ -389,7 +389,7 @@ session options (\fB-s\fR/\fB-S\fR).
 .Pp
 All the session files are located by session name in the directory
 .Pp
-\fB${XDG_CONFIG_HOME:-$HOME/.config}/nnn/sessions\fR
+.Pa ${XDG_CONFIG_HOME:-$HOME/.config}/nnn/sessions
 .Pp
 "@" is the "auto session" file.
 .Sh FILTERS
@@ -653,9 +653,27 @@ the files are listed in a popup titled with the count: \fBy\fR deletes (or trash
 .Sh UNITS
 The minimum file size unit is byte (B). The rest are K, M, G, T, P, E, Z, Y
 (powers of 1024), same as the default units in \fBls\fR.
+.Pp
+The units are listed below.
+.Pp
+.Bd -literal
+ Unit | Name      | Size
+_____ + _________ + ______
+ B    | Byte      | 1
+ K    | Kilobyte  | 1024
+ M    | Megabyte  | 1024^2
+ G    | Gigabyte  | 1024^3
+ T    | Terabyte  | 1024^4
+ P    | Petabyte  | 1024^5
+ E    | Exabyte   | 1024^6
+ Z    | Zettabyte | 1024^7
+ Y    | Yottabyte | 1024^8
+_____ + _________ + ______
+.Ed
 .Sh ENVIRONMENT
-The SHELL, VISUAL (else EDITOR) and PAGER environment variables are
-used. A single combination of arguments is supported for SHELL and PAGER.
+The \fBSHELL\fR, \fBVISUAL\fR (else \fBEDITOR\fR) and \fBPAGER\fR environment
+variables are used. A single combination of arguments is supported for
+\fBSHELL\fR and \fBPAGER\fR.
 .Pp
 \fBNNN_OPTS:\fR options to
 .Nm
@@ -670,9 +688,9 @@ on the command line override NNN_OPTS.
 \fBNNN_OPENER:\fR specify a custom file opener.
 .Bd -literal
     export NNN_OPENER=nuke
-
-    NOTE: \fBnuke\fR is a file opener available in the plugin repository.
 .Ed
+.Pp
+NOTE: \fBnuke\fR is a file opener available in the plugin repository.
 .Pp
 \fBNNN_BMS:\fR bookmark string as \fIkey_char:location\fR pairs
 separated by \fB;\fR:
@@ -686,63 +704,98 @@ separated by \fB;\fR:
 separated by \fB;\fR:
 .Bd -literal
     export NNN_PLUG='f:finder;o:fzopen;p:mocplay;d:diffs;t:nmount;v:imgview'
-
-    NOTES:
-        1. To run a plugin directly, press \fB;\fR followed by the key.
-        2. Alternatively, combine with \fBAlt\fR (i.e. \fBAlt+key\fR).
-        3. To pick and run an unassigned plugin, press \fBEnter\fR at the plugin prompt.
-        4. To run a plugin at startup, use the option `-P` followed by the plugin key.
 .Ed
 .Pp
-    \fBPLUGIN MODIFIERS\fR
-
-    [-] To skip directory refresh after running a plugin, prefix\~with\~\fB-\fR.
-
-        export NNN_PLUG='p:-plugin'
-
-    [!] To assign keys to arbitrary non-background cli commands and invoke like
-        plugins, add \fB!\fR before the command.
-
-        export NNN_PLUG='x:!chmod +x "$nnn";g:-!git log'
-
-    [&] To run a \fIGUI app as plugin\fR, add a \fB&\fR after \fB!\fR.
-
-        export NNN_PLUG='m:-!&mousepad "$nnn"'
-
-    [|] To show the output of run-and-exit commands which do not need user input,
-        add \fB|\fR (pipe) after \fB!\fR.
-
-.Bd -literal
-        export NNN_PLUG='m:-!|mediainfo "$nnn";t:-!|tree -ps;l:-!|ls -lah --group-directories-first'
+.Bd -ragged -offset indent
+\fBNOTES\fR
+.Bl -enum -compact
+.It
+To run a plugin directly, press \fB;\fR followed by the key.
+.It
+Alternatively, combine with \fBAlt\fR (i.e. \fBAlt+key\fR).
+.It
+To pick and run an unassigned plugin, press \fBEnter\fR at the plugin prompt.
+.It
+To run a plugin at startup, use the option\~\fB-P\fR followed by the plugin key.
+.El
 .Ed
-
-        * incompatible with \fB&\fR (terminal output is masked for GUI programs)
-
-    [>] To show the output of run-and-exit commands in a floating window,
-        add \fB>\fR (right arrow) after \fB!\fR.
-
+.Pp
+\fBPLUGIN MODIFIERS\fR
+.Pp
+.Bq Ic -
+To skip directory refresh after running a plugin, prefix\~with\~\fB-\fR.
 .Bd -literal
-        export NNN_PLUG='m:!>mediainfo "$nnn";t:!>tree -ps;l:!>ls -lah --group-directories-first'
+    export NNN_PLUG='p:-plugin'
 .Ed
-
-        * incompatible with \fB&\fR (terminal output is masked for GUI programs)
-        * ignores \fB-\fR (the directory is always refreshed)
-
-    [*] To skip user confirmation after command execution, suffix with \fB*\fR.
-
-        export NNN_PLUG='y:-!sync*'
-
-        * should be placed at the end of the plugin/command string
-        * ignored if \fB|\fR is used (output is already paged for user)
-        * ignored if \fB>\fR is used (output is rendered in a floating window)
-        * do not use \fB*\fR with programs those run and exit e.g. 'cat'
-
-    NOTES:
-        1. Place $nnn (or exported variables) in double quotes (\fB"$nnn"\fR).
-        2. Use single quotes for $NNN_PLUG so "$nnn" is not interpreted.
-
-    \fBEXAMPLES\fR
-
+.Pp
+.Bq Ic \&!
+To assign keys to arbitrary non-background cli commands and invoke like
+plugins, add \fB!\fR before the command.
+.Bd -literal
+    export NNN_PLUG='x:!chmod +x "$nnn";g:-!git log'
+.Ed
+.Pp
+.Bq Ic &
+To run a \fIGUI app as plugin\fR, add a \fB&\fR after \fB!\fR.
+.Bd -literal
+    export NNN_PLUG='m:-!&mousepad "$nnn"'
+.Ed
+.Pp
+.Bq Ic \&|
+To show the output of run-and-exit commands which do not need user input,
+add \fB|\fR (pipe) after \fB!\fR.
+.Bd -literal
+    export NNN_PLUG='m:-!|mediainfo "$nnn";t:-!|tree -ps;l:-!|ls -lah --group-directories-first'
+.Ed
+.Pp
+.Bl -bullet -compact
+.It
+incompatible with \fB&\fR (terminal output is masked for GUI programs)
+.El
+.Pp
+.Bq Ic >
+To show the output of run-and-exit commands in a floating window,
+add \fB>\fR (right arrow) after \fB!\fR.
+.Bd -literal
+    export NNN_PLUG='m:!>mediainfo "$nnn";t:!>tree -ps;l:!>ls -lah --group-directories-first'
+.Ed
+.Pp
+.Bl -bullet -compact
+.It
+incompatible with \fB&\fR (terminal output is masked for GUI programs)
+.It
+ignores \fB-\fR (the directory is always refreshed)
+.El
+.Pp
+.Bq Ic *
+To skip user confirmation after command execution, suffix with \fB*\fR.
+.Bd -literal
+    export NNN_PLUG='y:-!sync*'
+.Ed
+.Pp
+.Bl -bullet -compact
+.It
+should be placed at the end of the plugin/command string
+.It
+ignored if \fB|\fR is used (output is already paged for user)
+.It
+ignored if \fB>\fR is used (output is rendered in a floating window)
+.It
+do not use \fB*\fR with programs those run and exit e.g. 'cat'
+.El
+.Pp
+.Bd -ragged -offset indent
+\fBNOTES\fR
+.Bl -enum -compact
+.It
+Place $nnn (or exported variables) in double quotes (\fB"$nnn"\fR).
+.It
+Use single quotes for $NNN_PLUG so "$nnn" is not interpreted.
+.El
+.Ed
+.Pp
+\fBEXAMPLES\fR
+.Pp
 .Bd -literal
  Key:Command                         | Description
 ____________________________________ + ________________________________
@@ -768,45 +821,52 @@ ____________________________________ + ________________________________
 ____________________________________ + ________________________________
 .Ed
 .Pp
-    Online docs: https://github.com/jarun/nnn/tree/master/plugins
+Online docs: https://github.com/jarun/nnn/tree/master/plugins
 .Pp
 \fBNNN_ORDER:\fR directory-specific sort key.
 .Bd -literal
     export NNN_ORDER='t:/home/user/Downloads;S:/tmp'
-
-    NOTES:
-        1. Sort keys can be a/d/e/r/s/t/v (refer to the \fBSORTING\fR section).
-        2. Path must be absolute.
-
-    Timestamps of entries modified/created within 5 minutes are shown in reverse.
 .Ed
 .Pp
-\fBNNN_COLORS:\fR string of color numbers for each context, e.g.:
-.Bd -literal
-    # 8 color numbers:
-      0-black, 1-red, 2-green, 3-yellow, 4-blue (default), 5-magenta, 6-cyan, 7-white
-
-        export NNN_COLORS='12341234'
-
-    # xterm 256 color numbers (converted to hex, 2 symbols per context):
-      see https://user-images.githubusercontent.com/1482942/93023823-46a6ba80-f5e1-11ea-9ea3-6a3c757704f4.png
-
-        export NNN_COLORS='#0a1b2c3d0a1b2c3d'
-
-    # both (256 followed by 8 as fallback, separated by ';')
-
-        export NNN_COLORS='#0a1b2c3d0a1b2c3d;12341234'
-
-    NOTE: If only 256 colors are specified and the terminal doesn't support, default is used.
+.Bd -ragged -offset indent
+\fBNOTES\fR
+.Bl -enum -compact
+.It
+Sort keys can be a/d/e/r/s/t/v (refer to the \fBSORTING\fR section).
+.It
+Path must be absolute.
+.El
 .Ed
+.Pp
+Timestamps of entries modified/created within 5 minutes are shown in reverse.
+.Pp
+\fBNNN_COLORS:\fR string of color numbers for each context, e.g.:
+.Pp
+8 color numbers (0-black, 1-red, 2-green, 3-yellow, 4-blue (default), 5-magenta, 6-cyan, 7-white).
+.Bd -literal
+    export NNN_COLORS='12341234'
+.Ed
+.Pp
+xterm 256 color numbers (converted to hex, 2 symbols per context). See
+https://user-images.githubusercontent.com/1482942/93023823-46a6ba80-f5e1-11ea-9ea3-6a3c757704f4.png
+.Bd -literal
+    export NNN_COLORS='#0a1b2c3d0a1b2c3d'
+.Ed
+.Pp
+Both (256 followed by 8 as fallback, separated by ';').
+.Bd -literal
+    export NNN_COLORS='#0a1b2c3d0a1b2c3d;12341234'
+.Ed
+.Pp
+NOTE: If only 256 colors are specified and the terminal doesn't support, default is used.
 .Pp
 \fBNNN_FCOLORS:\fR specify file-type specific colors:
 .Bd -literal
     export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
-
-    Specify file-specific colors in xterm 256 color hex numbers (2 symbols per color).
-    Order is strict, use 00 to omit/use default terminal color. Defaults:
 .Ed
+.Pp
+Specify file-specific colors in xterm 256 color hex numbers (2 symbols per color).
+Order is strict, use 00 to omit/use default terminal color. Defaults:
 .Pp
 .Bd -literal
  Order                     | Hex | Color
@@ -828,20 +888,18 @@ __________________________ + ___ + _______________
 __________________________ + ___ + _______________
 .Ed
 .Pp
-.Bd -literal
-    The last two are optional; if omitted or 00, they use the file details color.
-
-    If the terminal supports xterm 256 colors or more, file-specific colors will be rendered.
-    To force the 8-color scheme use option -C.
-    If xterm 256 colors aren't supported, 8-color scheme will be used.
-.Ed
+The last two are optional; if omitted or 00, they use the file details color.
+.Pp
+If the terminal supports xterm 256 colors or more, file-specific colors will be rendered.
+To force the 8-color scheme use option\~\fB-C\fR.
+If xterm 256 colors aren't supported, 8-color scheme will be used.
 .Pp
 \fBNNN_ARCHIVE:\fR archive extensions to be handled silently (default: bzip2, (g)zip, tar).
 .Bd -literal
     export NNN_ARCHIVE="\\\\.(7z|bz2|gz|tar|tgz|zip)$"
-
-    NOTE: Non-default formats may require a third-party utility.
 .Ed
+.Pp
+NOTE: Non-default formats may require a third-party utility.
 .Pp
 \fBNNN_ARCHMNT:\fR optional archive mounter utility (default: archivemount).
 .Bd -literal
@@ -851,27 +909,32 @@ __________________________ + ___ + _______________
 \fBNNN_SSHFS:\fR specify custom sshfs command with options:
 .Bd -literal
     export NNN_SSHFS='sshfs -o reconnect,idmap=user,cache_timeout=3600'
-
-    NOTE: The options must be comma-separated without any space between them.
 .Ed
+.Pp
+NOTE: The options must be comma-separated without any space between them.
 .Pp
 \fBNNN_RCLONE:\fR pass additional options to rclone command:
 .Bd -literal
     export NNN_RCLONE='rclone mount --read-only --no-checksum'
-
-    NOTE: The options must be preceded by "rclone" and max 5 flags are supported.
 .Ed
+.Pp
+NOTE: The options must be preceded by "rclone" and max 5 flags are supported.
 .Pp
 \fBNNN_TRASH:\fR trash (instead of \fBrm -rf\fR) files to desktop Trash.
 .Bd -literal
     export NNN_TRASH=cmd
-
-    NOTES:
-        1. \fBcmd\fR is the name/path of the binary that nnn will call for
-           trashing files. E.g to use macOS's native `trash' command:
-           export NNN_TRASH="trash"
-        2. Special value "1" and "2" for cmd will use 'trash-cli' and
-           'gio trash' respectively.
+.Ed
+.Pp
+.Bd -ragged -offset indent
+\fBNOTES\fR
+.Bl -enum -compact
+.It
+\fBcmd\fR is the name/path of the binary that nnn will call for
+trashing files. E.g to use macOS's native `trash' command, set
+\fBNNN_TRASH="trash"\fR.
+.It
+Special value "1" and "2" for cmd will use 'trash-cli' and 'gio trash' respectively.
+.El
 .Ed
 .Pp
 \fBNNN_SEL:\fR absolute path to custom selection file.
@@ -882,14 +945,20 @@ __________________________ + ___ + _______________
 \fBNNN_FIFO:\fR path of a named pipe to write the hovered file path:
 .Bd -literal
     export NNN_FIFO='/tmp/nnn.fifo'
-
-    NOTES:
-        1. Overridden by a temporary path with -a option.
-        2. If the FIFO file doesn't exist it will be created,
-           but not removed (unless it is generated by -a option).
-
-    Online docs: https://github.com/jarun/nnn/wiki/Live-previews
 .Ed
+.Pp
+.Bd -ragged -offset indent
+\fBNOTES\fR
+.Bl -enum -compact
+.It
+Overridden by a temporary path with the\~\fB-a\fR option.
+.It
+If the FIFO file doesn't exist it will be created,
+but not removed (unless it is generated by the\~\fB-a\fR option).
+.El
+.Ed
+.Pp
+Online docs: https://github.com/jarun/nnn/wiki/Live-previews
 .Pp
 \fBNNN_LOCKER:\fR terminal locker program.
 .Bd -literal
@@ -910,9 +979,9 @@ __________________________ + ___ + _______________
 \fBNNN_MCLICK:\fR key emulated by a middle mouse click.
 .Bd -literal
     export NNN_MCLICK='^R'
-
-    NOTE: Only the first character is considered if not a \fBCtrl+key\fR combo.
 .Ed
+.Pp
+NOTE: Only the first character is considered if not a \fBCtrl+key\fR combo.
 .Pp
 \fBNNN_PILL:\fR set to \fB0\fR to turn off the rounded caps (pills) on the hovered entry,
 status line, top line and prompts (on by default; needs a nerd font build, \fBO_NERD\fR).
@@ -928,20 +997,30 @@ status line, top line and prompts (on by default; needs a nerd font build, \fBO_
 .Pp
 \fBNNN_YOUNG:\fR highlight style of timestamps modified in the last 5 minutes.
 .Bd -literal
-    reverse    reverse video (default without O_NERD)
-    pill       reverse video with rounded caps in the neighbouring cells
-    icon       clock icon before the time, no highlight (default with O_NERD)
-    none       no highlight
-
+ Value   | Meaning
+________ + ______________________________________________________________
+ reverse | Reverse video (default without O_NERD)
+ pill    | Reverse video with rounded caps in the neighbouring cells
+ icon    | Clock icon before the time, no highlight (default with O_NERD)
+ none    | No highlight
+________ + ______________________________________________________________
+.Ed
+.Pp
+.Bd -literal
     export NNN_YOUNG=pill
 .Ed
 .Pp
 \fBNNN_HOVERMARK:\fR marker before the time column of the hovered entry in detail mode.
 .Bd -literal
-    triangle   filled caret (default with O_NERD)
-    1          '>' (default without O_NERD)
-    0          no marker
-
+ Value    | Meaning
+_________ + __________________________________
+ triangle | Filled caret (default with O_NERD)
+ 1        | '>' (default without O_NERD)
+ 0        | No marker
+_________ + __________________________________
+.Ed
+.Pp
+.Bd -literal
     export NNN_HOVERMARK=0
 .Ed
 .Pp
