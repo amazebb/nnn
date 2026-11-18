@@ -11,35 +11,33 @@ from FORK.md. Build with `make docs` (see AGENTS.md). -->
 
 Every change is a small, optional layer on top of upstream nnn. Switch any of it off with a flag or an environment variable.
 
-### A modern look
+### [A modern look](man.html#appearance)
 
-Small touches that make the listing easier to scan. The hover highlight, status-line segments, the context number, the whole top-line path (followed by the git branch) and every message are drawn as rounded pills, and a triangle marks the hovered entry. [See manual](man.html#appearance).
+Small touches that make the listing easier to scan. The hover highlight, status-line segments, the context number, the whole top-line path (followed by the git branch) and every message are drawn as rounded pills, and a triangle marks the hovered entry.
 
-### Choice prompts
+### [Choice prompts](man.html#choice-prompts)
 
-Prompts with options show one pill per choice. The default is filled, the key to press is capitalised and underlined, and a final `Esc` pill shows that any other key cancels. [See manual](man.html#choice-prompts).
+Prompts with options show one pill per choice. The default is filled, the key to press is capitalised and underlined, and a final `Esc` pill shows that any other key cancels.
 
-### Floating windows {.wide}
+### [Floating windows](man.html#floating-windows) {.wide}
 
-Help, file stats and delete confirmations open in rounded, titled popups that fit their content, with clearer messages and pill key hints along the bottom. [See manual](man.html#floating-windows).
+Help, file stats and delete confirmations open in rounded, titled popups that fit their content, with clearer messages and pill key hints along the bottom.
 
-### Git status
+### [Git status](man.html#git-status)
 
-Git status is built in, with symbols for changes in the listing and the branch and its summary beside the current folder. It works with dotfiles repos in `$HOME`. [See manual](man.html#git-status).
+Git status is built in, with symbols for changes in the listing and the branch and its summary beside the current folder. It works with dotfiles repos in `$HOME`.
 
-### Readable timestamps
+### [Readable timestamps](man.html#appearance)
 
-Compact eza style, US style, or eza with the weekday for today's files, (`-y` / `-Y` / `-Z`). Press <kbd>y</kbd> to cycle them in a running session.
+Compact eza style, US style, or eza with the weekday for today's files. Press <kbd>y</kbd> to cycle them in a running session. Recently changed files get a clock icon.
 
-Recently changed files get a clock icon.
+### [Quieter detail view](man.html#display) {.wide}
 
-### Quieter detail view {.wide}
+Hide directory sizes and octal permissions, or toggle them with <kbd>I</kbd> and <kbd>M</kbd>. Time and size columns have their own colors.
 
-Hide directory sizes with `-I` and octal permissions with `-m`, or toggle them with <kbd>I</kbd> and <kbd>M</kbd>. Time and size columns have their own colors.
+### [Updated preview plugin](https://github.com/amazebb/nnn/blob/amazebb/plugins/preview-tui) {.wide}
 
-### Updated preview plugin {.wide}
-
-The bundled [`preview-tui`](https://github.com/amazebb/nnn/blob/amazebb/plugins/preview-tui) plugin is updated to work with newer terminals: native splits in Ghostty 1.3+ and Rex, images through chafa or viu with an EXIF caption underneath, and embedded JPEG previews for camera RAW files.
+The bundled `preview-tui` plugin is updated to work with newer terminals: native splits in Ghostty 1.3+ and Rex, images through chafa or viu with an EXIF caption underneath, and embedded JPEG previews for camera RAW files.
 
 ::: tags
 !New, Ghostty 1.3+, Rex, chafa, viu, EXIF caption, RAW preview
@@ -47,7 +45,7 @@ The bundled [`preview-tui`](https://github.com/amazebb/nnn/blob/amazebb/plugins/
 
 ### Everyday conveniences
 
-Quick Look the hovered file with <kbd>;</kbd><kbd>;</kbd>, copy names or paths to the clipboard, set and reverse sort keys, and more. [See all the keys](#keys).
+Quick Look the hovered file with <kbd>;</kbd><kbd>;</kbd>, copy names or paths to the clipboard, set and reverse sort keys, and more. See all the [keys](#keys).
 
 ## Keys {#keys}
 
