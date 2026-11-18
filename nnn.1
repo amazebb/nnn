@@ -1035,8 +1035,8 @@ selects the bare \fB~/.dotfiles\fR repository in tracked folders); without that 
 .Ed
 .Pp
 \fBNNN_GITIGNORE:\fR set to \fBdim\fR to draw git ignored entries dim and italic, in their own colors, instead of marking them
-\fB!!\fR in the git column (needs \fB-G\fR). Only the ignored entry itself is styled, not a folder
-that contains ignored files.
+\fB!!\fR in the git column (needs \fB-G\fR). Only an entry that is ignored itself is styled, so a folder
+that merely contains ignored files is not, unless the whole folder is ignored.
 .Bd -literal
     export NNN_GITIGNORE=dim
 .Ed
