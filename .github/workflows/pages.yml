@@ -41,6 +41,7 @@ jobs:
           mkdir _site
           cp docs/index.html docs/man.html docs/style.css docs/site.css docs/script.js _site/
           cp -R docs/img _site/
+          cp -R docs/fonts _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
