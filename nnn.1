@@ -650,6 +650,37 @@ without opening it.
 \fBx\fR and \fBX\fR on a single file end the prompt with \fB[y/n]\fR. With a selection,
 the files are listed in a popup titled with the count: \fBy\fR deletes (or trashes with
 \fBNNN_TRASH\fR), \fBn\fR, \fBq\fR or \fBEsc\fR cancels.
+.Sh GIT STATUS
+Git status is built into
+.Nm
+and needs no patch. \fB-G\fR queries git and adds a status column to the detail and
+normal views, and \fBi\fR toggles it in a running instance. Without \fB-G\fR git is not run.
+The column appears only when git reports a change. It has two cells, for staged and
+unstaged changes. A folder shows the first status found under it, which includes
+ignored files unless \fBNNN_GITIGNORE=dim\fR is set.
+.Pp
+.Bd -literal
+ Nerd font | Plain | Meaning
+__________ + _____ + _________
+ +         | A     | Added
+ ✗         | D     | Deleted
+ Δ         | M     | Modified
+ ?         | ?     | Untracked
+ 󰚰         | U     | Unmerged
+ !         | !     | Ignored
+__________ + _____ + _________
+.Ed
+.Pp
+With a nerd font build and pills, the current branch and a summary follow the path in the top
+line (\fB+\fRstaged \fB~\fRunstaged \fB!\fRconflicts \fB?\fRuntracked \fB\(ua\fRahead
+\fB\(da\fRbehind). It is green when the repository is clean and red when there are changes.
+\fBNNN_GITBRANCH=0\fR hides it.
+.Pp
+Inside \fB$HOME\fR it works with a bare dotfiles repository.
+.Pp
+\fBNNN_GITIGNORE=dim\fR draws ignored entries dim and italic instead of marking them \fB!!\fR.
+A folder is dimmed only when the whole folder is ignored, and one that merely contains
+ignored files shows nothing.
 .Sh UNITS
 The minimum file size unit is byte (B). The rest are K, M, G, T, P, E, Z, Y
 (powers of 1024), same as the default units in \fBls\fR.

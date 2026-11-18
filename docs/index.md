@@ -1,7 +1,7 @@
 ---
 title: n3: nnn, with a fin3r finish
-description: n3 is a personal fork of the nnn file manager with rounded pills, floating popups, git status, extended by plugins for previews and more.
-intro: **nnn** is a fast, lightweight terminal file manager. This fork keeps everything [upstream](https://github.com/jarun/nnn) does and adds a polished interface: rounded pills, floating popups, git status. Everything else, such as image and video previews, is a plugin, and nnn&rsquo;s plugin system lets you write or customise your own.
+description: n3 is a personal fork of the nnn file manager with a refreshed interface and new features, extended by plugins.
+intro: **nnn** is a fast, lightweight, customizable terminal file manager. This fork keeps everything [upstream](https://github.com/jarun/nnn) does and adds a polished interface and new features.
 ---
 
 <!-- Source of truth for the landing page text. The keys, options and requirements tables come
@@ -13,7 +13,7 @@ Every change is a small, optional layer on top of upstream nnn. Switch any of it
 
 ### A modern look
 
-Small touches that make the listing easier to scan. The hover highlight, status-line segments, the context number, the whole top-line path (followed by the git branch) and every message are drawn as rounded pills, and a triangle marks the hovered entry. Turn the pills off with `NNN_PILL=0`. [See manual](man.html#appearance).
+Small touches that make the listing easier to scan. The hover highlight, status-line segments, the context number, the whole top-line path (followed by the git branch) and every message are drawn as rounded pills, and a triangle marks the hovered entry. [See manual](man.html#appearance).
 
 ### Choice prompts
 
@@ -21,25 +21,21 @@ Prompts with options show one pill per choice. The default is filled, the key to
 
 ### Floating windows {.wide}
 
-Help, file stats and confirmations open in rounded, titled popups that fit their content, with pill key hints along the bottom. [See manual](man.html#floating-windows).
-
-### Delete confirmation
-
-Deleting one file ends the prompt with `[y/n]`. With a selection, the files are listed in a popup, relative to where you are, before you confirm with <kbd>y</kbd>. [See manual](man.html#floating-windows).
+Help, file stats and delete confirmations open in rounded, titled popups that fit their content, with clearer messages and pill key hints along the bottom. [See manual](man.html#floating-windows).
 
 ### Git status
 
-A status column built into nnn, not a patch. `-G` turns it on, <kbd>i</kbd> toggles it live, and it only appears when the repo has changes. It also works with a bare dotfiles repo at `~/.dotfiles` when you are in your `$HOME` folder.
+Git status is built in, with symbols for changes in the listing and the branch and its summary beside the current folder. It works with dotfiles repos in `$HOME`. [See manual](man.html#git-status).
 
 ### Readable timestamps
 
 Compact eza style, US style, or eza with the weekday for today's files, (`-y` / `-Y` / `-Z`). Press <kbd>y</kbd> to cycle them in a running session.
 
-Recently changed files get a clock icon `NNN_YOUNG`.
+Recently changed files get a clock icon.
 
 ### Quieter detail view {.wide}
 
-Hide directory sizes with `-I` and octal permissions with `-m`, or toggle them with <kbd>I</kbd> and <kbd>M</kbd>. Time and size columns have their own colors in `NNN_FCOLORS`.
+Hide directory sizes with `-I` and octal permissions with `-m`, or toggle them with <kbd>I</kbd> and <kbd>M</kbd>. Time and size columns have their own colors.
 
 ### Updated preview plugin {.wide}
 
