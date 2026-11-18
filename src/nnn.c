@@ -311,13 +311,14 @@
 
 /* Git icons */
 #ifdef NERD
-#define GIT_ADD "+"
-#define GIT_DEL "✗"
-#define GIT_IGN "!"
-#define GIT_MOD "Δ"
+/* Octicons diff icons (3 bytes each, so they fit the 4 byte status copy) */
+#define GIT_ADD "\uf457"
+#define GIT_DEL "\uf458"
+#define GIT_IGN "\uf474"
+#define GIT_MOD "\uf459"
 #define GIT_NEW "?"
 #define GIT_NON " "
-#define GIT_UPD "󰚰"
+#define GIT_UPD "\uf419"
 #else
 #define GIT_ADD "A"
 #define GIT_DEL "D"
