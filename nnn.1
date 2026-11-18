@@ -658,8 +658,9 @@ Git status is built into
 and needs no patch. \fB-G\fR queries git and adds a status column to the detail and
 normal views, and \fBi\fR toggles it in a running instance. Without \fB-G\fR git is not run.
 The column appears only when git reports a change. It has two cells, for staged and
-unstaged changes. A folder shows the first status found under it, which includes
-ignored files unless \fBNNN_GITIGNORE=dim\fR is set.
+unstaged changes. Ignored entries are drawn dim and italic and get no mark, and a folder
+is dimmed only when the whole folder is ignored. \fBNNN_GITIGNORE=mark\fR marks them
+\fB!!\fR instead, and a folder then shows the first status found under it, ignored files included.
 .Pp
 .Bd -literal
  Nerd font | Plain | Meaning
@@ -680,10 +681,6 @@ It is shown whenever the status column is on, so \fB-G\fR and \fBi\fR turn it on
 \fBNNN_GITBRANCH=0\fR hides it.
 .Pp
 Inside \fB$HOME\fR it works with a bare dotfiles repository.
-.Pp
-\fBNNN_GITIGNORE=dim\fR draws ignored entries dim and italic instead of marking them \fB!!\fR.
-A folder is dimmed only when the whole folder is ignored, and one that merely contains
-ignored files shows nothing.
 .Sh UNITS
 The minimum file size unit is byte (B). The rest are K, M, G, T, P, E, Z, Y
 (powers of 1024), same as the default units in \fBls\fR.
@@ -1068,11 +1065,11 @@ selects the bare \fB~/.dotfiles\fR repository in tracked folders); without that 
     export NNN_GITBRANCH=0
 .Ed
 .Pp
-\fBNNN_GITIGNORE:\fR set to \fBdim\fR to draw git ignored entries dim and italic, in their own colors, instead of marking them
-\fB!!\fR in the git column (needs \fB-G\fR). Only an entry that is ignored itself is styled, so a folder
-that merely contains ignored files is not, unless the whole folder is ignored.
+\fBNNN_GITIGNORE:\fR git ignored entries are drawn dim and italic, in their own colors (needs \fB-G\fR).
+Set to \fBmark\fR to mark them \fB!!\fR in the git column instead. Only an entry that is ignored itself
+is styled, so a folder that merely contains ignored files is not, unless the whole folder is ignored.
 .Bd -literal
-    export NNN_GITIGNORE=dim
+    export NNN_GITIGNORE=mark
 .Ed
 .Pp
 \fBNO_COLOR:\fR disable ANSI color output (overridden by \fBNNN_COLORS\fR).

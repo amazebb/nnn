@@ -267,7 +267,7 @@
 #define FILE_SELECTED 0x10
 #define FILE_SCANNED  0x20
 #define FILE_YOUNG    0x40
-#define FILE_IGNORED  0x80 /* git ignored; drawn dim when NNN_GITIGNORE=dim */
+#define FILE_IGNORED  0x80 /* git ignored; drawn dim unless NNN_GITIGNORE=mark */
 
 #define IS_DIR_OR_DIRLNK(ent) (((ent)->flags & DIR_OR_DIRLNK) != 0)
 
@@ -520,8 +520,8 @@ static bool gitpairs, gitrgb;
 static char gitbranch[128];
 static bool gittrack; /* Folder is tracked by the bare ~/.dotfiles repo */
 
-/* NNN_GITIGNORE=dim: dim git ignored entries instead of marking them in the git column */
-static bool gitdim = FALSE;
+/* Dim git ignored entries (default); NNN_GITIGNORE=mark marks them !! in the git column instead */
+static bool gitdim = TRUE;
 
 /* How timestamps of recently modified ("young") entries stand out; NNN_YOUNG selects */
 #define YOUNG_REVERSE   0 /* reverse video (as upstream) */
@@ -5789,7 +5789,7 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 
 	uchar_t color_pair = get_color_pair_name_ind(ent, &ind, &attrs);
 
-	/* Git ignored (NNN_GITIGNORE=dim): dim italic in the entry's own color, never bold */
+	/* Git ignored (default, not NNN_GITIGNORE=mark): dim italic in the entry's own color, never bold */
 	bool ign = (ent->flags & FILE_IGNORED) && !sel;
 
 	if (ign) {
@@ -12031,7 +12031,7 @@ int main(int argc, char *argv[])
 #endif
 
 	gitbranch_on = xgetenv("NNN_GITBRANCH", "1")[0] != '0';
-	gitdim = !strcmp(xgetenv("NNN_GITIGNORE", ""), "dim");
+	gitdim = strcmp(xgetenv("NNN_GITIGNORE", ""), "mark") != 0;
 
 	{
 		const char *hm = xgetenv("NNN_HOVERMARK", "");

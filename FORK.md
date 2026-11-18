@@ -137,7 +137,7 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 | `-I` `-m` | Hide directory sizes, hide octal permissions |
 | `NNN_PILL=0` | Turn off the rounded caps |
 | `NNN_GITBRANCH=0` | Hide the git branch segment after the path in the top line |
-| `NNN_GITIGNORE=dim` | With `-G`, draw git ignored entries dim and italic instead of marking them `!!` in the git column |
+| `NNN_GITIGNORE=mark` | With `-G`, mark git ignored entries `!!` in the git column instead of drawing them dim |
 | `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
 | `NNN_YOUNG` | Style for recent files: `icon`, `reverse`, `pill` or `none` |
 | `NNN_HOVERMARK` | Hovered entry marker: `triangle`, `1` for `>`, `0` for none |
@@ -204,7 +204,7 @@ Built into `nnn.c` (not applied as a compile-time patch).
 - **`i`**: toggle that column in a running instance (reloads the directory).
 - The column appears only when git reports a change (a clean repo looks like no column).
 - In `$HOME`, git is invoked against the bare `~/.dotfiles` repo.
-- **`NNN_GITIGNORE=dim`**: ignored entries are drawn dim and italic in their own colors (never bold) and get no `!!` mark. Only the ignored entry itself is styled, not a folder that merely contains ignored files. Unset, ignored entries show `!!`, and so do folders that contain them.
+- **Ignored entries** are drawn dim and italic in their own colors (never bold) and get no `!!` mark. Only the ignored entry itself is styled, not a folder that merely contains ignored files. `NNN_GITIGNORE=mark` goes back to `!!` marks, which also show on folders that contain ignored files.
 
 ### macOS `stat`
 
