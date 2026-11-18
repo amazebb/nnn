@@ -1034,12 +1034,11 @@ selects the bare \fB~/.dotfiles\fR repository in tracked folders); without that 
     export NNN_GITBRANCH=0
 .Ed
 .Pp
-\fBnnn:\fR this is a special variable.
-.Bd -literal
-    Set to the hovered file name before starting the command prompt or spawning a shell.
-.Ed
-.Pp
 \fBNO_COLOR:\fR disable ANSI color output (overridden by \fBNNN_COLORS\fR).
+.Pp
+\fBnnn:\fR a special variable that you cannot set. It is set to the name of the hovered
+file before the command prompt starts, a shell is spawned or a plugin runs, so
+commands can refer to it as \fB"$nnn"\fR.
 .Sh AUTHORS
 .Pp
 nnn is written by
