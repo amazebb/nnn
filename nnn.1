@@ -613,17 +613,19 @@ and a few small visual touches that make the listing easier to scan:
 - the hovered entry, the status line segments (counter, selection, sort and
 filter flags, time, permissions, owner, size, file name), the context number
 and path in the top line, and every message and prompt are pills with rounded
-caps; \fBNNN_PILL=0\fR turns them off, \fBNNN_MSGCOLOR\fR sets the message color
+caps, \fBNNN_PILL\fR, \fBNNN_MSGCOLOR\fR
 .br
-- the git branch and its summary follow the path in the top line
-(see \fBNNN_GITBRANCH\fR)
+- the git branch and its summary follow the path in the top line, \fBNNN_GITBRANCH\fR
 .br
-- a triangle marks the hovered entry in the detail view (\fBNNN_HOVERMARK\fR)
+- a triangle marks the hovered entry in the detail view, \fBNNN_HOVERMARK\fR
 .br
-- recently modified entries get a clock icon before the time (\fBNNN_YOUNG\fR)
+- recently modified entries get a clock icon before the time, \fBNNN_YOUNG\fR
 .br
-- timestamps can be compact (\fB-y\fR, \fB-Y\fR, \fB-Z\fR, key \fBy\fR) and the
-time and size columns have their own colors (\fBNNN_FCOLORS\fR)
+- timestamps can be compact, \fB-y\fR, \fB-Y\fR, \fB-Z\fR, and key
+.Ic y
+toggles the options
+.br
+- the time and size columns have their own colors, \fBNNN_FCOLORS\fR
 .br
 - choice prompts and floating windows are described in the next two sections
 .Pp
