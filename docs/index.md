@@ -25,11 +25,11 @@ Help, file stats and delete confirmations open in rounded, titled popups that fi
 
 ### [Git status](man.html#git-status)
 
-Git status is built in, with symbols for changes in the listing and the branch and its summary beside the current folder. It works with dotfiles repos in `$HOME`.
+Git status is built in, with symbols for changes in the listing and the branch and its summary beside the current folder. It also works with dotfiles repos.
 
 ### [Readable timestamps](man.html#appearance)
 
-Compact eza style, US style, or eza with the weekday for today's files. Press <kbd>y</kbd> to cycle them in a running session. Recently changed files get a clock icon.
+Compact eza style, US style, or the weekday for today's files only. Press <kbd>y</kbd> to cycle them in a running session. Recently changed files get a clock icon.
 
 ### [Quieter detail view](man.html#display) {.wide}
 
@@ -61,15 +61,17 @@ Flags and environment variables. Add the letters to `NNN_OPTS` to make them perm
 
 ## Install {#install}
 
-A binary is not included, so for now you need to compile it yourself. The pills need a Nerd Font in your terminal; without `O_NERD` the interface falls back to plain characters.
+A binary is not included, so for now you need to compile it yourself. The pills need a Nerd Font in your terminal, without it the interface falls back to plain characters.
 
 ### Requirements
 
-`make deploy` needs `make`, a C11 compiler, `git`, the ncurses headers and a Nerd Font for the glyphs. On macOS the Command Line Tools cover everything but the font:
+On macOS you need the Command Line Tools and a Nerd Font, which can be installed using [Homebrew](https://brew.sh):
 
 {{code ../FORK.md#requirements}}
 
-::: details What `make deploy` needs
+::: details What is needed
+Apart from the compiler tools, the ncurses headers and the font, all of it is standard on a Unix system.
+
 {{table ../FORK.md#requirements}}
 :::
 
@@ -84,10 +86,6 @@ make deploy
 # install the plugins, including the previews
 rsync -a plugins/ ~/.config/nnn/plugins/
 ```
-
-::: note
-`nnn -V` should report `5.3-amazebb`. The binary goes to `~/.local/bin/nnn` with the previous copy kept as `nnn.bak`, so make sure that folder is on your `PATH`.
-:::
 
 ::: details Make targets
 {{table ../FORK.md#make-targets}}

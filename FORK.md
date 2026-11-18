@@ -65,17 +65,15 @@ Put `~/.local/share/zsh/site-functions` on `fpath` so completion loads.
 
 #### Requirements
 
-No binary is provided: `make deploy` builds from source. It needs `make`, a C11 compiler, `git` (to clone), the ncurses headers, the standard `install`, `cp`, `grep` and `cut`, and a Nerd Font for the pill and icon glyphs. `pkg-config` is optional.
+No binary is provided: `make deploy` builds from source. It needs `make`, a C11 compiler, `git` (to clone), the ncurses headers, the standard `install`, `cp`, `grep` and `cut`, and a Nerd Font for the pill and icon glyphs. `pkg-config` is optional. Apart from the compiler tools, the ncurses headers and the font, all of it is standard on a Unix system.
 
 | Tool | Used for |
 | --- | --- |
 | `make` | runs the build |
 | C compiler (`cc`, C11) | builds `src/nnn.c` |
-| `grep`, `cut` | read the version string from `src/nnn.c` |
-| ncurses with headers (`pkg-config` optional) | linking; without `pkg-config` the `Makefile` falls back to `-lncurses` |
-| `pthread` | linked in; part of the system libc |
-| `install` | copies the binary, `nnn.1` and the zsh completion |
-| `cp` | keeps the previous binary as `nnn.bak` |
+| ncurses with headers | the terminal library `nnn` is linked against |
+| `pkg-config` (optional) | finds ncurses outside the default paths |
+| `install`, `cp`, `grep`, `cut`, `pthread` | standard coreutils and libc |
 
 On macOS, Apple's Command Line Tools supply `make`, `cc`, `git` and the ncurses headers, so the only extra step is a Nerd Font:
 
