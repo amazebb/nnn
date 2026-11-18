@@ -84,6 +84,21 @@ xcode-select --install
 brew install font-symbols-only-nerd-font
 ```
 
+#### Make targets
+
+| Command | What it does |
+| --- | --- |
+| `make` | builds only `./nnn` in the source folder, with the default options |
+| `make O_NERD=1` | builds only `./nnn` in the source folder, with Nerd Font icons and the rounded pills |
+| `make deploy` | builds `./nnn` with `O_NERD=1`, strips it and installs `~/.local/bin/nnn` (the old copy becomes `nnn.bak`), `~/.local/share/man/man1/nnn.1` and `~/.local/share/zsh/site-functions/_nnn` |
+| `make install` | builds and strips `./nnn` with the default options and installs `/usr/local/bin/nnn` (the old copy becomes `nnn.bak`), `/usr/local/share/man/man1/nnn.1` and `/usr/local/share/zsh/site-functions/_nnn`; may need `sudo` |
+| `make PREFIX=DIR install` | the same as `make install`, under `DIR/bin`, `DIR/share/man/man1` and `DIR/share/zsh/site-functions` |
+| `make uninstall` | removes the installed binary, man page and zsh completion from `PREFIX` |
+| `make strip` | builds and strips only `./nnn` in the source folder |
+| `make static` | builds and strips four static binaries in the source folder: `nnn-static`, `nnn-icons-static`, `nnn-nerd-static` and `nnn-emoji-static`; needs a static libc |
+| `make docs` | regenerates `docs/man.html` and `docs/index.html` with the [sitegen](https://github.com/amazebb/sitegen) tools (set `SITEGEN=` to your clone of it) |
+| `make clean` | deletes `./nnn`, the static binaries, release archives and generated icon files in the source folder; installed copies stay |
+
 ## Changes from master
 
 ### Keys

@@ -274,8 +274,9 @@ install: $(INSTALL_DEPS)
 
 # Regenerate the web pages (docs/man.html from nnn.1, docs/index.html from docs/index.md) with the
 # sitegen tools, and refresh docs/style.css, script.js and img/icons.svg from its theme
-SITEGEN ?= $(HOME)/Code/GitHub/amazebb/sitegen
+SITEGEN ?=
 docs:
+	@test -n "$(SITEGEN)" || { echo "set SITEGEN to your sitegen clone, e.g. make docs SITEGEN=/path/to/sitegen" >&2; exit 1; }
 	cp $(SITEGEN)/theme/style.css $(SITEGEN)/theme/script.js docs/
 	cp $(SITEGEN)/theme/icons.svg docs/img/icons.svg
 	$(SITEGEN)/bin/man2html -T docs/man.template.html -o docs/man.html nnn.1

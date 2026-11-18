@@ -67,11 +67,11 @@ Flags and environment variables. Add the letters to `NNN_OPTS` to make them perm
 
 ## Install {#install}
 
-Build from source. The pills need a Nerd Font in your terminal; without `O_NERD` the interface falls back to plain characters.
+A binary is not included, so for now you need to compile it yourself. The pills need a Nerd Font in your terminal; without `O_NERD` the interface falls back to plain characters.
 
 ### Requirements
 
-`make deploy` builds from source. It needs `make`, a C11 compiler, `git`, the ncurses headers and a Nerd Font for the glyphs. On macOS the Command Line Tools cover everything but the font:
+`make deploy` needs `make`, a C11 compiler, `git`, the ncurses headers and a Nerd Font for the glyphs. On macOS the Command Line Tools cover everything but the font:
 
 {{code ../FORK.md#requirements}}
 
@@ -93,6 +93,10 @@ rsync -a plugins/ ~/.config/nnn/plugins/
 
 ::: note
 `nnn -V` should report `5.3-amazebb`. The binary goes to `~/.local/bin/nnn` with the previous copy kept as `nnn.bak`, so make sure that folder is on your `PATH`.
+:::
+
+::: details Make targets
+{{table ../FORK.md#make-targets}}
 :::
 
 ## Manual {#manual}
