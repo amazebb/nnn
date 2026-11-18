@@ -145,7 +145,8 @@ _________ + ____________________________________________________________
  E        | Edit the selection list in the editor
  S        | Show the total size of the selection listed here
  C        | Copy file name(s) of the selection, else the hovered entry,
-          | to the system clipboard
+          | to the system clipboard (E opens the list in the editor
+          | instead). ^G in a prompt pastes the first one
  ^B       | Same as C, with full paths
  p, ^P    | Copy the selection into the current directory
  v, ^V    | Move the selection into the current directory
@@ -170,8 +171,7 @@ _________ + ____________________________________________________________
 C and ^B put one name or path per line on the clipboard. In any text prompt,
 such as the one opened by \fBn\fR, \fB^g\fR (lowercase) inserts the first
 copied entry at the cursor. If several entries were copied, only the first
-is inserted. \fB^Y\fR does the same where the terminal passes it through, but
-macOS reserves it, so use \fB^g\fR.
+is inserted.
 .Ss Misc
 .Bd -literal
 
@@ -1032,6 +1032,13 @@ the \fBdotfiles\fR zsh function in \fB~/.local/share/zsh/site-functions/dotfiles
 selects the bare \fB~/.dotfiles\fR repository in tracked folders); without that file nothing is shown.
 .Bd -literal
     export NNN_GITBRANCH=0
+.Ed
+.Pp
+\fBNNN_GITIGNORE:\fR set to \fBdim\fR to draw git ignored entries dim and italic, in their own colors, instead of marking them
+\fB!!\fR in the git column (needs \fB-G\fR). Only the ignored entry itself is styled, not a folder
+that contains ignored files.
+.Bd -literal
+    export NNN_GITIGNORE=dim
 .Ed
 .Pp
 \fBNO_COLOR:\fR disable ANSI color output (overridden by \fBNNN_COLORS\fR).

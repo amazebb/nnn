@@ -111,7 +111,7 @@ brew install font-symbols-only-nerd-font
 | `M` | Display | Toggle octal permissions in detail mode (same as `-m`) |
 | `y` | Display | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
 | `I` | Display | Toggle directory sizes in detail mode (same as the `-I` option) |
-| `C` / `Ctrl+B` | Files | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard (`pbcopy`; `wl-copy`/`xclip`/`xsel` elsewhere), newline separated. `Ctrl+G` (lowercase g; or `Ctrl+Y` where the tty delivers it) in any prompt (e.g. `n`) pastes the first copied entry. |
+| `C` / `Ctrl+B` | Files | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard, newline separated. `Ctrl+G` in any prompt (e.g. `n`) pastes the first copied entry. |
 | `;;` | Files | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
 
 #### Changed behavior of existing keys
@@ -137,6 +137,7 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 | `-I` `-m` | Hide directory sizes, hide octal permissions |
 | `NNN_PILL=0` | Turn off the rounded caps |
 | `NNN_GITBRANCH=0` | Hide the git branch segment after the path in the top line |
+| `NNN_GITIGNORE=dim` | With `-G`, draw git ignored entries dim and italic instead of marking them `!!` in the git column |
 | `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
 | `NNN_YOUNG` | Style for recent files: `icon`, `reverse`, `pill` or `none` |
 | `NNN_HOVERMARK` | Hovered entry marker: `triangle`, `1` for `>`, `0` for none |
@@ -203,6 +204,7 @@ Built into `nnn.c` (not applied as a compile-time patch).
 - **`i`**: toggle that column in a running instance (reloads the directory).
 - The column appears only when git reports a change (a clean repo looks like no column).
 - In `$HOME`, git is invoked against the bare `~/.dotfiles` repo.
+- **`NNN_GITIGNORE=dim`**: ignored entries are drawn dim and italic in their own colors (never bold) and get no `!!` mark. Only the ignored entry itself is styled, not a folder that merely contains ignored files. Unset, ignored entries show `!!`, and so do folders that contain them.
 
 ### macOS `stat`
 
