@@ -420,11 +420,11 @@ The filter prompt starts with a pill showing the mode and its keys, for example 
 the modes at an empty prompt and \fB:\fR toggles case: lowercase (\fBstr\fR) ignores case, uppercase
 (\fBSTR\fR) is case sensitive. Without pills the hint \fBstr [/], ic [:]\fR is shown on the line above.
 .Bd -literal
- Pill     | Mode   | Matches                             | Option
+ Pill     | Mode    | Matches                              | Option
 _________ + _______ + ____________________________________ + _______
- str, STR | String | Text anywhere in the name (default) | -
- fzy, FZY | Fuzzy  | All characters in order, e.g. mvk   | -z
- reg, REG | Regex  | Regular expression                  | -g
+ str, STR | String  | Text anywhere in the name (default)  | -
+ fzy, FZY | Fuzzy   | All characters in order, e.g. mvk    | -z
+ reg, REG | Regex   | Regular expression                   | -g
 _________ + _______ + ____________________________________ + _______
 .Ed
 .Pp
@@ -585,13 +585,13 @@ files are stored under their own names. If the archive exists, nnn asks before o
 .Pp
 nnn does not compress anything itself; it runs the first of these tools that is installed:
 .Bd -literal
- Tool   | Used when                          | Formats
-_______ + ___________________________________ + _________________________
- atool  | Installed (skipped with -B)        | tar.*, zip, 7z, rar, ...
- bsdtar | No atool, or -B                    | tar.*, zip, 7z
- zip    | Neither, and the name ends in .zip | zip
- tar    | Neither of the above               | tar.*
-_______ + ___________________________________ + _________________________
+ Order | Tool    | Used when                           | Formats
+______ + _______ + ___________________________________ + _________________________
+ 1     | atool   | Installed (skipped with -B)         | tar.*, zip, 7z, rar, ...
+ 2     | bsdtar  | No atool, or -B                     | tar.*, zip, 7z
+ 3     | zip     | Neither, and the name ends in .zip  | zip
+ 4     | tar     | Neither of the above                | tar.*
+______ + _______ + ___________________________________ + _________________________
 .Ed
 .Pp
 \fBatool\fR is a wrapper that calls the right program for each format. \fBbsdtar\fR is the
@@ -768,22 +768,22 @@ Inside \fB$HOME\fR it works with a bare dotfiles repository.
 This is the amazebb fork of nnn. Everything upstream does still works; the fork adds
 the following (the last column is the section of this manual that explains it):
 .Bd -literal
- Area           | Change                          | Section
+ Area           | Change                           | Section
 _______________ + ________________________________ + _________________
- Pills          | Rounded pills, hover to prompts | APPEARANCE
- Status line    | Pills, order set by NNN_STATUS  | APPEARANCE
- Filter prompt  | One pill: mode and case         | FILTERS
- Choice prompts | Pills, Left/Right to select     | CHOICE PROMPTS
- Popups         | Rounded help, stats, confirms   | FLOATING WINDOWS
- Git            | Built-in column, branch segment | GIT STATUS
- Timestamps     | Compact styles, young entries   | APPEARANCE
- Detail view    | Keys i M y I; returns on widen  | KEYBINDS
- Sorting        | t sets a key, T S E reverse     | SORTING
- Open with      | o: GUI/CLI choice, not found    | KEYBINDS
- Archives       | z, and l o x m on Enter         | ARCHIVES
- Bookmarks      | Esc goes back                   | BOOKMARKS
- Clipboard      | C, ^B copy; ;; Quick Look       | KEYBINDS
- Help (?)       | Archive, filter keys, regex     | KEYBINDS
+ Pills          | Rounded pills, hover to prompts  | \fBAPPEARANCE\fR
+ Status line    | Pills, order set by NNN_STATUS   | \fBAPPEARANCE\fR
+ Filter prompt  | One pill: mode and case          | \fBFILTERS\fR
+ Choice prompts | Pills, Left/Right to select      | \fBCHOICE PROMPTS\fR
+ Popups         | Rounded help, stats, confirms    | \fBFLOATING WINDOWS\fR
+ Git            | Built-in column, branch segment  | \fBGIT STATUS\fR
+ Timestamps     | Compact styles, young entries    | \fBAPPEARANCE\fR
+ Detail view    | Keys i M y I; returns on widen   | \fBKEYBINDS\fR
+ Sorting        | t sets a key, T S E reverse      | \fBSORTING\fR
+ Open with      | o: GUI/CLI choice, not found     | \fBKEYBINDS\fR
+ Archives       | z, and l o x m on Enter          | \fBARCHIVES\fR
+ Bookmarks      | Esc goes back                    | \fBBOOKMARKS\fR
+ Clipboard      | C, ^B copy; ;; Quick Look        | \fBKEYBINDS\fR
+ Help (?)       | Archive, filter keys, regex      | \fBKEYBINDS\fR
 _______________ + ________________________________ + _________________
 .Ed
 .Pp

@@ -9,7 +9,7 @@ from FORK.md. Build with `make docs` (see AGENTS.md). -->
 
 ## What's new {#features .cards}
 
-Every change is a small, optional layer on top of upstream nnn. Switch any of it off with a flag or an environment variable.
+[Every change](man.html#changes) is a small, optional layer on top of upstream nnn. Switch any of it off with a flag or an environment variable.
 
 ### [A modern look](man.html#appearance)
 
@@ -45,7 +45,7 @@ The bundled `preview-tui` plugin is updated to work with newer terminals: native
 
 ### Everyday conveniences
 
-Quick Look the hovered file with <kbd>;</kbd><kbd>;</kbd>, copy names or paths to the clipboard, set and reverse sort keys, and more. See all the [keys](#keys).
+Quick Look the hovered file with <kbd>;</kbd><kbd>;</kbd>, copy names or paths to the clipboard, set and reverse sort keys, and more. See all the [keys](#keys) and [every change](man.html#changes).
 
 ## Keys {#keys}
 
@@ -93,4 +93,4 @@ rsync -a plugins/ ~/.config/nnn/plugins/
 
 ## Manual {#manual}
 
-The full reference is the [`nnn(1)` man page](man.html).
+The full reference is the [`nnn(1)` man page](man.html). Everything this fork changes is listed in its [CHANGES](man.html#changes) section, with a link to the part of the manual that explains each one.
