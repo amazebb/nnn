@@ -402,6 +402,20 @@ When there's a unique match and it's a directory,
 .Nm
 auto enters the directory. Use the relevant program option to disable this.
 .Pp
+Filter modes, shown as a pill on the right of the line above the status bar (key \fB/\fR cycles them
+at an empty prompt, \fB:\fR toggles \fBic\fR/\fBnoic\fR, ignore case or case sensitive):
+.Bd -literal
+ Pill | Mode   | Matches                             | Option
+_____ + _______ + ____________________________________ + _______
+ str  | String | Text anywhere in the name (default) | -
+ fzy  | Fuzzy  | All characters in order, e.g. mvk   | -z
+ reg  | Regex  | Regular expression                  | -g
+_____ + _______ + ____________________________________ + _______
+.Ed
+.Pp
+The regex flavour is chosen when nnn is built: POSIX extended (no lookahead) by default, PCRE2 with
+\fBO_PCRE2=1\fR. The \fB?\fR help screen shows which one this build uses. Regex examples are listed below.
+.Pp
 Special keys at filter prompt:
 .Bd -literal
  Key   | Function

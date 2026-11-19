@@ -178,6 +178,8 @@ In `O_NERD` builds the hovered entry's highlight, the status-line segments (file
 
 While filtering, the hint on the right of the line above the status bar is drawn as pills: sort flags (when set), the filter mode (`str`, `reg` or `fzy`; `/` cycles it) and case handling (`ic` ignores case, `noic` is case sensitive; `:` toggles it). Without pills it is the upstream text `str [/], ic [:]`.
 
+The `?` help screen has a `REGEX FILTER` line naming the regex flavour of the build: POSIX extended (no lookahead, the default) or PCRE2 (`O_PCRE2=1`). The manual's FILTERS section has a table of the filter modes.
+
 ### Bookmarks
 
 `Esc` at the filter prompt that opens in the bookmarks directory (`b`, then Enter) goes back to the directory you came from; upstream stayed in the bookmarks directory.

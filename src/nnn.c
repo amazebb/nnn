@@ -7335,6 +7335,12 @@ static void show_help(const char *path)
 	fprintf(f, "used:%s ", coolsize(get_fs_info(path, VFS_USED)));
 	fprintf(f, "size:%s\n\n", coolsize(get_fs_info(path, VFS_SIZE)));
 
+#ifdef PCRE2
+	fprintf(f, "REGEX FILTER: PCRE2\n\n");
+#else
+	fprintf(f, "REGEX FILTER: POSIX extended (no lookahead)\n\n");
+#endif
+
 	if (bookmark || mark) {
 		fprintf(f, "BOOKMARKS\n");
 		printkv(bookmark, f, maxbm, NNN_BMS);
