@@ -638,8 +638,8 @@ option, the one \fBEnter\fR picks, is the filled message pill and the others use
 The key to press is capitalised and underlined (\f(BIF\fBile\fR, \f(BID\fBir\fR, \fBe\f(BIX\fBtract\fR).
 A final \fBEsc\fR pill shows that any other key cancels.
 .Pp
-Needs the rounded pills and at least 60 columns, otherwise the plain
-\fB'f'ile/'d'ir\fR text is shown. \fBNNN_PILL=0\fR turns the pills off.
+Needs the rounded pills; on a narrow screen the options that do not fit are left off.
+Without pills (\fBNNN_PILL=0\fR) the plain \fB'f'ile/'d'ir\fR text is shown.
 .Sh FLOATING WINDOWS
 Help, file stats (\fBf\fR) and confirmations open in rounded, titled popups that
 fit their content. Scroll indicators are nerd font carets (\fB^v<>\fR without nerd font
@@ -1018,6 +1018,14 @@ NOTE: Only the first character is considered if not a \fBCtrl+key\fR combo.
 status line, top line and prompts (on by default; needs a nerd font build, \fBO_NERD\fR).
 .Bd -literal
     export NNN_PILL=0
+.Ed
+.Pp
+\fBNNN_STATUS:\fR segments of the status line after the file counter and selection, left to right:
+\fBf\fR sort/filter flags, \fBt\fR time, \fBs\fR size, \fBp\fR permissions, \fBo\fR owner
+(needs \fB-U\fR), \fBn\fR file name. Default \fBftspon\fR. A segment left out is hidden. With pills,
+the segment that no longer fits and all after it are dropped, so the order is the priority.
+.Bd -literal
+    export NNN_STATUS=tsn
 .Ed
 .Pp
 \fBNNN_MSGCOLOR:\fR xterm color number (0-255) of the message and prompt pills

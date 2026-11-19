@@ -134,6 +134,7 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 | `-y` `-Y` `-Z` | Compact eza, US, or eza-with-weekday timestamps (the last one wins) |
 | `-I` `-m` | Hide directory sizes, hide octal permissions |
 | `NNN_PILL=0` | Turn off the rounded caps |
+| `NNN_STATUS` | Detail segments of the status line and their order (default `ftspon`) |
 | `NNN_GITBRANCH=0` | Hide the git branch segment after the path in the top line |
 | `NNN_GITIGNORE=mark` | With `-G`, mark git ignored entries `!!` in the git column instead of drawing them dim |
 | `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
@@ -168,7 +169,7 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
 ### Rounded highlight
 
-In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills when the terminal is at least 80 columns wide) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. The current context number and the whole path in the top line are pills too (two columns wider each, the path shortens to match); other contexts keep their colored digits. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
+In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills; order and visibility by `NNN_STATUS`, and from the right a pill that no longer fits is dropped) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. The current context number and the whole path in the top line are pills too (two columns wider each, the path shortens to match); other contexts keep their colored digits. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
 
 ### Git segment (top line)
 
@@ -176,7 +177,7 @@ In `O_NERD` builds with pills and a 256-color terminal, a git segment follows th
 
 ### Choice prompts
 
-Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). A final `Esc` pill shows that any other key cancels. Needs the pill caps and at least 60 columns, otherwise the plain `'f'ile/'d'ir` text is shown. See also [Copy / move with nothing selected](#copy--move-with-nothing-selected).
+Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). A final `Esc` pill shows that any other key cancels. Needs the pill caps; on a narrow screen the options that do not fit are left off. Without pills the plain `'f'ile/'d'ir` text is shown. See also [Copy / move with nothing selected](#copy--move-with-nothing-selected).
 
 ### Hovered entry marker
 

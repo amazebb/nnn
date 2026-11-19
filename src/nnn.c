@@ -511,6 +511,8 @@ static bool pill = TRUE;
 #define PILL_R ""
 #define pill FALSE
 #endif
+#define STATUS_DEFAULT       "ftspon"
+static char statusorder[8] = STATUS_DEFAULT; /* NNN_STATUS: detail segments, left to right = drop priority */
 
 static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 
@@ -1799,11 +1801,18 @@ static void printchoices(const char *spec)
 
 	while (*p) {
 		bool def = FALSE, key = FALSE;
+		int w = 0;
 
 		if (*p == '[') {
 			def = TRUE;
 			++p;
 		}
+
+		/* Option width; one that no longer fits (with caps and gap) ends the line, as in the status bar */
+		for (const char *q = p; *q && *q != '/' && *q != ']' && !(*q == '?' && !q[1]); ++q)
+			w += (*q != '\'');
+		if (getcurx(stdscr) + w + 5 >= xcols)
+			break;
 
 		if (def) {
 			if (msgcolor)
@@ -1840,18 +1849,20 @@ static void printchoices(const char *spec)
 	}
 
 	/* Any other key cancels in every choice prompt */
-	attron_curctx();
-	pill_open();
-	addstr("Esc");
-	pill_close();
-	attroff_curctx();
+	if (getcurx(stdscr) + 3 + 5 < xcols) {
+		attron_curctx();
+		pill_open();
+		addstr("Esc");
+		pill_close();
+		attroff_curctx();
+	}
 
 	clrtoeol();
 }
 
 static void showprompt(const char *prompt)
 {
-	if (pill && !g_state.oldcolor && xcols >= 60 && is_choice_prompt(prompt))
+	if (pill && !g_state.oldcolor && is_choice_prompt(prompt))
 		printchoices(prompt);
 	else
 		printmsg(prompt);
@@ -8880,8 +8891,8 @@ static void statusbar(char *path)
 
 	tolastln();
 
-	/* Segments (counter, time, perms, size) become pills when there is room */
-	bool segs = pill && !g_state.oldcolor && xcols >= 80;
+	/* Segments (counter, time, perms, size) become pills; narrow lines drop the ones that do not fit */
+	bool segs = pill && !g_state.oldcolor;
 
 	if (segs) {
 		pill_open();
@@ -8922,91 +8933,108 @@ static void statusbar(char *path)
 		       num_files, (ullong_t)pent->blocks << blk_shift, ptr);
 	} else { /* light or detail mode */
 		char sort[] = "\0\0\0\0\0";
-
 		bool hassort = getorderstr(sort);
+		bool lnk = S_ISLNK(pent->mode);
 
-		if (segs) { /* Filter mode and sort flags share one pill, shown only when set */
-			if (cfg.filtermode || hassort) {
-				pill_open();
+		/* Segments in NNN_STATUS order; with pills a segment that no longer fits ends the line */
+		for (const char *s = statusorder; *s; s++) {
+			const char *txt = NULL;
+			int w = 0;
+
+			switch (*s) {
+			case 'f': /* Filter mode and sort flags share one segment */
+				g_buf[0] = '\0';
 				if (cfg.filtermode)
-					addch('F');
+					xstrsncpy(g_buf, "F", 2);
 				if (hassort)
-					addstr(sort);
-				pill_close();
-			}
-		} else {
-			if (cfg.filtermode)
-				addch('F');
-			hassort ? addstr(sort) : addch(' ');
-		}
-
-		/* Timestamp */
-		if (segs)
-			pill_open();
-		print_time(&pent->sec, pent->flags, segs);
-
-		if (segs) {
-			pill_close();
-			pill_open();
-			addstr(get_lsperms(pent->mode));
-			pill_close();
-		} else {
-			addch(' ');
-			addstr(get_lsperms(pent->mode));
-			addch(' ');
-		}
+					xstrsncpy(g_buf + strlen(g_buf), sort, sizeof(sort));
+				if (!g_buf[0]) {
+					if (!segs)
+						addch(' ');
+					continue;
+				}
+				txt = g_buf;
+				break;
+			case 't':
+				w = cfg.compacttime ? TIME_COLS_COMPACT : TIME_COLS_ISO;
+				break;
+			case 'p':
+				txt = get_lsperms(pent->mode);
+				break;
 #ifndef NOUG
-		if (g_state.uidgid) {
-			if (segs)
-				pill_open();
-			addstr(getpwname(pent->uid));
-			addch(':');
-			addstr(getgrname(pent->gid));
-			if (segs)
-				pill_close();
-			else
-				addch(' ');
-		}
+			case 'o':
+				if (!g_state.uidgid)
+					continue;
+				i = snprintf(g_buf, 128, "%s", getpwname(pent->uid));
+				snprintf(g_buf + i, 128, ":%s", getgrname(pent->gid));
+				txt = g_buf;
+				break;
 #endif
-		if (S_ISLNK(pent->mode)) {
-			if (!cfg.fileinfo) {
-				i = readlink(pent->name, g_buf, PATH_MAX);
-				if (segs)
-					pill_open();
-				addstr(coolsize(i >= 0 ? i : pent->size)); /* Show symlink size */
-				if (segs)
-					pill_close();
-				if (i > 1) { /* Show symlink target */
-					int y;
-
-					addstr(segs ? "->" : " ->");
-					getyx(stdscr, len, y);
-					i = MIN(i, xcols - y);
-					g_buf[i] = '\0';
-					addstr(g_buf);
-				}
+			case 's':
+				if (lnk && cfg.fileinfo)
+					continue;
+				if (lnk) {
+					i = readlink(pent->name, g_buf, PATH_MAX);
+					txt = coolsize(i >= 0 ? i : pent->size); /* Show symlink size */
+				} else
+					txt = coolsize(pent->size);
+				break;
+			case 'n':
+				break;
+			default:
+				continue;
 			}
-		} else {
+
+			if (txt)
+				w = strlen(txt);
+
+			/* Pill: caps, padding and gap are 5 more columns; keep the last column free */
+			if (segs && *s != 'n' && getcurx(stdscr) + w + 5 >= xcols)
+				break;
+
+			if (*s == 'n') {
+				if (lnk) { /* Symlink target in place of the name */
+					if (cfg.fileinfo)
+						continue;
+					i = readlink(pent->name, g_buf, PATH_MAX);
+					if (i > 1) {
+						int y;
+
+						addstr("->");
+						getyx(stdscr, len, y);
+						i = MIN(i, xcols - y);
+						g_buf[i] = '\0';
+						addstr(g_buf);
+					}
+					continue;
+				}
+				if (segs)
+					pill_name(pent->name);
+				else
+					addstr(ptr);
+				if (pent->flags & HARD_LINK) {
+					struct stat sb;
+
+					if (stat(pent->name, &sb) != -1) {
+						addch(' ');
+						addstr(xitoa((int)sb.st_nlink)); /* Show number of links */
+						addch('-');
+						addstr(xitoa((int)sb.st_ino)); /* Show inode number */
+					}
+				}
+				continue;
+			}
+
 			if (segs)
 				pill_open();
-			addstr(coolsize(pent->size));
-			if (segs) {
+			if (*s == 't')
+				print_time(&pent->sec, pent->flags, segs);
+			else
+				addstr(txt);
+			if (segs)
 				pill_close();
-				pill_name(pent->name);
-			} else {
+			else if (*s != 'f')
 				addch(' ');
-				addstr(ptr);
-			}
-			if (pent->flags & HARD_LINK) {
-				struct stat sb;
-
-				if (stat(pent->name, &sb) != -1) {
-					addch(' ');
-					addstr(xitoa((int)sb.st_nlink)); /* Show number of links */
-					addch('-');
-					addstr(xitoa((int)sb.st_ino)); /* Show inode number */
-				}
-			}
 		}
 		clrtoeol();
 	}
@@ -12029,6 +12057,20 @@ int main(int argc, char *argv[])
 	if (xgetenv("NNN_PILL", "1")[0] == '0')
 		pill = FALSE;
 #endif
+
+	/* NNN_STATUS: f sort/filter, t time, s size, p perms, o owner, n name; unknown/repeated letters are ignored */
+	{
+		const char *st = xgetenv("NNN_STATUS", "");
+		int k = 0;
+
+		for (; *st && k < (int)sizeof(statusorder) - 1; st++)
+			if (strchr(STATUS_DEFAULT, *st) && !memchr(statusorder, *st, k))
+				statusorder[k++] = *st;
+		if (k)
+			statusorder[k] = '\0';
+		else
+			xstrsncpy(statusorder, STATUS_DEFAULT, sizeof(statusorder));
+	}
 
 	gitbranch_on = xgetenv("NNN_GITBRANCH", "1")[0] != '0';
 	gitdim = strcmp(xgetenv("NNN_GITIGNORE", ""), "mark") != 0;
