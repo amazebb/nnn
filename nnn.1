@@ -615,6 +615,9 @@ filter flags, time, permissions, owner, size, file name), the context number
 and path in the top line, and every message and prompt are pills with rounded
 caps, \fBNNN_PILL\fR, \fBNNN_MSGCOLOR\fR
 .br
+- the status line segments and their order are set with \fBNNN_STATUS\fR; on a narrow
+screen the ones that do not fit are dropped from the right
+.br
 - the git branch and its summary follow the path in the top line, \fBNNN_GITBRANCH\fR
 .br
 - a triangle marks the hovered entry in the detail view, \fBNNN_HOVERMARK\fR
@@ -1020,10 +1023,21 @@ status line, top line and prompts (on by default; needs a nerd font build, \fBO_
     export NNN_PILL=0
 .Ed
 .Pp
-\fBNNN_STATUS:\fR segments of the status line after the file counter and selection, left to right:
-\fBf\fR sort/filter flags, \fBt\fR time, \fBs\fR size, \fBp\fR permissions, \fBo\fR owner
-(needs \fB-U\fR), \fBn\fR file name. Default \fBftspon\fR. A segment left out is hidden. With pills,
-the segment that no longer fits and all after it are dropped, so the order is the priority.
+\fBNNN_STATUS:\fR segments of the status line after the file counter and selection, as letters from left to right.
+A segment left out is hidden. With pills, the segment that no longer fits and all after it are dropped on a
+narrow screen, so the order is the priority. Default \fBftspon\fR.
+.Bd -literal
+ Letter | Segment
+_______ + ______________________
+ f      | Sort and filter flags
+ t      | Time
+ s      | Size
+ p      | Permissions
+ o      | Owner (needs -U)
+ n      | File name
+_______ + ______________________
+.Ed
+.Pp
 .Bd -literal
     export NNN_STATUS=tsn
 .Ed
@@ -1073,9 +1087,16 @@ selects the bare \fB~/.dotfiles\fR repository in tracked folders); without that 
     export NNN_GITBRANCH=0
 .Ed
 .Pp
-\fBNNN_GITIGNORE:\fR git ignored entries are drawn dim and italic, in their own colors (needs \fB-G\fR).
-Set to \fBmark\fR to mark them \fB!!\fR in the git column instead. Only an entry that is ignored itself
+\fBNNN_GITIGNORE:\fR how git ignored entries are shown (needs \fB-G\fR). Only an entry that is ignored itself
 is styled, so a folder that merely contains ignored files is not, unless the whole folder is ignored.
+.Bd -literal
+ Value   | Meaning
+________ + __________________________________________________
+ (unset) | Dim and italic, in their own colors (default)
+ mark    | Marked !! in the git column, rolled up to folders
+________ + __________________________________________________
+.Ed
+.Pp
 .Bd -literal
     export NNN_GITIGNORE=mark
 .Ed

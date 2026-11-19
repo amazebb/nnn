@@ -13,7 +13,7 @@ Every change is a small, optional layer on top of upstream nnn. Switch any of it
 
 ### [A modern look](man.html#appearance)
 
-Small touches that make the listing easier to scan. The hover highlight, status-line segments, the context number, the whole top-line path (followed by the git branch) and every message are drawn as rounded pills, and a triangle marks the hovered entry.
+Small touches that make the listing easier to scan. The hover highlight, customisable status-line segments, the context number, the whole top-line path (followed by the git branch) and every message are drawn as rounded pills, and a triangle marks the hovered entry.
 
 ### [Choice prompts](man.html#choice-prompts)
 
