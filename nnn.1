@@ -527,6 +527,9 @@ clear, revert to filename order (not available with\~\fB-T\fR).
 cycle between filename/size/time order (not available with\~\fB-T\fR).
 .El
 .Pp
+Choosing a sort key sets it; choosing it again does not toggle it off. \fBt\fR then \fBc\fR clears
+all sort keys and goes back to name order.
+.Pp
 The uppercase version of the option (except \fBr\fR) reverses the default order.
 By default, time and size sort keys are ordered in descending order, and
 alphabetical fields are ordered in ascending order.
@@ -722,6 +725,9 @@ Help, file stats (\fBf\fR) and confirmations open in rounded, titled popups that
 fit their content. Scroll indicators are nerd font carets (\fB^v<>\fR without nerd font
 support) and the key hints along the bottom are pills with a bold key.
 .Pp
+On macOS \fBf\fR uses GNU \fBstat\fR from Homebrew coreutils
+(\fB/opt/homebrew/opt/coreutils/libexec/gnubin/stat\fR) when it is installed, otherwise \fB/usr/bin/stat -x\fR.
+.Pp
 \fBp\fR (copy) and \fBv\fR (move) with nothing selected show a popup first:
 \fBEnter\fR opens the editor on a blank path list, \fBq\fR or \fBEsc\fR cancels
 without opening it.
@@ -781,7 +787,8 @@ _______________ + ________________________________ + _________________
 _______________ + ________________________________ + _________________
 .Ed
 .Pp
-Plugins: \fBbb-z\fR (\fB;z\fR) jumps to a zoxide match, and \fBpreview-tui\fR has native splits in
+Plugins: \fBbb-z\fR (\fB;z\fR) jumps to a zoxide match (an empty prompt opens \fBzoxide query -i\fR,
+otherwise the words you type are the query), and \fBpreview-tui\fR has native splits in
 Ghostty and Rex, image previews with chafa or viu and an EXIF caption, and camera RAW previews.
 Both are in the \fBplugins\fR folder of the repository.
 .Pp

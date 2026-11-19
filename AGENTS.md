@@ -3,7 +3,7 @@
 - Personal fork of [jarun/nnn](https://github.com/jarun/nnn) on branch **`amazebb`**. 
 - `nnn -V` is **`5.3-amazebb`**. 
 - License stays BSD 2-Clause. 
-- Human-facing delta: `FORK.md`.
+- Human-facing delta: the **`CHANGES`** section of `nnn.1` (one row per change, naming the manual section that explains it). `FORK.md` keeps only maintainer notes (upstream sync, build, preview plugin) and the Keys / Options / Requirements tables the site pulls in. A new user-facing change gets a `nnn.1` section and a `CHANGES` row, not a `FORK.md` section.
 
 This file is the session brief. Keep it current: when a durable project fact changes, add or edit a **markdown bullet** here.
 

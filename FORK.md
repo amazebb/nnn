@@ -9,21 +9,8 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
 - [Build and Install](#build-and-install)
 - [Changes from master](#changes-from-master)
   - [Keys](#keys)
-  - [Appearance](#appearance)
   - [Options](#options)
-  - [Manual](#manual)
-  - [Timestamps](#timestamps)
-  - [Directory sizes](#directory-sizes)
-  - [Detail colors](#detail-colors)
-  - [Narrow screens](#narrow-screens)
-  - [Git status](#git-status)
-  - [Filter prompt](#filter-prompt)
-  - [Bookmarks](#bookmarks)
-  - [Git segment (top line)](#git-segment-top-line)
-  - [macOS `stat`](#macos-stat)
   - [Preview (Ghostty)](#preview-ghostty)
-  - [Sort keys (`t` / `s` / `e`)](#sort-keys-t--s--e)
-  - [Copy / move with nothing selected](#copy--move-with-nothing-selected)
   - [Plugin updates](#plugin-updates)
 
 ## Tracking upstream
@@ -103,6 +90,8 @@ brew install font-symbols-only-nerd-font
 
 ## Changes from master
 
+What the fork changes for a user is listed in the manual's **CHANGES** section (`man nnn`, or the site's manual page), and each change is explained in the section it names. This file keeps what the manual does not: the key and option tables that feed the site, and the preview plugin notes. Add a new change to the manual (a `CHANGES` row and its section), not here.
+
 ### Keys
 
 #### New keys
@@ -127,10 +116,6 @@ brew install font-symbols-only-nerd-font
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
 | `o` / `Ctrl+O` | Shows `command not found` when the typed command is not an executable on `PATH` (it is run without a shell, so aliases do not work); upstream silently did nothing. Choosing Gui also detaches stdin (so a terminal app started by mistake cannot steal keystrokes) and shows `launched <cmd> (no terminal; terminal apps need c)` |
 
-### Appearance
-
-With `O_NERD`, nnn draws its interface as rounded pills with a few small visual touches that make the listing easier to scan: pills for the hovered entry, status line segments, the context number and path, and every message and prompt (`NNN_PILL=0` disables them); the git branch after the path ([Git segment](#git-segment-top-line)); a triangle on the hovered entry (`NNN_HOVERMARK`); a clock icon on recently modified entries (`NNN_YOUNG`); compact timestamps ([Timestamps](#timestamps)); [choice prompts](#choice-prompts) and floating windows ([Copy / move with nothing selected](#copy--move-with-nothing-selected)). The manual's APPEARANCE section is the reference.
-
 ### Options
 
 | Setting | Effect |
@@ -145,101 +130,6 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 | `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
 | `NNN_YOUNG` | Style for recent files: `icon`, `reverse`, `pill` or `none` |
 | `NNN_HOVERMARK` | Hovered entry marker: `triangle`, `1` for `>`, `0` for none |
-
-### Manual
-
-`nnn.1` is clearer than upstream's:
-
-- New sections: CHANGES (every addition of the fork, with the section that explains it), ARCHIVES, APPEARANCE, CHOICE PROMPTS, FLOATING WINDOWS, GIT STATUS.
-- KEYBINDS is a full key reference in tables, with the text prompt keys and the Open with (`o`) prompt explained.
-- FILTERS has a table of the filter modes and the regex flavour of the build.
-- Options with a few values (`NNN_STATUS`, `NNN_YOUNG`, `NNN_HOVERMARK`, `NNN_GITIGNORE`) are tables.
-- The `?` help screen names the archive choices on the Open row (`l o x m`) and the filter toggles (`/ :`).
-
-### Timestamps
-
-| Flag | `NNN_OPTS` | Listing (12 columns) |
-| --- | --- | --- |
-| (default) | | `YYYY-MM-DD HH:MM` (16 columns) |
-| `-y` | `y` | eza style: `19 Aug 14:32` / older `19 Aug  2024` |
-| `-Y` | `Y` | US style: `Aug 19 14:32` / older `Aug 19  2024` |
-| `-Z` | `Z` | eza style, but files modified today show the weekday and time (`Thu    14:32`) in the normal time color, without the reverse-video highlight for files changed in the last 5 minutes |
-
-Use with detail mode (`-d` / `d`). `-y`, `-Y` and `-Z` are exclusive; the last one wins. In a running instance, `y` cycles ISO, eza, US, eza + today, ISO. A configurable timestamp template is a possible future replacement for these fixed styles.
-
-### Directory sizes
-
-| Flag | `NNN_OPTS` | Detail listing |
-| --- | --- | --- |
-| `-I` | `I` | Size column for files only; directories left blank (du/`d` sort still shows totals). Key `I` toggles it. |
-| `-m` | `m` | Hide octal permissions (`644`). Status bar still shows `rw-r--r--`. Toggle with `M`. |
-
-### Detail colors
-
-`NNN_FCOLORS` takes two optional extra slots after the 12 upstream ones: **13 = time**, **14 = size**. Default `04b3` (eza-like blue time, #d7af5f size). Missing or `00` falls back to slot 8 (file details), so 24-char strings behave as upstream.
-
-```sh
-export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
-```
-
-### Rounded highlight
-
-In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills; order and visibility by `NNN_STATUS`, and from the right a pill that no longer fits is dropped) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. The current context number and the whole path in the top line are pills too (two columns wider each, the path shortens to match); other contexts keep their colored digits. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
-
-### Filter prompt
-
-With pills the filter prompt starts with one pill holding the mode and its keys: `str /:`, `fzy /:` or `reg /:` (`/` cycles the mode at an empty prompt). `:` toggles case: lowercase ignores case, uppercase (`STR /:`) is case sensitive. The typed text follows the pill. The sort flags are not repeated there (the status bar shows them). Without pills it is the upstream hint `str [/], ic [:]` on the line above the status bar.
-
-The `?` help screen lists `/ :` (toggle mode, toggle case) under FILTER & PROMPT. It also has a `REGEX FILTER` line naming the regex flavour of the build: POSIX extended (no lookahead, the default) or PCRE2 (`O_PCRE2=1`). The manual's FILTERS section has a table of the filter modes.
-
-### Bookmarks
-
-`Esc` at the filter prompt that opens in the bookmarks directory (`b`, then Enter) goes back to the directory you came from; upstream stayed in the bookmarks directory.
-
-### Git segment (top line)
-
-In `O_NERD` builds with pills and a 256-color terminal, a git segment follows the path pill, drawn like the zsh prompt's: a cap in the path color blends into the segment, then ` <git glyph> <branch glyph>  <summary> ` in white on green (`#008400`, clean) or red (`#d6000c`, a ` +`, ` ~` or ` ?` entry), and a closing cap. The git glyph is the dotfiles one in folders tracked by the bare `~/.dotfiles` repo. The summary is `branch +staged ~unstaged !conflicts ?untracked ↑ahead ↓behind`, read on each directory change by running `dotfiles --print-status` (`~/.local/share/zsh/site-functions/dotfiles/dotfiles`) in `zsh -f` via fork/exec with no shell string; without that file there is no segment. The exact colors use terminal palette slots 232-234 (redefined while nnn runs) when the terminal allows it. Hidden if the path would not fit. On by default with `-G`; it follows the status column, so `i` toggles it with the column. `NNN_GITBRANCH=0` turns it off.
-
-### Choice prompts
-
-Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). A final `Esc` pill shows that any other key cancels. `Left` / `Right` move the filled pill along the options and the `Esc` pill, and Enter picks the filled one (typing an option's key still works). Needs the pill caps; on a narrow screen the options that do not fit are left off. Without pills the plain `'f'ile/'d'ir` text is shown. See also [Copy / move with nothing selected](#copy--move-with-nothing-selected).
-
-### Hovered entry marker
-
-In detail mode a marker before the time column points at the hovered entry. `NNN_HOVERMARK` picks it: `triangle` a filled right-pointing caret (U+F0DA, Font Awesome via Nerd Font; needs `O_NERD`; default with `O_NERD`), `1` the `>` arrowhead (default without `O_NERD`), `0` no marker.
-### Recently modified timestamps
-
-Timestamps of entries modified in the last 5 minutes are highlighted. `NNN_YOUNG` picks the style:
-
-| Value | Style |
-| --- | --- |
-| `reverse` | Reverse video, as upstream (default without `O_NERD`) |
-| `pill` | Reverse video with rounded caps in the neighbouring cells (falls back to `reverse` without caps or with `NNN_PILL=0`) |
-| `icon` | Clock icon (U+F017) in the spare cell before the time, no highlight; the column width is unchanged (default with `O_NERD`; ignored otherwise) |
-| `none` | No highlight |
-
-The status-line time pill is already reversed, so it gets no extra highlight. `-Z` skips the highlight for entries modified today.
-
-### Narrow screens
-
-When the name column would get too narrow, nnn switches from the detail view to the light view. Upstream never switches back, so after widening the window only the names stayed. The fork restores the detail view (time, size, permissions, git column) as soon as the window is wide enough again. A detail view turned off with `d` stays off.
-
-Status line pills (`NNN_STATUS`) and [choice prompts](#choice-prompts) stay pills and drop what does not fit from the right.
-
-### Git status
-
-Built into `nnn.c` (not applied as a compile-time patch).
-
-- **`-G` option**: query git and show the status column (detail and normal mode). Without the `-G` option, git is not run.
-- **`i`**: toggle that column in a running instance (reloads the directory).
-- The column appears only when git reports a change (a clean repo looks like no column).
-- In `$HOME`, git is invoked against the bare `~/.dotfiles` repo.
-- **Ignored entries** are drawn dim and italic in their own colors (never bold) and get no `!!` mark. Only the ignored entry itself is styled, not a folder that merely contains ignored files. `NNN_GITIGNORE=mark` goes back to `!!` marks, which also show on folders that contain ignored files.
-
-### macOS `stat`
-
-File stats (`f`) use Homebrew GNU `stat` when
-`/opt/homebrew/opt/coreutils/libexec/gnubin/stat` is present, otherwise `/usr/bin/stat -x`.
 
 ### Preview (Ghostty)
 
@@ -264,22 +154,6 @@ The `n3` launcher (dotfiles, not this repo): **`n3`** uses the native split; **`
 When `TERM_PROGRAM=rex` (and `REX_BLOCK` is set), `preview-tui` opens the preview as a native Rex split with `rex split --focus=false --json`, records the new block id, and closes it with `rex block close <id>` when the preview is toggled off. No helper scripts are needed. Images follow `NNN_IMGVIEWER` (chafa runs as `chafa -f kitty` because it does not detect Rex); video uses the same `mpv --vo=kitty` command. Needs a Rex with Kitty graphics support (Mac preview.19+) and, for correct chafa sizing, Server & CLI preview.15+.
 
 Rex fades unfocused panes, which mutes the image colors. Set Settings > Interface > Active Pane > **Fade inactive panes** to *surface* (not content) so the preview stays at full color. It is a global setting; Rex has no per-pane control.
-
-### Sort keys (`t` / `s` / `e`)
-
-`t` then `t` / `s` / `e` **sets** that key (does not toggle it off). A capital (`T` / `S` / `E`) sets the key reversed: `t` then `T` is oldest first. Clear with `t` then `c`: it drops every sort key (time, size, extension, disk usage), reverse and version sort, so the listing is back to the default name order.
-
-### Copy / move with nothing selected
-
-`p` (copy) and `v` (move) show a floating help window (same style as `f`) first. Enter opens the editor on a blank path list; q/Esc cancels without opening it. Upstream opens the editor straight away. The popup is titled and sized to its text. Floating windows have rounded corners and nerd font scroll carets (`^v<>` without `O_NERD`). Footer key hints are pills with a bold key.
-
-### zoxide
-
-The `bb-z` plugin (`;z` via `n3`) jumps to a zoxide match: an empty prompt opens `zoxide query -i`, anything else is the query, and the directory jumped to is recorded with `zoxide add`.
-
-### Delete confirmation
-
-`x` / `X` on a single file ends the prompt with `[y/n]`. With a selection, the files are listed in a floating window titled with the count, where `y` deletes (or trashes) and `n`/`q`/Esc cancels. Upstream asks `rm -rf N file(s)?` on the status line.
 
 ### Plugin updates
 
