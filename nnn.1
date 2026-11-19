@@ -104,6 +104,19 @@ ____ + _________________________________________________________
 ____ + _________________________________________________________
 .Ed
 .Pp
+\fBOpen with\fR (\fBo\fR, \fB^O\fR) asks for a command at the \fBopen with:\fR prompt. Type it and press Enter,
+for example \fBvlc\fR, \fBopen -a Preview\fR or \fBcode\fR. nnn adds the path of the hovered entry as the last
+argument. The command is run directly, not through a shell, so shell aliases, functions and pipes
+do not work (use a program name or a script on your PATH). A second prompt asks how to run it:
+.Bd -literal
+ Key       | Runs the command
+__________ + ____________________________________________________
+ g, Enter  | As a GUI app: detached, nnn keeps running (default)
+ c         | As a CLI app: in the terminal, nnn waits for it
+ any other | Cancel
+__________ + ____________________________________________________
+.Ed
+.Pp
 These keys work in every text prompt (new, rename, open with, ...):
 .Bd -literal
  Key            | Function
@@ -159,7 +172,7 @@ _________ + ____________________________________________________________
  r        | Batch rename the entries of the current directory
  z        | Archive the selection or hovered entry
  e        | Edit the hovered file in \fBEDITOR\fR
- o, ^O    | Open the hovered entry with a command you type
+ o, ^O    | Open the hovered entry with a command you type (see below)
  f, ^F    | Show file details (stat, file, mime type)
  *        | Toggle the executable bit
  >        | Export the file list of the directory to a file
