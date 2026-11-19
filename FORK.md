@@ -11,6 +11,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
   - [Keys](#keys)
   - [Appearance](#appearance)
   - [Options](#options)
+  - [Manual](#manual)
   - [Timestamps](#timestamps)
   - [Directory sizes](#directory-sizes)
   - [Detail colors](#detail-colors)
@@ -144,6 +145,15 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 | `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
 | `NNN_YOUNG` | Style for recent files: `icon`, `reverse`, `pill` or `none` |
 | `NNN_HOVERMARK` | Hovered entry marker: `triangle`, `1` for `>`, `0` for none |
+
+### Manual
+
+`nnn.1` is clearer than upstream's:
+
+- New sections: ARCHIVES, APPEARANCE, CHOICE PROMPTS, FLOATING WINDOWS, GIT STATUS.
+- KEYBINDS is a full key reference in tables, with the text prompt keys and the Open with (`o`) prompt explained.
+- FILTERS has a table of the filter modes and the regex flavour of the build.
+- Options with a few values (`NNN_STATUS`, `NNN_YOUNG`, `NNN_HOVERMARK`, `NNN_GITIGNORE`) are tables.
 
 ### Timestamps
 

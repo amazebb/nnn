@@ -819,7 +819,7 @@ static const char * const messages[] = {
 	"'s'ave/'l'oad/'r'estore?",
 	"Quit all contexts?",
 	"remote name (- for hovered): ",
-	"archive [path/]name: ",
+	"save archive as: ",
 	"open with: ",
 	"[path/]name: ",
 	"link prefix [@ for none]: ",

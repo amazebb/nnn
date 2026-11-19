@@ -171,7 +171,7 @@ _________ + ____________________________________________________________
  ^R       | Rename the hovered entry (or duplicate if the name is
           | unchanged)
  r        | Batch rename the entries of the current directory
- z        | Archive the selection or hovered entry
+ z        | Archive the selection or hovered entry (see ARCHIVES)
  e        | Edit the hovered file in \fBEDITOR\fR
  o, ^O    | Open the hovered entry with a command you type (see below)
  f, ^F    | Show file details (stat, file, mime type)
@@ -573,6 +573,32 @@ to list the selection file.
 can show the total size of non-filtered selected files listed in a
 directory. For directories, only the size of the directory is added by
 default. To add the size of the contents of a directory, sort by disk usage (aka du mode).
+.Sh ARCHIVES
+\fBz\fR archives the selection, or the hovered entry when nothing is selected. It asks
+\fBsave archive as:\fR (prefilled with the hovered name). Type the archive's name \fBwith an extension\fR,
+for example \fBphotos.zip\fR, \fBnotes.tar.gz\fR or \fBbackup.7z\fR: the extension decides the format.
+A path (\fB~/backups/photos.zip\fR) says where the archive is saved; the directory should already exist. The
+files are stored under their own names. If the archive exists, nnn asks before overwriting it.
+.Pp
+nnn does not compress anything itself; it runs the first of these tools that is installed:
+.Bd -literal
+ Tool   | Used when                          | Formats
+_______ + ___________________________________ + _________________________
+ atool  | Installed (skipped with -B)        | tar.*, zip, 7z, rar, ...
+ bsdtar | No atool, or -B                    | tar.*, zip, 7z
+ zip    | Neither, and the name ends in .zip | zip
+ tar    | Neither of the above               | tar.*
+_______ + ___________________________________ + _________________________
+.Ed
+.Pp
+\fBatool\fR is a wrapper that calls the right program for each format. \fBbsdtar\fR is the
+\fBlibarchive\fR version of tar (it is the system \fBtar\fR on macOS and many BSDs). Other tools, such
+as \fB7z\fR, \fBunar\fR or \fBouch\fR, are not run directly; atool can use \fB7z\fR when it is installed.
+.Pp
+Opening an archive (Enter) offers list, open (mount) and extract; extracting uses the same tools in
+the same order (unzip for .zip when neither atool nor bsdtar is installed). \fBNNN_ARCHIVE\fR sets which extensions count as archives and \fBNNN_ARCHMNT\fR the
+mounter.
+.Pp
 .Sh FIND AND LIST
 There are two ways to search and list:
 .Pp
