@@ -150,7 +150,7 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 
 `nnn.1` is clearer than upstream's:
 
-- New sections: ARCHIVES, APPEARANCE, CHOICE PROMPTS, FLOATING WINDOWS, GIT STATUS.
+- New sections: CHANGES (every addition of the fork, with the section that explains it), ARCHIVES, APPEARANCE, CHOICE PROMPTS, FLOATING WINDOWS, GIT STATUS.
 - KEYBINDS is a full key reference in tables, with the text prompt keys and the Open with (`o`) prompt explained.
 - FILTERS has a table of the filter modes and the regex flavour of the build.
 - Options with a few values (`NNN_STATUS`, `NNN_YOUNG`, `NNN_HOVERMARK`, `NNN_GITIGNORE`) are tables.

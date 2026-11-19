@@ -671,6 +671,9 @@ There are 2 ways (can be used together) to manage bookmarks.
 On entering a bookmark, the directory where the select bookmark key was
 pressed is set as the previous directory. Press \fB-\fR to return to it.
 .Pp
+\fBEsc\fR at the filter prompt that opens in the bookmarks directory goes back to
+the directory you came from.
+.Pp
 .Sh APPEARANCE
 With a nerd font build (\fBO_NERD\fR) the interface is drawn with rounded pills
 and a few small visual touches that make the listing easier to scan:
@@ -694,6 +697,9 @@ screen the ones that do not fit are dropped from the right
 toggles the options
 .br
 - the time and size columns have their own colors, \fBNNN_FCOLORS\fR
+.br
+- on a narrow screen the detail view gives way to the light view and returns when the
+window is wide enough again (\fBd\fR keeps it off)
 .br
 - choice prompts and floating windows are described in the next two sections
 .Pp
@@ -752,6 +758,33 @@ It is shown whenever the status column is on, so \fB-G\fR and \fBi\fR turn it on
 \fBNNN_GITBRANCH=0\fR hides it.
 .Pp
 Inside \fB$HOME\fR it works with a bare dotfiles repository.
+.Sh CHANGES
+This is the amazebb fork of nnn. Everything upstream does still works; the fork adds
+the following (the last column is the section of this manual that explains it):
+.Bd -literal
+ Area           | Change                          | Section
+_______________ + ________________________________ + _________________
+ Pills          | Rounded pills, hover to prompts | APPEARANCE
+ Status line    | Pills, order set by NNN_STATUS  | APPEARANCE
+ Filter prompt  | One pill: mode and case         | FILTERS
+ Choice prompts | Pills, Left/Right to select     | CHOICE PROMPTS
+ Popups         | Rounded help, stats, confirms   | FLOATING WINDOWS
+ Git            | Built-in column, branch segment | GIT STATUS
+ Timestamps     | Compact styles, young entries   | APPEARANCE
+ Detail view    | Keys i M y I; returns on widen  | KEYBINDS
+ Sorting        | t sets a key, T S E reverse     | SORTING
+ Open with      | o: GUI/CLI choice, not found    | KEYBINDS
+ Archives       | z, and l o x m on Enter         | ARCHIVES
+ Bookmarks      | Esc goes back                   | BOOKMARKS
+ Clipboard      | C, ^B copy; ;; Quick Look       | KEYBINDS
+ Help (?)       | Archive, filter keys, regex     | KEYBINDS
+_______________ + ________________________________ + _________________
+.Ed
+.Pp
+Plugins: \fBbb-z\fR (\fB;z\fR) jumps to a zoxide match, and \fBpreview-tui\fR has native splits in
+Ghostty and Rex, image previews with chafa or viu and an EXIF caption, and camera RAW previews.
+Both are in the \fBplugins\fR folder of the repository.
+.Pp
 .Sh UNITS
 The minimum file size unit is byte (B). The rest are K, M, G, T, P, E, Z, Y
 (powers of 1024), same as the default units in \fBls\fR.
