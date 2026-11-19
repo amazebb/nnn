@@ -9333,20 +9333,29 @@ static void preview_pane(const char *path)
 	}
 }
 
+static bool detailauto; /* Detail view was switched off for a narrow screen; restore it when the screen widens */
+
 static int adjust_cols(int n)
 {
 	/* Calculate the number of cols available to print entry name */
 #ifdef ICONS_ENABLED
 	n -= (g_state.oldcolor ? 0 : ICON_SIZE + ICON_PADDING_LEFT_LEN + ICON_PADDING_RIGHT_LEN);
 #endif
-	if (cfg.showdetail) {
-		int detailcols = (cfg.compacttime ? TIME_COLS_COMPACT : TIME_COLS_ISO)
-				 + DETAIL_COLS_REST - (cfg.noperms ? PERM_COLS : 0);
+	int detailcols = (cfg.compacttime ? TIME_COLS_COMPACT : TIME_COLS_ISO)
+			 + DETAIL_COLS_REST - (cfg.noperms ? PERM_COLS : 0);
+	int need = detailcols + (git_statuses.show ? 6 : 4);
 
+	if (detailauto && !cfg.showdetail && n >= need) {
+		cfg.showdetail = 1;
+		detailauto = FALSE;
+	}
+
+	if (cfg.showdetail) {
 		/* Fallback to light mode if the name column would be too narrow */
-		if (n < detailcols + (git_statuses.show ? 6 : 4))
-			cfg.showdetail ^= 1;
-		else /* 2 more accounted for below */
+		if (n < need) {
+			cfg.showdetail = 0;
+			detailauto = TRUE;
+		} else /* 2 more accounted for below */
 			n -= detailcols + (git_statuses.show ? 2 : 0);
 	} else if (cfg.normalgit && git_statuses.show)
 		n -= 3;
@@ -10365,6 +10374,7 @@ nochange:
 				copycurname(lastname);
 				goto cdfalse_begin;
 			case SEL_DETAIL:
+				detailauto = FALSE;
 				cfg.showdetail ^= 1;
 				cfg.blkorder = 0;
 				continue;

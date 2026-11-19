@@ -14,6 +14,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
   - [Timestamps](#timestamps)
   - [Directory sizes](#directory-sizes)
   - [Detail colors](#detail-colors)
+  - [Narrow screens](#narrow-screens)
   - [Git status](#git-status)
   - [Git segment (top line)](#git-segment-top-line)
   - [macOS `stat`](#macos-stat)
@@ -194,6 +195,12 @@ Timestamps of entries modified in the last 5 minutes are highlighted. `NNN_YOUNG
 | `none` | No highlight |
 
 The status-line time pill is already reversed, so it gets no extra highlight. `-Z` skips the highlight for entries modified today.
+
+### Narrow screens
+
+When the name column would get too narrow, nnn switches from the detail view to the light view. Upstream never switches back, so after widening the window only the names stayed. The fork restores the detail view (time, size, permissions, git column) as soon as the window is wide enough again. A detail view turned off with `d` stays off.
+
+Status line pills (`NNN_STATUS`) and [choice prompts](#choice-prompts) stay pills and drop what does not fit from the right.
 
 ### Git status
 
