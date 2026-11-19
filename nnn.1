@@ -416,15 +416,16 @@ When there's a unique match and it's a directory,
 .Nm
 auto enters the directory. Use the relevant program option to disable this.
 .Pp
-Filter modes, shown as a pill on the right of the line above the status bar (key \fB/\fR cycles them
-at an empty prompt, \fB:\fR toggles \fBic\fR/\fBnoic\fR, ignore case or case sensitive):
+The filter prompt starts with a pill showing the mode and its keys, for example \fBstr /:\fR. Key \fB/\fR cycles
+the modes at an empty prompt and \fB:\fR toggles case: lowercase (\fBstr\fR) ignores case, uppercase
+(\fBSTR\fR) is case sensitive. Without pills the hint \fBstr [/], ic [:]\fR is shown on the line above.
 .Bd -literal
- Pill | Mode   | Matches                             | Option
-_____ + _______ + ____________________________________ + _______
- str  | String | Text anywhere in the name (default) | -
- fzy  | Fuzzy  | All characters in order, e.g. mvk   | -z
- reg  | Regex  | Regular expression                  | -g
-_____ + _______ + ____________________________________ + _______
+ Pill     | Mode   | Matches                             | Option
+_________ + _______ + ____________________________________ + _______
+ str, STR | String | Text anywhere in the name (default) | -
+ fzy, FZY | Fuzzy  | All characters in order, e.g. mvk   | -z
+ reg, REG | Regex  | Regular expression                  | -g
+_________ + _______ + ____________________________________ + _______
 .Ed
 .Pp
 The regex flavour is chosen when nnn is built: POSIX extended (no lookahead) by default, PCRE2 with

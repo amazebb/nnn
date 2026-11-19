@@ -16,7 +16,7 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
   - [Detail colors](#detail-colors)
   - [Narrow screens](#narrow-screens)
   - [Git status](#git-status)
-  - [Filter hint](#filter-hint)
+  - [Filter prompt](#filter-prompt)
   - [Bookmarks](#bookmarks)
   - [Git segment (top line)](#git-segment-top-line)
   - [macOS `stat`](#macos-stat)
@@ -175,11 +175,11 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 
 In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills; order and visibility by `NNN_STATUS`, and from the right a pill that no longer fits is dropped) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. The current context number and the whole path in the top line are pills too (two columns wider each, the path shortens to match); other contexts keep their colored digits. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
 
-### Filter hint
+### Filter prompt
 
-While filtering, the hint on the right of the line above the status bar is drawn as pills: sort flags (when set), the filter mode (`str`, `reg` or `fzy`; `/` cycles it) and case handling (`ic` ignores case, `noic` is case sensitive; `:` toggles it). Without pills it is the upstream text `str [/], ic [:]`.
+With pills the filter prompt starts with one pill holding the mode and its keys: `str /:`, `fzy /:` or `reg /:` (`/` cycles the mode at an empty prompt). `:` toggles case: lowercase ignores case, uppercase (`STR /:`) is case sensitive. The typed text follows the pill. The sort flags are not repeated there (the status bar shows them). Without pills it is the upstream hint `str [/], ic [:]` on the line above the status bar.
 
-The `?` help screen has a `REGEX FILTER` line naming the regex flavour of the build: POSIX extended (no lookahead, the default) or PCRE2 (`O_PCRE2=1`). The manual's FILTERS section has a table of the filter modes.
+The `?` help screen lists `/ :` (toggle mode, toggle case) under FILTER & PROMPT. It also has a `REGEX FILTER` line naming the regex flavour of the build: POSIX extended (no lookahead, the default) or PCRE2 (`O_PCRE2=1`). The manual's FILTERS section has a table of the filter modes.
 
 ### Bookmarks
 

@@ -4180,6 +4180,10 @@ static void showfilterinfo(void)
 	int i = 0;
 	char info[REGEX_MAX] = "\0\0\0\0\0";
 
+	/* With pills the mode and case are in the prompt (printfilterline) and the sort flags in the status bar */
+	if (pill && !g_state.oldcolor && !(cfg.fileinfo && ndents))
+		return;
+
 	i = getorderstr(info);
 
 	if (cfg.fileinfo && ndents && get_output("file", "-b", pdents[cur].name, -1, FALSE))
@@ -4188,46 +4192,45 @@ static void showfilterinfo(void)
 		const char *mode = cfg.regex ? "reg" : (cfg.fuzzy ? "fzy" : "str");
 		const char *icase = (fnstrstr == &strcasestr) ? "ic" : "noic";
 
-		if (pill && !g_state.oldcolor) { /* Sort flags, filter mode (/) and case (:) as pills, right aligned */
-			char sortflags[8] = "", modetxt[16], casetxt[16];
-			int w;
-
-			if (i)
-				xstrsncpy(sortflags, info, i + 1);
-			snprintf(modetxt, sizeof(modetxt), "%s /", mode);
-			snprintf(casetxt, sizeof(casetxt), "%s :", icase);
-
-			/* Pad as if noic so toggling ic/noic does not leave a stale cap behind */
-			int pad = 4 - (int)strlen(icase);
-
-			w = (i ? i + 5 : 0) + (int)strlen(modetxt) + 5 + (int)strlen(casetxt) + 5 + pad;
-			move(xlines - 2, MAX(xcols - w, 0));
-			printw("%*s", pad, "");
-			if (i) {
-				pill_open();
-				addstr(sortflags);
-				pill_close();
-			}
-			pill_open();
-			addstr(modetxt);
-			pill_close();
-			pill_open();
-			addstr(casetxt);
-			pill_close();
-			return;
-		}
-
 		snprintf(info + i, REGEX_MAX - i - 1, "  %s [/], %s [:]", mode, icase);
 	}
 
 	mvaddstr(xlines - 2, xcols - xstrlen(info), info);
 }
 
+/*
+ * Filter prompt line. With pills the mode and its keys are the leading pill: "str /:" ignores case,
+ * "STR /:" is case sensitive; the typed text follows. nomatch also reverses the typed text.
+ */
+static void printfilterline(const char *ln, bool nomatch)
+{
+	if (!pill || g_state.oldcolor) {
+		printmsg_nc(ln);
+		return;
+	}
+
+	const char *mode = cfg.regex ? "reg" : (cfg.fuzzy ? "fzy" : "str");
+	bool sens = (fnstrstr != &strcasestr);
+
+	tolastln();
+	pill_open();
+	for (; *mode; ++mode)
+		addch(sens ? toupper((uchar_t)*mode) : *mode);
+	attron(A_DIM);
+	addstr(" /:");
+	attroff(A_DIM);
+	pill_close();
+	if (nomatch)
+		attron(A_REVERSE | A_STANDOUT);
+	addstr(ln + 1);
+	clrtoeol();
+}
+
 static void showfilter(char *str)
 {
 	attron_curctx();
 	showfilterinfo();
-	printmsg_nc(str);
+	printfilterline(str, FALSE);
 	attroff_curctx();
 }
 
@@ -4506,7 +4509,7 @@ static int filterentries(char *path, char *lastname)
 			if (r == 0)
 				unget_wch(KEY_BACKSPACE);
 			attron((COLOR_PAIR(cfg.curctx + 1)) | A_REVERSE | A_STANDOUT);
-			printmsg_nc(ln);
+			printfilterline(ln, TRUE);
 			attroff((COLOR_PAIR(cfg.curctx + 1)) | A_REVERSE | A_STANDOUT);
 			continue;
 		}
@@ -7260,7 +7263,8 @@ static void show_help(const char *path)
 	  "4q Alt+Esc  Quit context%12R  Reopen context\n"
 	"0\n"
 	"1FILTER & PROMPT\n"
-		  "c/  Filter%17^N  Toggle type-to-nav\n"
+		  "c/  Filter (/: see below)%02^N  Toggle type-to-nav\n"
+		 "a/ :  Toggle mode, toggle case\n"
 		"aEsc  Exit prompt%12^L  Clear/apply filter\n"
 	"0\n"
 	"1DISPLAY\n"
