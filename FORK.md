@@ -124,6 +124,7 @@ brew install font-symbols-only-nerd-font
 | `t` then `c` | Resets to the default sort order |
 | `p` / `v` with nothing selected | Floating help; Enter opens the editor, q/Esc cancels |
 | `f` popup, `j` `n` / `k` `p` | Listing highlight follows the hovered file |
+| `o` / `Ctrl+O` | Shows `command not found` when the typed command is not an executable on `PATH` (it is run without a shell, so aliases do not work); upstream silently did nothing. Choosing Gui also detaches stdin (so a terminal app started by mistake cannot steal keystrokes) and shows `launched <cmd> (no terminal; terminal apps need c)` |
 
 ### Appearance
 

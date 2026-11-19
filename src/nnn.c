@@ -799,6 +799,7 @@ static char * const utils[] = {
 #define MSG_DIR_CHANGED  42
 #define MSG_BM_NAME      43
 #define MSG_ARCHIVE_RLTV 44
+#define MSG_NOT_FOUND    45
 
 static const char * const messages[] = {
 	"",
@@ -846,6 +847,7 @@ static const char * const messages[] = {
 	"dir changed, range sel off",
 	"name: ",
 	"add files with relative path?",
+	"command not found",
 };
 
 /* Supported configuration environment variables */
@@ -8672,17 +8674,51 @@ static void handle_screen_move(enum action sel)
 	}
 }
 
-static void handle_openwith(const char *path, const char *name, char *newpath, char *tmp)
+/* True if the first word of cmd is an executable file, given by path or found on PATH (no shell, so no aliases) */
+static bool cmd_exists(const char *cmd)
+{
+	char name[NAME_MAX + 1], full[PATH_MAX];
+	size_t n = strcspn(cmd, " \t");
+
+	if (!n || n >= sizeof(name))
+		return FALSE;
+
+	memcpy(name, cmd, n);
+	name[n] = '\0';
+
+	if (strchr(name, '/'))
+		return access(name, X_OK) == 0;
+
+	for (const char *p = getenv("PATH"); p && *p;) {
+		int l = (int)strcspn(p, ":");
+
+		snprintf(full, sizeof(full), "%.*s/%s", l ? l : 1, l ? p : ".", name); /* Empty entry is cwd */
+		if (access(full, X_OK) == 0)
+			return TRUE;
+
+		p += l;
+		if (*p == ':')
+			++p;
+	}
+
+	return FALSE;
+}
+
+/* Returns TRUE if the command was started as a detached GUI app */
+static bool handle_openwith(const char *path, const char *name, char *newpath, char *tmp)
 {
 	/* Confirm if app is CLI or GUI */
 	int r = get_input(messages[MSG_CLI_MODE]);
+	bool gui = (r == 'g' || r == '\r');
 
-	r = (r == 'c' ? F_CLI :
-	     ((r == 'g' || r == '\r') ? (F_NOWAIT | F_NOTRACE | F_MULTI) : 0));
+	/* A GUI app is detached with no terminal: stdin too, or a terminal app left behind would steal keystrokes */
+	r = (r == 'c' ? F_CLI : (gui ? (F_NOWAIT | F_NOTRACE | F_NOSTDIN | F_MULTI) : 0));
 	if (r) {
 		mkpath(path, name, newpath);
 		spawn(tmp, newpath, NULL, NULL, r);
 	}
+
+	return gui;
 }
 
 static void copynextname(char *lastname)
@@ -10845,7 +10881,20 @@ nochange:
 				}
 				continue;
 			case SEL_OPENWITH:
-				handle_openwith(path, pdents[cur].name, newpath, tmp);
+				if (!cmd_exists(tmp)) {
+					printwait(messages[MSG_NOT_FOUND], &presel);
+					copycurname(lastname);
+					goto nochange;
+				}
+				if (handle_openwith(path, pdents[cur].name, newpath, tmp)) {
+					char note[NAME_MAX + 64];
+
+					snprintf(note, sizeof(note), "launched %.*s (no terminal; terminal apps need c)",
+						 (int)strcspn(tmp, " \t"), tmp);
+					printwait(note, &presel);
+					copycurname(lastname);
+					goto nochange;
+				}
 
 				cfg.filtermode ?  presel = FILTER : statusbar(path);
 				copycurname(lastname);
