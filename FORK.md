@@ -202,7 +202,7 @@ In `O_NERD` builds with pills and a 256-color terminal, a git segment follows th
 
 ### Choice prompts
 
-Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). A final `Esc` pill shows that any other key cancels. Needs the pill caps; on a narrow screen the options that do not fit are left off. Without pills the plain `'f'ile/'d'ir` text is shown. See also [Copy / move with nothing selected](#copy--move-with-nothing-selected).
+Prompts with options (`n` file/dir/sym/hard, cp/mv as, current/selection, gui/cli, session, remote, archive open) show one pill per option. The default (what Enter picks) is the filled message pill, the others use the context color, and the key to press is capitalised and underlined (`File`, `Dir`, `eXtract`). A final `Esc` pill shows that any other key cancels. `Left` / `Right` move the filled pill along the options and the `Esc` pill, and Enter picks the filled one (typing an option's key still works). Needs the pill caps; on a narrow screen the options that do not fit are left off. Without pills the plain `'f'ile/'d'ir` text is shown. See also [Copy / move with nothing selected](#copy--move-with-nothing-selected).
 
 ### Hovered entry marker
 

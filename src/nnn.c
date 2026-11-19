@@ -1795,20 +1795,20 @@ static bool is_choice_prompt(const char *prompt)
  * a filled message pill, the others use the context color. The key to press
  * is capitalised and underlined: 'd'ir shows as Dir, e'x'tract as eXtract.
  */
-static void printchoices(const char *spec)
+static void printchoices(const char *spec, int sel)
 {
 	const char *p = spec;
+	int idx = 0;
 
 	tolastln();
 
 	while (*p) {
-		bool def = FALSE, key = FALSE;
+		bool def, key = FALSE;
 		int w = 0;
 
-		if (*p == '[') {
-			def = TRUE;
+		if (*p == '[')
 			++p;
-		}
+		def = (idx++ == sel); /* The selected option (the default at first) is the filled pill */
 
 		/* Option width; one that no longer fits (with caps and gap) ends the line, as in the status bar */
 		for (const char *q = p; *q && *q != '/' && *q != ']' && !(*q == '?' && !q[1]); ++q)
@@ -1850,49 +1850,105 @@ static void printchoices(const char *spec)
 			++p;
 	}
 
-	/* Any other key cancels in every choice prompt */
+	/* Any other key cancels in every choice prompt; Left/Right can select Esc too */
 	if (getcurx(stdscr) + 3 + 5 < xcols) {
-		attron_curctx();
+		if (idx == sel && msgcolor)
+			attron(COLOR_PAIR(C_MSG));
+		else if (idx == sel)
+			attron(A_BOLD);
+		else
+			attron_curctx();
 		pill_open();
 		addstr("Esc");
 		pill_close();
-		attroff_curctx();
+		if (idx == sel && msgcolor)
+			attroff(COLOR_PAIR(C_MSG));
+		else if (idx == sel)
+			attroff(A_BOLD);
+		else
+			attroff_curctx();
 	}
 
 	clrtoeol();
 }
 
-static void showprompt(const char *prompt)
+static void showprompt(const char *prompt, int sel)
 {
 	if (pill && !g_state.oldcolor && is_choice_prompt(prompt))
-		printchoices(prompt);
+		printchoices(prompt, sel);
 	else
 		printmsg(prompt);
 }
 
+/* Keys (the quoted char) of the options of a choice prompt; returns their count, *def is the [default] index or -1 */
+static int parse_choices(const char *spec, char *keys, int max, int *def)
+{
+	int n = 0;
+
+	*def = -1;
+	for (const char *p = spec; *p && n < max;) {
+		if (*p == '[')
+			*def = n, ++p;
+
+		keys[n] = '\0';
+		for (; *p && *p != '/' && *p != ']' && !(*p == '?' && !p[1]); ++p)
+			if (*p == '\'' && !keys[n])
+				keys[n] = *++p;
+		++n;
+
+		if (*p == ']')
+			++p;
+		if (*p == '/' || *p == '?')
+			++p;
+	}
+
+	return n;
+}
+
+/*
+ * Read one key. At a choice prompt drawn as pills, Left/Right move the filled pill
+ * (the options, then Esc) and Enter picks it; typing an option's key still works.
+ */
 static int get_input(const char *prompt)
 {
 	wint_t ch[1];
+	char keys[16];
+	int sel = -1, def = -1, n = 0;
+	bool pills = prompt && pill && !g_state.oldcolor && is_choice_prompt(prompt);
 
-	if (prompt)
-		showprompt(prompt);
-	cleartimeout();
+	if (pills) {
+		n = parse_choices(prompt, keys, sizeof(keys), &def);
+		sel = def;
+	}
 
-	get_wch(ch);
-
-#ifdef KEY_RESIZE
-	while (*ch == KEY_RESIZE) {
-		if (prompt) {
-			clearoldprompt();
-			xlines = LINES;
-			showprompt(prompt);
-		}
+	for (;;) {
+		if (prompt)
+			showprompt(prompt, sel);
+		cleartimeout();
 
 		get_wch(ch);
-	}
+
+#ifdef KEY_RESIZE
+		while (*ch == KEY_RESIZE) {
+			if (prompt) {
+				clearoldprompt();
+				xlines = LINES;
+				showprompt(prompt, sel);
+			}
+
+			get_wch(ch);
+		}
 #endif
-	settimeout();
-	return (int)*ch;
+		if (pills && (*ch == KEY_LEFT || *ch == KEY_RIGHT)) {
+			sel = (sel < 0) ? (*ch == KEY_RIGHT ? 0 : n) : (sel + (*ch == KEY_RIGHT ? 1 : n)) % (n + 1);
+			continue;
+		}
+
+		settimeout();
+		if (pills && *ch == '\r' && sel != def) /* Enter picks the selected pill: its key, or cancel on Esc */
+			return (sel >= 0 && sel < n && keys[sel]) ? (uchar_t)keys[sel] : CONTROL('[');
+		return (int)*ch;
+	}
 }
 
 static bool isselfileempty(void)
