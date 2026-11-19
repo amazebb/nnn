@@ -62,7 +62,7 @@ _______________ + _______________________________________________________
  j, Down        | Next entry
  k, Up          | Previous entry
  h, Left        | Go to the parent directory
- l, Right       | Open the hovered dir or file
+ l, Right       | Open the hovered dir or file (an archive asks what to do, see ARCHIVES)
  Enter          | Same as l; in picker mode, picks the hovered file
  PgDn, ^D       | Page down (^D: half page)
  PgUp, ^U       | Page up (^U: half page)
@@ -595,9 +595,19 @@ _______ + ___________________________________ + _________________________
 \fBlibarchive\fR version of tar (it is the system \fBtar\fR on macOS and many BSDs). Other tools, such
 as \fB7z\fR, \fBunar\fR or \fBouch\fR, are not run directly; atool can use \fB7z\fR when it is installed.
 .Pp
-Opening an archive (Enter) offers list, open (mount) and extract; extracting uses the same tools in
-the same order (unzip for .zip when neither atool nor bsdtar is installed). \fBNNN_ARCHIVE\fR sets which extensions count as archives and \fBNNN_ARCHMNT\fR the
-mounter.
+Opening an archive (\fBEnter\fR, \fBl\fR or \fBRight\fR) asks what to do:
+.Bd -literal
+ Key      | Action
+_________ + ____________________________________________________________
+ l, Enter | List the contents (default)
+ o        | Open it like any other file (NNN_OPENER)
+ x        | Extract into a directory you name (. is here), then open it
+ m        | Mount it (NNN_ARCHMNT) and browse it; u unmounts
+_________ + ____________________________________________________________
+.Ed
+.Pp
+Listing and extracting use the same tools as above, in the same order (unzip for .zip when neither
+atool nor bsdtar is installed). \fBNNN_ARCHIVE\fR sets which extensions count as archives.
 .Pp
 .Sh FIND AND LIST
 There are two ways to search and list:

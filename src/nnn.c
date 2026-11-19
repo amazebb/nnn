@@ -7252,7 +7252,7 @@ static void show_help(const char *path)
 	       "9Up k  Prev%14PgUp ^U  Page up\n"
 	       "9Dn j  Next%14PgDn ^D  Page down\n"
 	       "9Lt h  Parent%12~ ` @ -  ~, /, start, prev\n"
-	   "5Ret Rt l  Open%20'  First file/match\n"
+	   "5Ret Rt l  Open, archive: l o x m%02'  First file/match\n"
 	       "9g ^A  Top%21J  Jump to entry/offset\n"
 	       "9G ^E  End%20^J  Toggle auto-advance on open\n"
 		  "c.  Toggle hidden%11d  Detail mode toggle\n"

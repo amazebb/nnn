@@ -154,6 +154,7 @@ With `O_NERD`, nnn draws its interface as rounded pills with a few small visual 
 - KEYBINDS is a full key reference in tables, with the text prompt keys and the Open with (`o`) prompt explained.
 - FILTERS has a table of the filter modes and the regex flavour of the build.
 - Options with a few values (`NNN_STATUS`, `NNN_YOUNG`, `NNN_HOVERMARK`, `NNN_GITIGNORE`) are tables.
+- The `?` help screen names the archive choices on the Open row (`l o x m`) and the filter toggles (`/ :`).
 
 ### Timestamps
 
