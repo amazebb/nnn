@@ -16,6 +16,8 @@ This branch is a fork of [jarun/nnn](https://github.com/jarun/nnn) `master` (nnn
   - [Detail colors](#detail-colors)
   - [Narrow screens](#narrow-screens)
   - [Git status](#git-status)
+  - [Filter hint](#filter-hint)
+  - [Bookmarks](#bookmarks)
   - [Git segment (top line)](#git-segment-top-line)
   - [macOS `stat`](#macos-stat)
   - [Preview (Ghostty)](#preview-ghostty)
@@ -171,6 +173,14 @@ export NNN_FCOLORS='c1e2272e006033f7c6d6abc404b3'
 ### Rounded highlight
 
 In `O_NERD` builds the hovered entry's highlight, the status-line segments (file counter, selection counter, sort/filter flags, time, permissions, owner, size, file name; separate pills; order and visibility by `NNN_STATUS`, and from the right a pill that no longer fits is dropped) and the bottom-line messages and prompts get rounded Powerline caps (U+E0B6 / U+E0B4) in the highlight color. Needs a patched font. `NNN_PILL=0` turns them off. One column is reserved for the trailing cap, so names truncate one column earlier. The current context number and the whole path in the top line are pills too (two columns wider each, the path shortens to match); other contexts keep their colored digits. Message and prompt pills use their own color (xterm 208, orange) so they stand out from the status pills; `NNN_MSGCOLOR=0-255` changes it. Needs a 256-color terminal, otherwise they use the context color.
+
+### Filter hint
+
+While filtering, the hint on the right of the line above the status bar is drawn as pills: sort flags (when set), the filter mode (`str`, `reg` or `fzy`; `/` cycles it) and case handling (`ic` ignores case, `noic` is case sensitive; `:` toggles it). Without pills it is the upstream text `str [/], ic [:]`.
+
+### Bookmarks
+
+`Esc` at the filter prompt that opens in the bookmarks directory (`b`, then Enter) goes back to the directory you came from; upstream stayed in the bookmarks directory.
 
 ### Git segment (top line)
 

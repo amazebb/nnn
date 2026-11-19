@@ -4184,8 +4184,38 @@ static void showfilterinfo(void)
 		mvaddstr(xlines - 2, 2, g_buf);
 	else {
 		const char *mode = cfg.regex ? "reg" : (cfg.fuzzy ? "fzy" : "str");
-		snprintf(info + i, REGEX_MAX - i - 1, "  %s [/], %s [:]",
-			 mode, ((fnstrstr == &strcasestr) ? "ic" : "noic"));
+		const char *icase = (fnstrstr == &strcasestr) ? "ic" : "noic";
+
+		if (pill && !g_state.oldcolor) { /* Sort flags, filter mode (/) and case (:) as pills, right aligned */
+			char sortflags[8] = "", modetxt[16], casetxt[16];
+			int w;
+
+			if (i)
+				xstrsncpy(sortflags, info, i + 1);
+			snprintf(modetxt, sizeof(modetxt), "%s /", mode);
+			snprintf(casetxt, sizeof(casetxt), "%s :", icase);
+
+			/* Pad as if noic so toggling ic/noic does not leave a stale cap behind */
+			int pad = 4 - (int)strlen(icase);
+
+			w = (i ? i + 5 : 0) + (int)strlen(modetxt) + 5 + (int)strlen(casetxt) + 5 + pad;
+			move(xlines - 2, MAX(xcols - w, 0));
+			printw("%*s", pad, "");
+			if (i) {
+				pill_open();
+				addstr(sortflags);
+				pill_close();
+			}
+			pill_open();
+			addstr(modetxt);
+			pill_close();
+			pill_open();
+			addstr(casetxt);
+			pill_close();
+			return;
+		}
+
+		snprintf(info + i, REGEX_MAX - i - 1, "  %s [/], %s [:]", mode, icase);
 	}
 
 	mvaddstr(xlines - 2, xcols - xstrlen(info), info);
@@ -9732,7 +9762,7 @@ static bool browse(char *ipath, int pkey)
 	struct stat sb;
 	int r = -1, presel, selstartid = 0, selendid = 0;
 	const uchar_t opener_flags = (cfg.cliopener ? F_CLI : (F_NOTRACE | F_NOSTDIN | F_NOWAIT));
-	bool watch = FALSE, cd = TRUE;
+	bool watch = FALSE, cd = TRUE, bmpick = FALSE; /* bmpick: the filter prompt just opened in the bookmarks directory */
 	ino_t inode = 0;
 
 #ifndef NOMOUSE
@@ -10255,8 +10285,10 @@ nochange:
 					goto nochange;
 				}
 
-				if (g_state.selbm == 1) /* Allow filtering in bookmarks directory */
+				if (g_state.selbm == 1) { /* Allow filtering in bookmarks directory */
 					presel = FILTER;
+					bmpick = TRUE;
+				}
 				if (strcmp(path, newpath) == 0)
 					break;
 			}
@@ -10333,8 +10365,17 @@ nochange:
 			}
 #endif
 			presel = filterentries(path, lastname);
+			r = bmpick;
+			bmpick = FALSE;
 			if (presel == ESC) {
 				presel = 0;
+				/* Esc at the bookmark prompt goes back to the directory we came from */
+				if (r && g_state.selbm && chdir(lastdir) == 0) {
+					g_state.selbm = 0;
+					xstrsncpy(newpath, lastdir, PATH_MAX);
+					cdprep(lastdir, NULL, path, newpath) ? (presel = FILTER) : (watch = TRUE);
+					goto begin;
+				}
 				break;
 			}
 			if (presel == FILTER) { /* Refresh dir and filter again */
