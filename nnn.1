@@ -734,6 +734,10 @@ bookmark, sort and time type prompts. The same goes for cancelling (\fBEsc\fR or
 bookmark (\fBB\fR), the extract-to prompt of an archive, the remote host prompt (\fBc\fR) and the empty
 copy or move help (\fBp\fR, \fBv\fR). Any other key that is not an option or an assigned key shows \fBinvalid key\fR.
 .Pp
+Yes/no questions (overwrite, remove the tmp file, unmount lazily, quit all contexts, delete, add files with
+a relative path) end with \fB[y/n]\fR. Only \fBy\fR, \fBn\fR and \fBEsc\fR answer them: other keys and
+\fBEnter\fR are ignored, and \fBEsc\fR cancels.
+.Pp
 Needs the rounded pills; on a narrow screen the options that do not fit are left off.
 Without pills (\fBNNN_PILL=0\fR) the plain \fB'f'ile/'d'ir\fR text is shown.
 .Sh FLOATING WINDOWS

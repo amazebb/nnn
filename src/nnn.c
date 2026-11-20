@@ -815,9 +815,9 @@ static const char * const messages[] = {
 	"size limit exceeded",
 	"['f'ile]/'d'ir/'s'ym/'h'ard?",
 	"['g'ui]/'c'li?",
-	"overwrite?",
+	"Overwrite? [y/n]",
 	"'s'ave/'l'oad/'r'estore?",
-	"Quit all contexts?",
+	"Quit all contexts? [y/n]",
 	"remote name (- for hovered): ",
 	"save archive as: ",
 	"open with: ",
@@ -839,14 +839,14 @@ static const char * const messages[] = {
 	"Keys:",
 	"invalid regex",
 	"'a'u/'d'u/'e'xt/'r'ev/'s'z/'t'm/'v'er/'c'lr/'^T'?",
-	"unmount failed! try lazy?",
+	"Unmount failed! Try lazy? [y/n]",
 	"first file (\')/char?",
-	"remove tmp file?",
+	"Remove tmp file? [y/n]",
 	"invalid key",
 	"unchanged",
 	"dir changed, range sel off",
 	"name: ",
-	"add files with relative path? [y/n]",
+	"Add files with relative path? [y/n]",
 	"command not found",
 };
 
@@ -1734,8 +1734,12 @@ static void printmsg(const char *msg)
 		tolastln();
 		if (msgcolor)
 			attron(COLOR_PAIR(C_MSG));
+		size_t n = xstrlen(msg);
+
+		while (n && msg[n - 1] == ' ') /* pill_close() pads already */
+			--n;
 		pill_open();
-		addstr(msg);
+		addnstr(msg, (int)n);
 		pill_close();
 		if (msgcolor)
 			attroff(COLOR_PAIR(C_MSG));
@@ -1775,11 +1779,6 @@ static void printerr(int linenum)
 		unlink(selpath);
 	free(pselbuf);
 	exit(1);
-}
-
-static inline bool xconfirm(int c)
-{
-	return (c == 'y' || c == 'Y');
 }
 
 /* Prompts written as 'k'ey options separated by /, with the default in [] */
@@ -2122,22 +2121,14 @@ static char confirm_force(bool selection, bool use_trash)
 		r = confirm_list(use_trash);
 
 		/* Double confirm on removal of more than 10 files */
-		if (!use_trash && (nselected > RM_RECONFIRM) && (r == 'y' || r == 'Y')) {
-			snprintf(str, 300, "Are you sure?");
-			r = get_input(str);
-		}
+		if (!use_trash && (nselected > RM_RECONFIRM) && r == 'y')
+			r = get_yn("Are you sure? [y/n]");
 	} else {
 		snprintf(str + r, 280, " '%s'? [y/n]", pdents[cur].name);
-		r = get_input(str);
+		r = get_yn(str);
 	}
 
-	if (r == ESC)
-		return '\0'; /* cancel */
-	if (r == 'y' || r == 'Y')
-		return 'f'; /* forceful for rm */
-	if (r == 'n' || r == 'N')
-		return '\0'; /* cancel */
-	return (use_trash ? '\0' : 'i'); /* interactive for rm */
+	return (r == 'y') ? 'f' : '\0'; /* forceful for rm; n or Esc cancels */
 }
 
 /* Writes buflen char(s) from buf to a file */
@@ -2731,7 +2722,7 @@ static void export_file_list(void)
 
 	spawn(editor, g_tmpfpath, NULL, NULL, F_CLI);
 
-	if (xconfirm(get_input(messages[MSG_RM_TMP])) && unlink(g_tmpfpath)) {
+	if (get_yn(messages[MSG_RM_TMP]) == 'y' && unlink(g_tmpfpath)) {
 		DPRINTF_S(strerror(errno));
 	}
 }
@@ -7193,7 +7184,7 @@ static bool unmount(char *name, char *newpath, int *presel, char *currentpath)
 #else
 	if (spawn(cmd, "-qu", newpath, NULL, F_NORMAL)) {
 #endif
-		if (!xconfirm(get_input(messages[MSG_LAZY])))
+		if (get_yn(messages[MSG_LAZY]) != 'y')
 			return FALSE;
 
 #ifdef __APPLE__
@@ -10959,7 +10950,7 @@ nochange:
 				tmp = abspath(tmp, NULL, newpath);
 				if (!tmp)
 					continue;
-				if (!(access(tmp, F_OK) || xconfirm(get_input(messages[MSG_OVERWRITE])))) {
+				if (!(access(tmp, F_OK) || get_yn(messages[MSG_OVERWRITE]) == 'y')) {
 					goto statusbar_nochange;
 				}
 
@@ -11034,7 +11025,7 @@ nochange:
 			if (lstat(tmp, &sb) == 0) {
 				if ((sel == SEL_RENAME) || ((r == 'f') && (S_ISREG(sb.st_mode)))) {
 					/* Overwrite file with same name? */
-					if (!xconfirm(get_input(messages[MSG_OVERWRITE])))
+					if (get_yn(messages[MSG_OVERWRITE]) != 'y')
 						break;
 				} else {
 					/* Do nothing for SEL_NEW if a non-regular entry exists */
@@ -11294,11 +11285,11 @@ nochange:
 			} else if (!g_state.forcequit) {
 				for (r = 0; r < CTX_MAX; ++r)
 					if (r != cfg.curctx && g_ctx[r].c_cfg.ctxactive) {
-						r = get_input(messages[MSG_QUIT_ALL]);
+						r = get_yn(messages[MSG_QUIT_ALL]);
 						break;
 					}
 
-				if (!(r == CTX_MAX || xconfirm(r)))
+				if (!(r == CTX_MAX || r == 'y'))
 					break; // fallthrough
 			}
 
