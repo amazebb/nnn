@@ -7318,8 +7318,10 @@ static size_t handle_bookmark(const char *bmark, char *newpath)
 	else if (key == '\r') { /* Visit bookmarks directory */
 		mkpath(cfgpath, toks[TOK_BM], newpath);
 		g_state.selbm = 1;
-	} else if (!get_kv_val(bookmark, newpath, key, maxbm, NNN_BMS))
-		return MSG_SILENT; /* Esc or no such bookmark: back to the main screen, no message */
+	} else if (key == ESC)
+		return MSG_SILENT; /* Back to the main screen, no message */
+	else if (!get_kv_val(bookmark, newpath, key, maxbm, NNN_BMS))
+		r = MSG_INVALID_KEY;
 
 	if (!r && chdir(newpath) == -1) {
 		r = MSG_ACCESS;

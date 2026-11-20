@@ -738,7 +738,7 @@ A final \fBEsc\fR pill shows that \fBEsc\fR cancels.
 bookmark, sort and time type prompts. The same goes for cancelling (\fBEsc\fR or an empty name) the name of a new
 bookmark (\fBB\fR), the extract-to prompt of an archive, the remote host prompt (\fBc\fR) and the empty
 copy or move help (\fBp\fR, \fBv\fR). Any other key that is not an option or an assigned key is ignored: the prompt stays open until you press a valid key or \fBEsc\fR.
-The bookmark prompt (\fBb\fR) is the exception: a key with no bookmark returns to the main screen without a message.
+The bookmark prompt (\fBb\fR, with \fBNNN_BMS\fR set) is the exception: a key with no bookmark shows \fBInvalid Key\fR and closes it.
 .Pp
 Yes/no questions (overwrite, remove the tmp file, unmount lazily, quit all contexts, delete, add files with
 a relative path) end with \fB[y/n]\fR. Only \fBy\fR, \fBn\fR and \fBEsc\fR answer them: other keys and
