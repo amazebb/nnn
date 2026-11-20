@@ -584,8 +584,10 @@ can show the total size of non-filtered selected files listed in a
 directory. For directories, only the size of the directory is added by
 default. To add the size of the contents of a directory, sort by disk usage (aka du mode).
 .Sh ARCHIVES
-\fBz\fR archives the selection, or the hovered entry when nothing is selected. It asks
-\fBsave archive as:\fR (prefilled with the hovered name). Type the archive's name \fBwith an extension\fR,
+\fBz\fR archives the selection, or the hovered entry when nothing is selected. When something is
+selected it first asks \fBCurrent\fR or \fBSel\fR, and \fBEnter\fR picks \fBSel\fR. It then asks
+\fBsave archive as:\fR, prefilled with the name of the hovered entry, of the one selected file, or, for
+several selected files, of the current directory. Type the archive's name \fBwith an extension\fR,
 for example \fBphotos.zip\fR, \fBnotes.tar.gz\fR or \fBbackup.7z\fR: the extension decides the format.
 A path (\fB~/backups/photos.zip\fR) says where the archive is saved; the directory should already exist. The
 files are stored under their own names. If the archive exists, nnn asks before overwriting it.

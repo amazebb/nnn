@@ -800,6 +800,7 @@ static char * const utils[] = {
 #define MSG_BM_NAME      43
 #define MSG_ARCHIVE_RLTV 44
 #define MSG_NOT_FOUND    45
+#define MSG_CUR_SEL_S    46
 
 static const char * const messages[] = {
 	"",
@@ -848,6 +849,7 @@ static const char * const messages[] = {
 	"name: ",
 	"Add files with relative path? [y/n]",
 	"command not found",
+	"'c'urrent/['s'el]?",
 };
 
 /* Supported configuration environment variables */
@@ -1785,7 +1787,7 @@ static void printerr(int linenum)
 static bool is_choice_prompt(const char *prompt)
 {
 	static const uchar_t ids[] = {
-		MSG_CP_MV_AS, MSG_CUR_SEL_OPTS, MSG_NEW_OPTS, MSG_CLI_MODE,
+		MSG_CP_MV_AS, MSG_CUR_SEL_OPTS, MSG_CUR_SEL_S, MSG_NEW_OPTS, MSG_CLI_MODE,
 		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS
 	};
 
@@ -1977,7 +1979,8 @@ static bool isselfileempty(void)
 	return (stat(selpath, &sb) == -1) || (!sb.st_size);
 }
 
-static int get_cur_or_sel(void)
+/* defsel makes Sel the option Enter picks */
+static int get_cur_or_sel(bool defsel)
 {
 	bool sel = (selbufpos || !isselfileempty());
 
@@ -1989,7 +1992,10 @@ static int get_cur_or_sel(void)
 		if (cfg.prefersel && selbufpos)
 			return 's';
 
-		int choice = get_input(messages[MSG_CUR_SEL_OPTS]);
+		int choice = get_input(messages[defsel ? MSG_CUR_SEL_S : MSG_CUR_SEL_OPTS]);
+
+		if (choice == '\r' && defsel)
+			choice = 's';
 
 		return ((choice == 'c' || choice == 's') ? choice : 0);
 	}
@@ -3391,7 +3397,7 @@ static bool batch_rename(void)
 					     "tr '\n' '\\0' | xargs -0 -n2 sh -c 'mv -i -- \"$0\" \"$@\" <"
 					     " /dev/tty'";
 	char buf[sizeof(batchrenamecmd) + (PATH_MAX << 1)];
-	int i = get_cur_or_sel();
+	int i = get_cur_or_sel(FALSE);
 
 	if (!i)
 		return ret;
@@ -5132,7 +5138,7 @@ static int xlink(char *prefix, char *path, char *curfname, char *buf, int type)
 	int (*link_fn)(const char *, const char *) = NULL;
 	char lnpath[PATH_MAX];
 
-	choice = get_cur_or_sel();
+	choice = get_cur_or_sel(FALSE);
 	if (!choice)
 		return -1;
 
@@ -10824,7 +10830,7 @@ nochange:
 		case SEL_RM_RF:
 		{
 			if ((sel == SEL_TRASH) || (sel == SEL_RM_RF)) {
-				r = get_cur_or_sel();
+				r = get_cur_or_sel(FALSE);
 				if (!r) {
 					goto statusbar_nochange;
 				}
@@ -10879,6 +10885,7 @@ nochange:
 		{
 			int ret = 'n';
 			size_t len;
+			const char *self = NULL; /* The one entry being archived: its name is suggested */
 
 			if (!ndents && (sel == SEL_OPENWITH || sel == SEL_RENAME))
 				break;
@@ -10888,7 +10895,7 @@ nochange:
 
 			switch (sel) {
 			case SEL_ARCHIVE:
-				r = get_cur_or_sel();
+				r = get_cur_or_sel(TRUE);
 				if (!r) {
 					goto statusbar_nochange;
 				}
@@ -10898,11 +10905,13 @@ nochange:
 						goto msgwait_nochange;
 					}
 
-					tmp = NULL;
+					if (selbufpos && nselected == 1)
+						self = xbasename(pselbuf);
 				} else
-					tmp = pdents[cur].name;
+					self = pdents[cur].name;
 
-				tmp = xreadline(tmp, messages[MSG_ARCHIVE_NAME]);
+				/* Several files: suggest the name of the current directory */
+				tmp = xreadline(self ? self : xbasename(path), messages[MSG_ARCHIVE_NAME]);
 				break;
 			case SEL_OPENWITH:
 #ifndef NORL
@@ -10944,8 +10953,8 @@ nochange:
 
 			switch (sel) {
 			case SEL_ARCHIVE:
-				if (r == 'c' && strcmp(tmp, pdents[cur].name) == 0)
-					continue; /* Cannot overwrite the hovered file */
+				if (self && strcmp(tmp, self) == 0)
+					continue; /* Cannot overwrite the file being archived */
 
 				tmp = abspath(tmp, NULL, newpath);
 				if (!tmp)
