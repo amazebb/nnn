@@ -807,7 +807,7 @@ static const char * const messages[] = {
 	"0 selected",
 	"cancelled",
 	"failed!",
-	"session name: ",
+	"Session name: ",
 	"'c'p/'m'v as?",
 	"'c'urrent/'s'el?",
 	"file limit exceeded",
@@ -817,12 +817,12 @@ static const char * const messages[] = {
 	"Overwrite? [y/n]",
 	"'s'ave/'l'oad/'r'estore?",
 	"Quit all contexts? [y/n]",
-	"remote name (- for hovered): ",
-	"save archive as: ",
-	"open with: ",
-	"[path/]name: ",
-	"link prefix [@ for none]: ",
-	"copy [path/]name: ",
+	"Remote name (- for hovered): ",
+	"Save archive as: ",
+	"Open with: ",
+	"[Path/]name: ",
+	"Link prefix [@ for none]: ",
+	"Copy [path/]name: ",
 	"\n'Enter' to continue",
 	"open failed",
 	"dir inaccessible",
@@ -833,18 +833,18 @@ static const char * const messages[] = {
 	"too few cols!",
 	"'s'shfs/'r'clone?",
 	"refresh if slow",
-	"app: ",
+	"App: ",
 	"['l's]/'o'pen/e'x'tract/'m'nt?",
 	"Keys:",
 	"invalid regex",
 	"'a'u/'d'u/'e'xt/'r'ev/'s'z/'t'm/'v'er/'c'lr/'^T'?",
 	"Unmount failed! Try lazy? [y/n]",
-	"first file (\')/char?",
+	"First file (\')/char?",
 	"Remove tmp file? [y/n]",
 	"invalid key",
 	"unchanged",
 	"dir changed, range sel off",
-	"name: ",
+	"Name: ",
 	"Add files with relative path? [y/n]",
 	"command not found",
 	"'c'urrent/['s'el]?",
@@ -7081,7 +7081,7 @@ static bool remote_mount(char *newpath)
 		return FALSE;
 	}
 
-	tmp = xreadline(NULL, "host[:dir] > ");
+	tmp = xreadline(NULL, "Host[:dir] > ");
 	if (!tmp[0]) { /* Cancelled: no message */
 		statusbar(".");
 		return FALSE;
@@ -8701,7 +8701,7 @@ static void handle_screen_move(enum action sel)
 		break;
 	case SEL_JUMP:
 	{
-		char *input = xreadline(NULL, "jump (+n/-n/n): ");
+		char *input = xreadline(NULL, "Jump (+n/-n/n): ");
 
 		if (!input || !*input)
 			break;
