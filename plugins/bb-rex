@@ -12,7 +12,7 @@ hosts=$(rex hosts --json | jq -r '.hosts[].host | [.label, .endpoints[0]] | @tsv
 [ -n "$hosts" ] || { printf 'No Rex hosts. Press Enter ' >&2; read -r _; exit 1; }
 
 if command -v fzf >/dev/null; then
-	pick=$(printf '%s\n' "$hosts" | fzf --prompt='Rex host> ' --with-nth=1 --delimiter='\t' \
+	pick=$(printf '%s\n' "$hosts" | fzf --height=100% --margin=5% --border=rounded --border-label=' Rex hosts ' --prompt='Rex host> ' --with-nth=1 --delimiter='\t' \
 		--preview='rex --timeout 3s -S {1} session ls 2>&1' --preview-window=right,60%) || exit 0
 else
 	printf '%s\n' "$hosts" | cut -f1 | nl >&2
@@ -29,7 +29,7 @@ manage() {
 	command -v fzf >/dev/null || { printf 'Manage needs fzf. Press Enter ' >&2; read -r _; return; }
 	list="rex --timeout 3s -S '$label' session ls --json | jq -r '.sessions[] | [.label, .session_id] | @tsv'"
 	while :; do
-		out=$(sh -c "$list" | fzf --prompt="$label sessions> " --with-nth=1 --delimiter='\t' \
+		out=$(sh -c "$list" | fzf --height=100% --margin=5% --border=rounded --border-label=' Rex sessions ' --prompt="$label sessions> " --with-nth=1 --delimiter='\t' \
 			--header='Enter: switch  ctrl-x: kill  ctrl-n: new' --expect=ctrl-n \
 			--bind "ctrl-x:execute-silent(rex -S '$label' session kill {2})+reload($list)" \
 			--preview="rex --timeout 3s -S '$label' block ls -s {2} 2>&1" --preview-window=right,60%)
