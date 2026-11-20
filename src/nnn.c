@@ -3487,6 +3487,24 @@ static char *get_archive_cmd(const char *archive)
 	return archive_cmd[i];
 }
 
+/* Check if p (an absolute path) is one of the selected paths */
+static bool sel_has_path(const char *p)
+{
+	char *psel = pselbuf;
+	size_t pos = 0, len;
+
+	while (pos < selbufpos) {
+		if (xstrcmp(psel, p) == 0)
+			return TRUE;
+
+		len = xstrlen(psel) + 1;
+		pos += len;
+		psel += len;
+	}
+
+	return FALSE;
+}
+
 /* Check if all the selected paths are within dir (used to archive with paths relative to cwd) */
 static bool sel_paths_in_dir(const char *dir)
 {
@@ -7314,6 +7332,33 @@ static size_t handle_bookmark(const char *bmark, char *newpath)
 	return r;
 }
 
+/*
+ * Ask for the archive name. A name that resolves to a file the archive is made from (the hovered
+ * one, or any selected one) would replace it, so the prompt stays with the typed name until it is
+ * changed or cancelled with Esc.
+ */
+static char *ask_archive_name(const char *prefill, bool hovered, const char *path, char *newpath)
+{
+	char typed[PATH_MAX], full[PATH_MAX];
+	const char *prompt = messages[MSG_ARCHIVE_NAME];
+	char *name, *abs;
+
+	for (;;) {
+		name = xreadline(prefill, prompt);
+		if (!name || !*name || !(abs = abspath(name, NULL, newpath)))
+			return name;
+
+		if (hovered)
+			mkpath(path, pdents[cur].name, full);
+		if (!(hovered ? xstrcmp(abs, full) == 0 : sel_has_path(abs)))
+			return name;
+
+		xstrsncpy(typed, name, sizeof(typed));
+		prefill = typed;
+		prompt = "Save archive as (pick another name): ";
+	}
+}
+
 static void add_bookmark(char *path, char *newpath, int *presel)
 {
 	char *dir = xbasename(path);
@@ -10917,7 +10962,7 @@ nochange:
 					self = pdents[cur].name;
 
 				/* Several files: suggest the name of the current directory */
-				tmp = xreadline(self ? self : xbasename(path), messages[MSG_ARCHIVE_NAME]);
+				tmp = ask_archive_name(self ? self : xbasename(path), r == 'c', path, newpath);
 				break;
 			case SEL_OPENWITH:
 #ifndef NORL
@@ -10959,9 +11004,6 @@ nochange:
 
 			switch (sel) {
 			case SEL_ARCHIVE:
-				if (self && strcmp(tmp, self) == 0)
-					continue; /* Cannot overwrite the file being archived */
-
 				tmp = abspath(tmp, NULL, newpath);
 				if (!tmp)
 					continue;

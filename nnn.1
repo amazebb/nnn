@@ -590,7 +590,8 @@ selected it first asks \fBCurrent\fR or \fBSel\fR, and \fBEnter\fR picks \fBSel\
 several selected files, of the current directory. Type the archive's name \fBwith an extension\fR,
 for example \fBphotos.zip\fR, \fBnotes.tar.gz\fR or \fBbackup.7z\fR: the extension decides the format.
 A path (\fB~/backups/photos.zip\fR) says where the archive is saved; the directory should already exist. The
-files are stored under their own names. If the archive exists, nnn asks before overwriting it.
+files are stored under their own names. If the archive exists, nnn asks before overwriting it. A name that is one of the files being archived
+is not accepted: the prompt stays open (as \fBSave archive as (pick another name):\fR) until you change the name or press \fBEsc\fR.
 While the archive is made, the tool lists the files it adds and nnn waits for \fBEnter\fR;
 \fBNNN_ARCHIVELIST=0\fR runs the tool silently instead.
 .Pp
