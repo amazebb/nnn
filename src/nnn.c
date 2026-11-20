@@ -538,6 +538,8 @@ static uchar_t youngstyle = YOUNG_ICON;
 static uchar_t youngstyle = YOUNG_REVERSE;
 #endif
 
+#define PILL_EXTRA 3 /* Columns a pill takes besides its text: two caps and the gap */
+
 /* Pill: cap, reversed text with no padding, cap, gap */
 static void pill_open(void)
 {
@@ -1722,6 +1724,12 @@ static void attroff_curctx(void)
 
 static int lastkey; /* Last key a prompt returned: Esc cancels without an invalid key message */
 
+/* A prompt was cancelled: back to the status line, no message. statusbar() reads the working directory */
+static void cancelled(void)
+{
+	statusbar(".");
+}
+
 static void print_msg(const char *msg)
 {
 	attron_curctx();
@@ -1748,7 +1756,7 @@ static void print_msg(const char *msg)
 static void printmsg(const char *msg)
 {
 	if (lastkey == CONTROL('[') && msg == messages[MSG_INVALID_KEY])
-		statusbar("."); /* The prompt was cancelled: no message */
+		cancelled();
 	else
 		print_msg(msg);
 }
@@ -1823,7 +1831,7 @@ static void printchoices(const char *spec, int sel)
 		/* Option width; one that no longer fits (with caps and gap) ends the line, as in the status bar */
 		for (const char *q = p; *q && *q != '/' && *q != ']' && !(*q == '?' && !q[1]); ++q)
 			w += (*q != '\'');
-		if (getcurx(stdscr) + w + 3 >= xcols)
+		if (getcurx(stdscr) + w + PILL_EXTRA >= xcols)
 			break;
 
 		if (def) {
@@ -1861,7 +1869,7 @@ static void printchoices(const char *spec, int sel)
 	}
 
 	/* Any other key cancels in every choice prompt; Left/Right can select Esc too */
-	if (getcurx(stdscr) + 3 + 3 < xcols) {
+	if (getcurx(stdscr) + 3 + PILL_EXTRA < xcols) {
 		if (idx == sel && msgcolor)
 			attron(COLOR_PAIR(C_MSG));
 		else if (idx == sel)
@@ -3334,7 +3342,7 @@ static bool cpmvrm_selection(enum action sel, char *path)
 		fw_confirm = FALSE;
 		fw_title = NULL;
 		if (!r) {
-			statusbar("."); /* Cancelled: no message */
+			cancelled();
 			return FALSE;
 		}
 		editselection(TRUE);
@@ -6914,8 +6922,8 @@ static bool handle_archive(char *fpath /* in-out param */, char op)
 		outdir = xreadline(is_atool ? "." : name, messages[MSG_NEW_PATH]);
 		free(name);
 
-		if (!outdir || !*outdir) { /* Cancelled: no message */
-			statusbar(".");
+		if (!outdir || !*outdir) {
+			cancelled();
 			return FALSE;
 		}
 		/* Do not create smart context for current dir */
@@ -7085,8 +7093,8 @@ static bool remote_mount(char *newpath)
 	}
 
 	tmp = xreadline(NULL, "Host[:dir] > ");
-	if (!tmp[0]) { /* Cancelled: no message */
-		statusbar(".");
+	if (!tmp[0]) {
+		cancelled();
 		return FALSE;
 	}
 
@@ -7318,7 +7326,7 @@ static void add_bookmark(char *path, char *newpath, int *presel)
 		xstrsncpy(newpath + r, dir, PATH_MAX - r);
 		printwait((symlink(path, newpath) == -1) ? strerror(errno) : newpath, presel);
 	} else
-		statusbar(path); /* Cancelled: back to the main screen, no message */
+		cancelled();
 }
 
 /*
@@ -9016,7 +9024,7 @@ static bool set_time_type(int *presel)
 /* Full file name as a pill, truncated to the remaining width (uses g_buf) */
 static void pill_name(const char *name)
 {
-	int avail = xcols - getcurx(stdscr) - 3; /* caps and gap */
+	int avail = xcols - getcurx(stdscr) - PILL_EXTRA;
 
 	if (avail < 4)
 		return;
@@ -9156,8 +9164,8 @@ static void statusbar(char *path)
 			if (txt)
 				w = strlen(txt);
 
-			/* Pill: caps, padding and gap are 5 more columns; keep the last column free */
-			if (segs && *s != 'n' && getcurx(stdscr) + w + 3 >= xcols)
+			/* Pill: caps and gap are PILL_EXTRA more columns; keep the last column free */
+			if (segs && *s != 'n' && getcurx(stdscr) + w + PILL_EXTRA >= xcols)
 				break;
 
 			if (*s == 'n') {
