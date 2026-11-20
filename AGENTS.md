@@ -38,7 +38,7 @@ Behavior is documented in `nnn.1` (CHANGES) and `src/nnn.c`; only the non-obviou
 - `NNN_FCOLORS` slots 13/14 are the detail time/size colors; icon pairs start at `C_SIZ + 1`.
 - macOS `f` stats: Homebrew GNU `stat` if `…/coreutils/libexec/gnubin/stat` exists, else `/usr/bin/stat -x`.
 - `o` open with runs via `spawn()` without a shell (no aliases/functions); Gui detaches stdin (`F_NOSTDIN`) so a stray terminal app cannot steal keystrokes.
-- Choice prompts opt in through the `is_choice_prompt()` list in `nnn.c`: add a message id there to render it as pills.
+- Choice prompts opt in through the `is_choice_prompt()` list in `nnn.c`: add a message id there to render it as pills. Prompts built at run time (sort: `build_sortprompt()` into `sortprompt`; time type: `timeprompt`) are static buffers matched by pointer in the same function, with the current choice in `[...]` as the default pill; `'^T'` in a spec is Ctrl+T.
 - Pills are tight: `pill_open()`/`pill_close()` add no padding inside the caps, only one gap cell after the closing cap; width checks count the caps and that gap (`+ 3`), not padding. Trim a message's own trailing space before drawing it in a pill.
 - Ghostty preview leaves id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
 - zoxide: plugin `bb-z` (`;z`, bound in `n3`); the chosen dir is recorded with `zoxide add` and sent as `0c<dir>` to `NNN_PIPE`.

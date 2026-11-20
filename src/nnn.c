@@ -1786,19 +1786,20 @@ static void printerr(int linenum)
 
 /* Prompts written as 'k'ey options separated by /, with the default in [] */
 static char timeprompt[40]; /* Time type choices; the current one is the default */
+static char sortprompt[100]; /* Sort choices; the current one is the default */
 
 static bool is_choice_prompt(const char *prompt)
 {
 	static const uchar_t ids[] = {
 		MSG_CP_MV_AS, MSG_CUR_SEL_OPTS, MSG_CUR_SEL_S, MSG_NEW_OPTS, MSG_CLI_MODE,
-		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS, MSG_ORDER
+		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS
 	};
 
 	for (size_t i = 0; i < ELEMENTS(ids); ++i)
 		if (prompt == messages[ids[i]])
 			return TRUE;
 
-	return prompt == timeprompt;
+	return prompt == timeprompt || prompt == sortprompt;
 }
 
 /*
@@ -9042,6 +9043,22 @@ static int set_sort_flags(int r)
 	return r;
 }
 
+/* Sort choices as pills, the current sort ('c'lear when none is set) being the default */
+static void build_sortprompt(void)
+{
+	static const char keys[] = "aderstvc";
+	static const char * const labels[] = {
+		"'a'pparent", "'d'isk", "'e'xt", "'r'ev", "'s'ize", "'t'ime", "'v'er", "'c'lear"
+	};
+	const char curkey = strchr(keys, cfgsort[cfg.curctx]) && cfgsort[cfg.curctx] ? (char)cfgsort[cfg.curctx] : 'c';
+	char *o = sortprompt;
+
+	for (size_t i = 0; i < ELEMENTS(labels); ++i)
+		o += snprintf(o, sizeof(sortprompt) - (size_t)(o - sortprompt), "%s%s%s/",
+			      keys[i] == curkey ? "[" : "", labels[i], keys[i] == curkey ? "]" : "");
+	xstrsncpy(o, "'^T'?", sizeof(sortprompt) - (size_t)(o - sortprompt));
+}
+
 static bool set_time_type(int *presel)
 {
 	bool ret = FALSE;
@@ -10651,9 +10668,10 @@ nochange:
 				cfg.preview ^= 1;
 				continue;
 			default: /* SEL_SORT */
+				build_sortprompt();
 				do {
-					r = get_input(messages[MSG_ORDER]);
-					if (r == ESC)
+					r = get_input(sortprompt);
+					if (r == ESC || r == '\r') /* Enter keeps the current sort */
 						goto statusbar_nochange;
 				} while (!(r = set_sort_flags(r))); /* Keys that sort nothing are ignored */
 			}
