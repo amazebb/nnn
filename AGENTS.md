@@ -30,33 +30,17 @@ This file is the session brief. Keep it current: when a durable project fact cha
 
 ## Current behavior (bullets)
 
-- `-y` / `NNN_OPTS=y`: eza-style compact timestamps (12 columns).
-- `-Y` / `NNN_OPTS=Y`: US compact timestamps (`Aug 19 14:32`). Last of `-y`/`-Y`/`-Z` wins.
-- `-I` / `NNN_OPTS=I`: hide directory sizes in the detail listing (file sizes stay; `d` du sort still works).
-- `-Z` / `NNN_OPTS=Z`: eza style with weekday + time (`Thu    14:32`) for files modified today, normal time color, no reverse-video highlight. `y` key cycles detail time format (ISO, eza, US, eza + today); `I` key toggles directory sizes. `;;` (plugin prefix twice, handled in nnn.c without a plugin; `;` is never a plugin key): macOS Quick Look via `qlmanage -p`, raised with osascript after `sleep 0.15` (opens behind the terminal otherwise).
-- `-m` / `NNN_OPTS=m`: hide octal permissions in the detail listing; `M` toggles. Status bar perms stay.
-- `NNN_FCOLORS` slots 13/14: detail time/size colors (default `04`/`b3`); unset or `00` falls back to slot 8. Icon pairs start at `C_SIZ + 1`.
-- `-G`: run git and show the status column. Without `-G`, git is not queried.
-- Ignored entries (`gitdim`, `FILE_IGNORED` in `nnn.c`): by default, with `-G`, drawn `A_DIM | A_ITALIC` in their own colors, never bold, with no `!!`; only the ignored entry itself (exact path), never its parent folders. `NNN_GITIGNORE=mark` restores the `!!` marks (rolled up to folders).
-- `i`: toggle that git column; short on/off notice. Column is omitted when the repo is clean. In `$HOME`, git uses the bare `~/.dotfiles` repo.
+Behavior is documented in `nnn.1` (CHANGES) and `src/nnn.c`; only the non-obvious rules are kept here.
+
+- `;` is never a plugin key: `;;` (macOS Quick Look via `qlmanage -p`, raised with osascript after `sleep 0.15`) is handled in `nnn.c` without a plugin.
+- In `$HOME`, git (`-G`, `i`) uses the bare `~/.dotfiles` repo.
+- Top-line git segment: summary and tracked flag come from `zsh -f -c 'source …/site-functions/dotfiles/dotfiles --print-status'` via fork/exec argv; no segment if that file is missing.
+- `NNN_FCOLORS` slots 13/14 are the detail time/size colors; icon pairs start at `C_SIZ + 1`.
 - macOS `f` stats: Homebrew GNU `stat` if `…/coreutils/libexec/gnubin/stat` exists, else `/usr/bin/stat -x`.
-- `f` popup `j`/`n` and `k`/`p`: listing highlight (and status bar) follow the hovered file; preview-tui already did via FIFO.
-- Empty `p` (copy) / `v` (move): floating help in the same style as `f`; Enter opens the editor, q/Esc cancels (`fw_confirm`). Non-per-file floating popups fit their content/footer and can carry a title (`fw_title`); the per-file `f` popup keeps its fixed size. All floating popups have rounded corners; scroll indicators are nerd font carets with `O_NERD` (`FW_UP`/`FW_DOWN`/`FW_LEFT`/`FW_RIGHT`), else `^v<>`. Footer key hints are pills (`fw_pill()`): bold key, capitalised label, first entry aligned with the title.
-- Preview toggle off / quit: close the Ghostty preview surface by recorded id; leftover id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
-- `C` / `^B`: copy name(s) / full path(s) of the selection (else hovered) to the clipboard; `^G` in `xreadline` prompts pastes the first entry from `yankbuf`.
-- `O_NERD` builds: cursor highlight, status-line segments (`pill_open`/`pill_close` in `statusbar()`, one pill each for counter, selection, sort/filter flags (only when set), time, perms, owner, size, file name for non-symlinks in place of the extension; ones that do not fit are dropped, see `NNN_STATUS`) and `printmsg()` messages/prompts (own color pair `C_MSG`, xterm 208, `NNN_MSGCOLOR`) use U+E0B6/U+E0B4 caps (`PILL_L`/`PILL_R`, `pill` in `nnn.c`); `NNN_PILL=0` disables. `printent` clears to end of line on other rows to erase a stale trailing cap.
-- `NNN_YOUNG=reverse|pill|icon|none` (default `icon` with `O_NERD`, else `reverse`) styles timestamps of young entries (`youngstyle`, `print_time(..., inpill)`); `pill` puts caps in the neighbouring detail cells (`printent`), the status pill gets no young highlight (already reversed).
-- Hover marker in detail mode (`markhovered()`, `hovermark`): `NNN_HOVERMARK=triangle` U+F0DA (default with `O_NERD`), `1` `>` (default otherwise), `0` off.
-- Top line: the current context number and the whole path are pills (`ctxpill`, `mincol` in `redraw()`: path width accounts for the 4 extra columns).
-- Top line git segment (`gitbranch`, `gittrack`, `git_branch_update()` in `browse()`; pairs `C_GIT`+): follows the path pill like zsh-prompt: seamless cap in the path colour, ` <git/dotfiles glyph> <branch glyph>  <summary>` white on #008400 (clean) / #d6000c (a ` +`/` ~`/` ?` entry), closing cap. Summary (`branch +s ~u !c ?n ↑a ↓b`) and tracked flag come from `zsh -f -c 'source …/site-functions/dotfiles/dotfiles --print-status'` via fork/exec argv (no segment if that file is missing). `NNN_GITBRANCH=0` disables (on by default); shown only while `cfg.normalgit` is on (`-G`, toggled by `i`); needs pills and 256 colors; hidden if the path would not fit.
-- Status line detail segments (`statusorder`, `NNN_STATUS`, default `ftspon`: f sort/filter, t time, s size, p perms, o owner with `-U`, n name; counter and selection are fixed first): drawn in that order, with pills the first segment that does not fit ends the line (order = priority); plain text only without pills (`NNN_PILL=0`, no `O_NERD`).
-- `printfilterline()`: with pills the filter prompt starts with one pill, mode + keys (`str /:`; UPPERCASE = case sensitive, lowercase = ignore case; `fnstrstr` decides), then the typed text; `showfilterinfo()` keeps the upstream `str [/], ic [:]` hint only without pills (or the `file` line with `-i`); `Esc` at the first filter prompt in the bookmarks directory (`bmpick` in `browse()`, `selbm`) returns to `lastdir`. `show_help()` prints a `REGEX FILTER` line (POSIX extended, or PCRE2 with `O_PCRE2=1`).
-- `o` open with (`handle_openwith()`): the command runs via `spawn()` without a shell (no aliases/functions). `cmd_exists()` checks the first word on `PATH` first and shows `command not found`. Gui = `F_NOWAIT|F_NOTRACE|F_NOSTDIN|F_MULTI` (stdin detached so a stray terminal app cannot steal keystrokes) and shows a `launched <cmd>` notice; Cli = `F_CLI`.
-- Narrow screens: `adjust_cols()` switches to the light view when the name column is too narrow and sets `detailauto`; the detail view returns when the screen widens (`d` clears the flag).
-- Choice prompts (`is_choice_prompt()` list in `nnn.c`) render the existing `'k'ey/[default]` message strings as pills via `printchoices()`; add a message id to that list to opt in. `get_input()` handles Left/Right (the filled pill moves through the options and `Esc`, `parse_choices()`) and Enter returns the selected option's key (`ESC` on the `Esc` pill). Options that do not fit the width are dropped from the right (no plain-text switch).
-- `x`/`X` delete confirmation: single file prompt ends with `[y/n]`; a selection is listed in the floating window (`confirm_list()`, `fw_yesno`, `fw_yes_label`): `y` proceeds, `n`/`q`/Esc cancels. The >10-file `Are you sure?` double confirm for `rm` stays a status-line prompt.
-- zoxide: plugin `bb-z` (`;z`, bound in `n3`), self-contained: empty prompt = `zoxide query -i`, else `zoxide query -- <words>`; the chosen dir is recorded with `zoxide add` and sent as `0c<dir>` to `NNN_PIPE`.
-- Sort `t`/`s`/`e`: set the key (no xor-off). `t` `T` is reverse time; `t` `c` clears.
+- `o` open with runs via `spawn()` without a shell (no aliases/functions); Gui detaches stdin (`F_NOSTDIN`) so a stray terminal app cannot steal keystrokes.
+- Choice prompts opt in through the `is_choice_prompt()` list in `nnn.c`: add a message id there to render it as pills.
+- Ghostty preview leaves id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
+- zoxide: plugin `bb-z` (`;z`, bound in `n3`); the chosen dir is recorded with `zoxide add` and sent as `0c<dir>` to `NNN_PIPE`.
 
 ## Commits
 
