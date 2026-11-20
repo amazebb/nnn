@@ -796,6 +796,7 @@ static char * const utils[] = {
 #define MSG_FIRST        38
 #define MSG_RM_TMP       39
 #define MSG_INVALID_KEY  40
+#define MSG_SILENT       0xff /* Not a message: a prompt was cancelled */
 #define MSG_NOCHANGE     41
 #define MSG_DIR_CHANGED  42
 #define MSG_BM_NAME      43
@@ -844,7 +845,7 @@ static const char * const messages[] = {
 	"Unmount failed! Try lazy? [y/n]",
 	"First file (\')/char?",
 	"Remove tmp file? [y/n]",
-	"invalid key",
+	"Invalid Key",
 	"unchanged",
 	"dir changed, range sel off",
 	"Name: ",
@@ -1722,15 +1723,13 @@ static void attroff_curctx(void)
 	attroff(COLOR_PAIR(cfg.curctx + 1));
 }
 
-static int lastkey; /* Last key a prompt returned: Esc cancels without an invalid key message */
-
 /* A prompt was cancelled: back to the status line, no message. statusbar() reads the working directory */
 static void cancelled(void)
 {
 	statusbar(".");
 }
 
-static void print_msg(const char *msg)
+static void printmsg(const char *msg)
 {
 	attron_curctx();
 	if (pill && msg[0] && !g_state.oldcolor) {
@@ -1751,14 +1750,6 @@ static void print_msg(const char *msg)
 	} else
 		printmsg_nc(msg);
 	attroff_curctx();
-}
-
-static void printmsg(const char *msg)
-{
-	if (lastkey == CONTROL('[') && msg == messages[MSG_INVALID_KEY])
-		cancelled();
-	else
-		print_msg(msg);
 }
 
 static void printwait(const char *msg, int *presel)
@@ -1964,22 +1955,29 @@ static int get_input(const char *prompt)
 
 		settimeout();
 		if (pills && *ch == '\r' && sel != def) /* Enter picks the selected pill: its key, or cancel on Esc */
-			return lastkey = (sel >= 0 && sel < n && keys[sel]) ? (uchar_t)keys[sel] : CONTROL('[');
-		return lastkey = (int)*ch;
+			return (sel >= 0 && sel < n && keys[sel]) ? (uchar_t)keys[sel] : CONTROL('[');
+		return (int)*ch;
 	}
 }
 
-/* Ask until y, n or Esc is pressed; returns 'y', 'n' or ESC. Other keys, Enter included, are ignored */
-static int get_yn(const char *prompt)
+/* Ask until one of the keys in valid, or Esc, is pressed; returns that key or ESC. Other keys are ignored */
+static int get_input_in(const char *prompt, const char *valid)
 {
 	int r;
 
-	do {
-		r = get_input(prompt); /* Read once: TOLOWER() evaluates its argument several times */
-		r = TOLOWER(r);
-	} while (r != 'y' && r != 'n' && r != ESC);
+	do
+		r = get_input(prompt);
+	while (r != ESC && !(r > 0 && r < 0x100 && strchr(valid, r)));
 
 	return r;
+}
+
+/* y or n (either case, as 'y' or 'n'), or ESC */
+static int get_yn(const char *prompt)
+{
+	int r = get_input_in(prompt, "yYnN");
+
+	return TOLOWER(r);
 }
 
 static bool isselfileempty(void)
@@ -3366,9 +3364,9 @@ static bool cpmvrm_selection(enum action sel, char *path)
 		opstr(g_buf, mv);
 		break;
 	case SEL_CPMVAS:
-		r = get_input(messages[MSG_CP_MV_AS]);
-		if (r != 'c' && r != 'm') {
-			printmsg(messages[MSG_INVALID_KEY]);
+		r = get_input_in(messages[MSG_CP_MV_AS], "cm");
+		if (r == ESC) {
+			cancelled();
 			return FALSE;
 		}
 
@@ -7096,7 +7094,7 @@ static bool remote_mount(char *newpath)
 	}
 
 	if (r && s)
-		opt = get_input(messages[MSG_REMOTE_OPTS]);
+		opt = get_input_in(messages[MSG_REMOTE_OPTS], "sr");
 	else
 		opt = (!s) ? 'r' : 's';
 
@@ -7105,8 +7103,8 @@ static bool remote_mount(char *newpath)
 	else if (opt == 'r') {
 		flag |= F_NOWAIT | F_NOTRACE;
 		env = xgetenv("NNN_RCLONE", "rclone mount");
-	} else {
-		printmsg(messages[MSG_INVALID_KEY]);
+	} else { /* Esc */
+		cancelled();
 		return FALSE;
 	}
 
@@ -7321,7 +7319,7 @@ static size_t handle_bookmark(const char *bmark, char *newpath)
 		mkpath(cfgpath, toks[TOK_BM], newpath);
 		g_state.selbm = 1;
 	} else if (!get_kv_val(bookmark, newpath, key, maxbm, NNN_BMS))
-		r = MSG_INVALID_KEY;
+		return MSG_SILENT; /* Esc or no such bookmark: back to the main screen, no message */
 
 	if (!r && chdir(newpath) == -1) {
 		r = MSG_ACCESS;
@@ -9044,24 +9042,23 @@ static bool set_time_type(int *presel)
 
 	buf[sizeof(buf) - 3] = cfg.timetype == T_MOD ? 'm' : (cfg.timetype == T_ACCESS ? 'a' : 'c');
 
-	int r = get_input(buf);
+	int r = get_input_in(buf, "acm");
 
-	if (r == 'a' || r == 'c' || r == 'm') {
-		r = (r == 'm') ? T_MOD : ((r == 'a') ? T_ACCESS : T_CHANGE);
-		if (cfg.timetype != r) {
-			cfg.timetype = r;
+	if (r == ESC) {
+		cancelled();
+		return FALSE;
+	}
 
-			if (cfg.filtermode || g_ctx[cfg.curctx].c_fltr[1])
-				*presel = FILTER;
+	r = (r == 'm') ? T_MOD : ((r == 'a') ? T_ACCESS : T_CHANGE);
+	if (cfg.timetype != r) {
+		cfg.timetype = r;
 
-			ret = TRUE;
-		} else
-			r = MSG_NOCHANGE;
+		if (cfg.filtermode || g_ctx[cfg.curctx].c_fltr[1])
+			*presel = FILTER;
+
+		ret = TRUE;
 	} else
-		r = MSG_INVALID_KEY;
-
-	if (!ret)
-		printwait(messages[r], presel);
+		printwait(messages[MSG_NOCHANGE], presel);
 
 	return ret;
 }
@@ -9090,7 +9087,7 @@ static void statusbar(char *path)
 	pEntry pent = &pdents[cur];
 
 	if (!ndents) {
-		print_msg("0/0");
+		printmsg("0/0");
 		return;
 	}
 
@@ -10098,7 +10095,6 @@ nochange:
 			return EXIT_FAILURE;
 
 		sel = nextsel(presel);
-		lastkey = 0;
 		if (presel)
 			presel = 0;
 
@@ -10373,7 +10369,9 @@ nochange:
 #else
 			if (tmp && !regexec(&archive_re, tmp, 0, NULL, 0)) {
 #endif
-				r = get_input(messages[MSG_ARCHIVE_OPTS]);
+				r = get_input_in(messages[MSG_ARCHIVE_OPTS], "lxmo\r");
+				if (r == ESC)
+					goto statusbar_nochange;
 				if (r == '\r')
 					r = 'l';
 				if (r == 'l' || r == 'x') {
@@ -10401,10 +10399,6 @@ nochange:
 					goto begin;
 				}
 
-				if (r != 'o') {
-					printwait(messages[MSG_INVALID_KEY], &presel);
-					goto nochange;
-				}
 			}
 
 			/* Invoke desktop opener as last resort */
@@ -10471,6 +10465,8 @@ nochange:
 		case SEL_BMOPEN:
 			if (sel == SEL_BMOPEN) {
 				r = (int)handle_bookmark(mark, newpath);
+				if (r == MSG_SILENT)
+					goto statusbar_nochange;
 				if (r) {
 					printwait(messages[r], &presel);
 					goto nochange;
@@ -10642,11 +10638,11 @@ nochange:
 				cfg.preview ^= 1;
 				continue;
 			default: /* SEL_SORT */
-				r = set_sort_flags(get_input(messages[MSG_ORDER]));
-				if (!r) {
-					printwait(messages[MSG_INVALID_KEY], &presel);
-					goto nochange;
-				}
+				do {
+					r = get_input(messages[MSG_ORDER]);
+					if (r == ESC)
+						goto statusbar_nochange;
+				} while (!(r = set_sort_flags(r))); /* Keys that sort nothing are ignored */
 			}
 
 			if (cfg.filtermode || filterset())
@@ -11146,15 +11142,25 @@ nochange:
 
 			lazy_parse_plug();
 			if (!pkey) {
-				r = get_kv_input(plug, " Tab", maxplug);
-				while (r == '\t' && plug) { /* Tab lists the plugin keys */
-					show_plugkeys();
+				for (;;) {
 					r = get_kv_input(plug, " Tab", maxplug);
+					if (r == '\t' && plug) { /* Tab lists the plugin keys */
+						show_plugkeys();
+						continue;
+					}
+
+					/* Esc, Enter, ; and ? are not plugin keys; any other key must be one */
+					if (r == ESC || r == '\r' || r == ';' || r == '?'
+					    || get_kv_val(plug, NULL, r, maxplug, NNN_PLUG))
+						break;
 				}
 			} else {
 				r = pkey;
 				pkey = '\0';
 			}
+
+			if (r == ESC)
+				goto statusbar_nochange;
 
 			if (r == ';') { /* ;; is Quick Look (not a plugin) */
 				if (ndents) {
@@ -11171,10 +11177,8 @@ nochange:
 					tmp = "!>\"$NNN_PLUGLIST/.pluglist\"";
 				} else
 					tmp = get_kv_val(plug, NULL, r, maxplug, NNN_PLUG);
-				if (!tmp) {
-					printwait(messages[MSG_INVALID_KEY], &presel);
-					goto nochange;
-				}
+				if (!tmp) /* An Alt+key that is not a plugin key */
+					goto statusbar_nochange;
 
 				if (tmp[0] == '-' && tmp[1]) {
 					++tmp;
