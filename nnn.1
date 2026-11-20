@@ -590,6 +590,10 @@ for example \fBphotos.zip\fR, \fBnotes.tar.gz\fR or \fBbackup.7z\fR: the extensi
 A path (\fB~/backups/photos.zip\fR) says where the archive is saved; the directory should already exist. The
 files are stored under their own names. If the archive exists, nnn asks before overwriting it.
 .Pp
+When the selection is in the current directory, nnn then asks \fBadd files with relative path? [y/n]\fR:
+\fBy\fR stores the files relative to the current directory, \fBn\fR with their full paths. Only \fBy\fR,
+\fBn\fR and \fBEsc\fR answer it (other keys are ignored); \fBEsc\fR cancels without creating an archive.
+.Pp
 nnn does not compress anything itself; it runs the first of these tools that is installed:
 .Bd -literal
  Order | Tool    | Used when                           | Formats
