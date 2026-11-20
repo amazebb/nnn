@@ -7311,7 +7311,7 @@ static void add_bookmark(char *path, char *newpath, int *presel)
 		xstrsncpy(newpath + r, dir, PATH_MAX - r);
 		printwait((symlink(path, newpath) == -1) ? strerror(errno) : newpath, presel);
 	} else
-		printwait(messages[MSG_CANCEL], presel);
+		statusbar(path); /* Cancelled: back to the main screen, no message */
 }
 
 /*
