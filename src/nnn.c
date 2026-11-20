@@ -841,7 +841,7 @@ static const char * const messages[] = {
 	"['l's]/'o'pen/e'x'tract/'m'nt?",
 	"Keys:",
 	"invalid regex",
-	"'a'u/'d'u/'e'xt/'r'ev/'s'z/'t'm/'v'er/'c'lr/'^T'?",
+	"'a'pparent/'d'isk/'e'xt/'r'ev/'s'ize/'t'ime/'v'er/'c'lear/'^T'?",
 	"Unmount failed! Try lazy? [y/n]",
 	"First file (\')/char?",
 	"Remove tmp file? [y/n]",
@@ -1785,18 +1785,20 @@ static void printerr(int linenum)
 }
 
 /* Prompts written as 'k'ey options separated by /, with the default in [] */
+static char timeprompt[40]; /* Time type choices; the current one is the default */
+
 static bool is_choice_prompt(const char *prompt)
 {
 	static const uchar_t ids[] = {
 		MSG_CP_MV_AS, MSG_CUR_SEL_OPTS, MSG_CUR_SEL_S, MSG_NEW_OPTS, MSG_CLI_MODE,
-		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS
+		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS, MSG_ORDER
 	};
 
 	for (size_t i = 0; i < ELEMENTS(ids); ++i)
 		if (prompt == messages[ids[i]])
 			return TRUE;
 
-	return FALSE;
+	return prompt == timeprompt;
 }
 
 /*
@@ -1901,8 +1903,11 @@ static int parse_choices(const char *spec, char *keys, int max, int *def)
 
 		keys[n] = '\0';
 		for (; *p && *p != '/' && *p != ']' && !(*p == '?' && !p[1]); ++p)
-			if (*p == '\'' && !keys[n])
+			if (*p == '\'' && !keys[n]) {
 				keys[n] = *++p;
+				if (keys[n] == '^' && p[1] && p[1] != '\'') /* '^T' is Ctrl+T */
+					keys[n] = CONTROL(p[1]);
+			}
 		++n;
 
 		if (*p == ']')
@@ -9040,11 +9045,17 @@ static int set_sort_flags(int r)
 static bool set_time_type(int *presel)
 {
 	bool ret = FALSE;
-	char buf[] = "'a'ccess / 'c'hange / 'm'od [ ]";
+	const char curkey = cfg.timetype == T_MOD ? 'm' : (cfg.timetype == T_ACCESS ? 'a' : 'c');
 
-	buf[sizeof(buf) - 3] = cfg.timetype == T_MOD ? 'm' : (cfg.timetype == T_ACCESS ? 'a' : 'c');
+	snprintf(timeprompt, sizeof(timeprompt), "%s'a'ccess%s/%s'c'hange%s/%s'm'od%s?",
+		 curkey == 'a' ? "[" : "", curkey == 'a' ? "]" : "",
+		 curkey == 'c' ? "[" : "", curkey == 'c' ? "]" : "",
+		 curkey == 'm' ? "[" : "", curkey == 'm' ? "]" : "");
 
-	int r = get_input_in(buf, "acm");
+	int r = get_input_in(timeprompt, "acm\r");
+
+	if (r == '\r') /* Enter picks the current one */
+		r = curkey;
 
 	if (r == ESC) {
 		cancelled();
