@@ -2120,7 +2120,7 @@ static char confirm_force(bool selection, bool use_trash)
 	}
 
 	/* Note: ideally we should use utils[UTIL_RM_RF] instead of the "rm -rf" string */
-	int r = snprintf(str, 20, "%s", use_trash ? utils[UTIL_GIO_TRASH] + 4 : "rm -rf");
+	int r = snprintf(str, 20, "%s", use_trash ? "Trash" : "rm -rf");
 
 	if (selection) {
 		r = confirm_list(use_trash);
