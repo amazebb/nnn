@@ -7262,7 +7262,7 @@ static void show_plugkeys(void)
 		return;
 
 	printkv(plug, f, maxplug, NNN_PLUG);
-	fprintf(f, "\n Tab: this list\n ?: available plugins (online catalog)\n");
+	fprintf(f, "\n Tab: this list\n ?: available plugins (online catalog)\n Enter: browse the plugins folder to pick one\n");
 	fclose(f);
 
 	if (len) {
