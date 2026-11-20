@@ -1722,13 +1722,8 @@ static void attroff_curctx(void)
 
 static int lastkey; /* Last key a prompt returned: Esc cancels without an invalid key message */
 
-static void printmsg(const char *msg)
+static void print_msg(const char *msg)
 {
-	if (lastkey == CONTROL('[') && msg == messages[MSG_INVALID_KEY]) {
-		statusbar("."); /* The prompt was cancelled: no message */
-		return;
-	}
-
 	attron_curctx();
 	if (pill && msg[0] && !g_state.oldcolor) {
 		/* Rounded pill in the context color; the trailing space keeps prompt input off the cap */
@@ -1748,6 +1743,14 @@ static void printmsg(const char *msg)
 	} else
 		printmsg_nc(msg);
 	attroff_curctx();
+}
+
+static void printmsg(const char *msg)
+{
+	if (lastkey == CONTROL('[') && msg == messages[MSG_INVALID_KEY])
+		statusbar("."); /* The prompt was cancelled: no message */
+	else
+		print_msg(msg);
 }
 
 static void printwait(const char *msg, int *presel)
@@ -1790,7 +1793,7 @@ static bool is_choice_prompt(const char *prompt)
 		MSG_SSN_OPTS, MSG_REMOTE_OPTS, MSG_ARCHIVE_OPTS
 	};
 
-	for (uchar_t i = 0; i < ELEMENTS(ids); ++i)
+	for (size_t i = 0; i < ELEMENTS(ids); ++i)
 		if (prompt == messages[ids[i]])
 			return TRUE;
 
@@ -2033,12 +2036,12 @@ static const char *fw_title; /* Optional title on the top border of non-per-file
 static const char *fw_yes_label; /* Footer label of the y entry */
 
 /* Lists the selection in a floating window; returns 'y' to proceed, else 'n' */
-static char confirm_list(bool use_trash)
+static int confirm_list(bool use_trash)
 {
 	char title[64];
 	struct stat sb;
 	char *buf;
-	char ret = 'n';
+	int ret = 'n';
 	int fd = open(selpath, O_RDONLY);
 
 	if (fd == -1)
@@ -2892,8 +2895,8 @@ static bool initcurses(void *oldmask)
 		for (int k = 0; k < 2; ++k) {
 			int bg = bgs[k];
 
-			init_pair(C_GIT + 3 * k + 1, white, bg);
-			init_pair(C_GIT + 3 * k + 2, bg, -1);
+			init_pair(C_GIT + (3 * k) + 1, white, bg);
+			init_pair(C_GIT + (3 * k) + 2, bg, -1);
 		}
 		gitpairs = TRUE;
 	}
@@ -3298,7 +3301,6 @@ finish:
 	return ret;
 }
 
-static bool show_content_in_floating_window(char *content, size_t content_len, enum action *action, bool perfile);
 /* Scroll indicators: nerd font carets (same family as the hover marker) or ASCII */
 #ifdef NERD
 #define FW_UP    "\xef\x83\x98" /* U+F0D8 nf-fa-caret_up */
@@ -9035,7 +9037,7 @@ static void statusbar(char *path)
 	pEntry pent = &pdents[cur];
 
 	if (!ndents) {
-		printmsg("0/0");
+		print_msg("0/0");
 		return;
 	}
 
@@ -9692,19 +9694,19 @@ static void redraw(char *path)
 		short cf, cb;
 
 		pair_content(cfg.curctx + 1, &cf, &cb);
-		init_pair(C_GIT + 3 * k, cf, gitrgb ? 233 + k : (k ? 160 : 28));
+		init_pair(C_GIT + (3 * k), cf, gitrgb ? 233 + k : (k ? 160 : 28));
 		attroff(COLOR_PAIR(cfg.curctx + 1));
-		attron(COLOR_PAIR(C_GIT + 3 * k));
+		attron(COLOR_PAIR(C_GIT + (3 * k)));
 		addstr(PILL_R); /* seamless: path colour on the segment colour */
-		attroff(COLOR_PAIR(C_GIT + 3 * k));
-		attron(COLOR_PAIR(C_GIT + 3 * k + 1) | A_BOLD);
+		attroff(COLOR_PAIR(C_GIT + (3 * k)));
+		attron(COLOR_PAIR(C_GIT + (3 * k) + 1) | A_BOLD);
 		addstr(gittrack ? " \xee\x97\xbb" : " \xee\x99\x9d"); /* U+E5FB dotfiles / U+E65D git */
 		addstr(" \xee\x9c\xa5  "); /* U+E725 branch */
 		addstr(gitbranch);
-		attroff(COLOR_PAIR(C_GIT + 3 * k + 1) | A_BOLD);
-		attron(COLOR_PAIR(C_GIT + 3 * k + 2));
+		attroff(COLOR_PAIR(C_GIT + (3 * k) + 1) | A_BOLD);
+		attron(COLOR_PAIR(C_GIT + (3 * k) + 2));
 		addstr(PILL_R);
-		attroff(COLOR_PAIR(C_GIT + 3 * k + 2));
+		attroff(COLOR_PAIR(C_GIT + (3 * k) + 2));
 	} else if (ctxpill)
 		addstr(PILL_R);
 	attroff(COLOR_PAIR(cfg.curctx + 1));
