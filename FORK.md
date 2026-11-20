@@ -127,6 +127,7 @@ What the fork changes for a user is listed in the manual's **CHANGES** section (
 | `NNN_PILL=0` | Turn off the rounded caps |
 | `NNN_STATUS` | Detail segments of the status line and their order (default `ftspon`) |
 | `NNN_GITBRANCH=0` | Hide the git branch segment after the path in the top line |
+| `NNN_ARCHIVELIST=0` | Archive without the tool's file list and the Enter pause; nothing is shown, errors included |
 | `NNN_GITIGNORE=mark` | With `-G`, mark git ignored entries `!!` in the git column instead of drawing them dim |
 | `NNN_MSGCOLOR` | Message pill color, 0 to 255 |
 | `NNN_YOUNG` | Style for recent files: `icon`, `reverse`, `pill` or `none` |

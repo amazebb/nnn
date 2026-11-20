@@ -591,6 +591,8 @@ several selected files, of the current directory. Type the archive's name \fBwit
 for example \fBphotos.zip\fR, \fBnotes.tar.gz\fR or \fBbackup.7z\fR: the extension decides the format.
 A path (\fB~/backups/photos.zip\fR) says where the archive is saved; the directory should already exist. The
 files are stored under their own names. If the archive exists, nnn asks before overwriting it.
+While the archive is made, the tool lists the files it adds and nnn waits for \fBEnter\fR;
+\fBNNN_ARCHIVELIST=0\fR runs the tool silently instead.
 .Pp
 When the selection is in the current directory, nnn then asks \fBadd files with relative path? [y/n]\fR:
 \fBy\fR stores the files relative to the current directory, \fBn\fR with their full paths. Only \fBy\fR,
@@ -1219,6 +1221,13 @@ the \fBdotfiles\fR zsh function in \fB~/.local/share/zsh/site-functions/dotfiles
 selects the bare \fB~/.dotfiles\fR repository in tracked folders); without that file nothing is shown.
 .Bd -literal
     export NNN_GITBRANCH=0
+.Ed
+.Pp
+\fBNNN_ARCHIVELIST:\fR set to \fB0\fR to archive (\fBz\fR) without showing the tool's list of files and
+without waiting for \fBEnter\fR. Nothing is shown when the archive is made, not even an error, so a
+failed archive simply leaves no file (or a partial one). On by default.
+.Bd -literal
+    export NNN_ARCHIVELIST=0
 .Ed
 .Pp
 \fBNNN_GITIGNORE:\fR how git ignored entries are shown (needs \fB-G\fR). Only an entry that is ignored itself

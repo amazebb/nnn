@@ -480,6 +480,7 @@ struct {
 	git_status_t *statuses;
 } git_statuses;
 static const char *gitstat_notice;
+static ushort_t archiveflags = F_CLI | F_CONFIRM; /* NNN_ARCHIVELIST=0: no file list, run silently */
 
 /* Configuration, contexts */
 static settings cfg = {
@@ -3582,7 +3583,7 @@ static void archive_selection(const char *cmd, const char *archive, const char *
 		snprintf(buf, len, patterns[P_ARCHIVE_CMD], cmd, archive_esc, selpath_esc);
 	}
 
-	spawn(utils[UTIL_SH_EXEC], buf, NULL, NULL, F_CLI | F_CONFIRM);
+	spawn(utils[UTIL_SH_EXEC], buf, NULL, NULL, archiveflags);
 
 cleanup:
 	if (relative)
@@ -10965,7 +10966,7 @@ nochange:
 						goto statusbar_nochange;
 					archive_selection(get_archive_cmd(tmp), tmp, path, rel == 'y');
 				} else
-					spawn(get_archive_cmd(tmp), tmp, pdents[cur].name, NULL, F_CLI | F_CONFIRM);
+					spawn(get_archive_cmd(tmp), tmp, pdents[cur].name, NULL, archiveflags);
 
 				if (tmp && (access(tmp, F_OK) == 0)) { /* File created */
 					if (r == 's')
@@ -12284,6 +12285,8 @@ int main(int argc, char *argv[])
 	}
 
 	gitbranch_on = xgetenv("NNN_GITBRANCH", "1")[0] != '0';
+	if (xgetenv("NNN_ARCHIVELIST", "1")[0] == '0')
+		archiveflags = F_MULTI | F_NOTRACE | F_NOSTDIN;
 	gitdim = strcmp(xgetenv("NNN_GITIGNORE", ""), "mark") != 0;
 
 	{
