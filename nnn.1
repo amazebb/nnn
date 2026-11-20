@@ -725,8 +725,10 @@ A final \fBEsc\fR pill shows that \fBEsc\fR cancels.
 \fBLeft\fR and \fBRight\fR move the filled pill along the options and the \fBEsc\fR pill (wrapping around);
 \fBEnter\fR picks the filled one, and typing an option's key still works.
 .Pp
-\fBEsc\fR cancels a prompt without a message, here and at the plugin (\fB;\fR), bookmark, sort
-and time type prompts. Any other key that is not an option or an assigned key shows \fBinvalid key\fR.
+\fBEsc\fR cancels a prompt and returns to the main screen without a message, here and at the plugin (\fB;\fR),
+bookmark, sort and time type prompts. The same goes for cancelling (\fBEsc\fR or an empty name) the name of a new
+bookmark (\fBB\fR), the extract-to prompt of an archive, the remote host prompt (\fBc\fR) and the empty
+copy or move help (\fBp\fR, \fBv\fR). Any other key that is not an option or an assigned key shows \fBinvalid key\fR.
 .Pp
 Needs the rounded pills; on a narrow screen the options that do not fit are left off.
 Without pills (\fBNNN_PILL=0\fR) the plain \fB'f'ile/'d'ir\fR text is shown.
@@ -784,7 +786,7 @@ _______________ + ________________________________ + _________________
  Status line    | Pills, order set by NNN_STATUS   | \fBAPPEARANCE\fR
  Filter prompt  | One pill: mode and case          | \fBFILTERS\fR
  Choice prompts | Pills, Left/Right to select      | \fBCHOICE PROMPTS\fR
- Prompts        | Esc cancels, no invalid key      | \fBCHOICE PROMPTS\fR
+ Prompts        | Esc cancels, no message          | \fBCHOICE PROMPTS\fR
  Plugin prompt  | Tab lists the plugin keys        | \fBKEYBINDS\fR
  Popups         | Rounded help, stats, confirms    | \fBFLOATING WINDOWS\fR
  Git            | Built-in column, branch segment  | \fBGIT STATUS\fR

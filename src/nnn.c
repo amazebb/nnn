@@ -3323,7 +3323,7 @@ static bool cpmvrm_selection(enum action sel, char *path)
 		fw_confirm = FALSE;
 		fw_title = NULL;
 		if (!r) {
-			printmsg(messages[MSG_CANCEL]);
+			statusbar("."); /* Cancelled: no message */
 			return FALSE;
 		}
 		editselection(TRUE);
@@ -6907,8 +6907,8 @@ static bool handle_archive(char *fpath /* in-out param */, char op)
 		outdir = xreadline(is_atool ? "." : name, messages[MSG_NEW_PATH]);
 		free(name);
 
-		if (!outdir || !*outdir) { /* Cancelled */
-			printwait(messages[MSG_CANCEL], NULL);
+		if (!outdir || !*outdir) { /* Cancelled: no message */
+			statusbar(".");
 			return FALSE;
 		}
 		/* Do not create smart context for current dir */
@@ -7078,8 +7078,8 @@ static bool remote_mount(char *newpath)
 	}
 
 	tmp = xreadline(NULL, "host[:dir] > ");
-	if (!tmp[0]) {
-		printmsg(messages[MSG_CANCEL]);
+	if (!tmp[0]) { /* Cancelled: no message */
+		statusbar(".");
 		return FALSE;
 	}
 
