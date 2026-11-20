@@ -1,3 +1,5 @@
+> **This is a fork.** [amazebb/nnn](https://github.com/amazebb/nnn) tracks [jarun/nnn](https://github.com/jarun/nnn), the original project by Arun Prakash Jana and contributors, and adds the changes listed in [FORK.md](FORK.md) and the **CHANGES** section of the manual (`nnn.1`). The rest of this README is upstream's.
+
 <h3 align="center"><img src="misc/logo/logo-128x128.png" alt="nnn"><br>nnn - <i>Supercharge your productivity!</i></h3>
 
 <p align="center">

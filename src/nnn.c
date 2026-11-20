@@ -153,7 +153,7 @@
 
 /* Macro definitions */
 #define VERSION      "5.3-amazebb"
-#define GENERAL_INFO "BSD 2-Clause\nhttps://github.com/jarun/nnn"
+#define GENERAL_INFO "BSD 2-Clause\nFork: https://github.com/amazebb/nnn\nUpstream: https://github.com/jarun/nnn"
 
 #ifndef NOSSN
 #define SESSIONS_VERSION 1
