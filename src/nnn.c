@@ -537,17 +537,15 @@ static uchar_t youngstyle = YOUNG_ICON;
 static uchar_t youngstyle = YOUNG_REVERSE;
 #endif
 
-/* Status line segment as a pill: cap, reversed padded text, cap, gap */
+/* Pill: cap, reversed text with no padding, cap, gap */
 static void pill_open(void)
 {
 	addstr(PILL_L);
 	attron(A_REVERSE);
-	addch(' ');
 }
 
 static void pill_close(void)
 {
-	addch(' ');
 	attroff(A_REVERSE);
 	addstr(PILL_R);
 	addch(' ');
@@ -1738,7 +1736,7 @@ static void printmsg(const char *msg)
 			attron(COLOR_PAIR(C_MSG));
 		size_t n = xstrlen(msg);
 
-		while (n && msg[n - 1] == ' ') /* pill_close() pads already */
+		while (n && msg[n - 1] == ' ') /* The pill fits the text tightly */
 			--n;
 		pill_open();
 		addnstr(msg, (int)n);
@@ -1821,7 +1819,7 @@ static void printchoices(const char *spec, int sel)
 		/* Option width; one that no longer fits (with caps and gap) ends the line, as in the status bar */
 		for (const char *q = p; *q && *q != '/' && *q != ']' && !(*q == '?' && !q[1]); ++q)
 			w += (*q != '\'');
-		if (getcurx(stdscr) + w + 5 >= xcols)
+		if (getcurx(stdscr) + w + 3 >= xcols)
 			break;
 
 		if (def) {
@@ -1859,7 +1857,7 @@ static void printchoices(const char *spec, int sel)
 	}
 
 	/* Any other key cancels in every choice prompt; Left/Right can select Esc too */
-	if (getcurx(stdscr) + 3 + 5 < xcols) {
+	if (getcurx(stdscr) + 3 + 3 < xcols) {
 		if (idx == sel && msgcolor)
 			attron(COLOR_PAIR(C_MSG));
 		else if (idx == sel)
@@ -6420,7 +6418,7 @@ static bool fw_caps(void)
 
 static int fw_pill_width(const char *key, const char *label)
 {
-	return (int)xstrlen(key) + 1 + (int)xstrlen(label) + 2 + (fw_caps() ? 2 : 0) + 1;
+	return (int)xstrlen(key) + 1 + (int)xstrlen(label) + (fw_caps() ? 2 : 0) + 1;
 }
 
 static void fw_pill(WINDOW *win, const char *key, const char *label, bool def)
@@ -6431,13 +6429,11 @@ static void fw_pill(WINDOW *win, const char *key, const char *label, bool def)
 	if (fw_caps())
 		waddstr(win, PILL_L);
 	wattron(win, A_REVERSE);
-	waddch(win, ' ');
 	wattron(win, A_BOLD);
 	waddstr(win, key);
 	wattroff(win, A_BOLD);
 	waddch(win, ' ');
 	waddstr(win, label);
-	waddch(win, ' ');
 	wattroff(win, A_REVERSE);
 	if (fw_caps())
 		waddstr(win, PILL_R);
@@ -9017,7 +9013,7 @@ static bool set_time_type(int *presel)
 /* Full file name as a pill, truncated to the remaining width (uses g_buf) */
 static void pill_name(const char *name)
 {
-	int avail = xcols - getcurx(stdscr) - 5; /* caps, padding and gap */
+	int avail = xcols - getcurx(stdscr) - 3; /* caps and gap */
 
 	if (avail < 4)
 		return;
@@ -9158,7 +9154,7 @@ static void statusbar(char *path)
 				w = strlen(txt);
 
 			/* Pill: caps, padding and gap are 5 more columns; keep the last column free */
-			if (segs && *s != 'n' && getcurx(stdscr) + w + 5 >= xcols)
+			if (segs && *s != 'n' && getcurx(stdscr) + w + 3 >= xcols)
 				break;
 
 			if (*s == 'n') {
@@ -9704,7 +9700,6 @@ static void redraw(char *path)
 		addstr(gittrack ? " \xee\x97\xbb" : " \xee\x99\x9d"); /* U+E5FB dotfiles / U+E65D git */
 		addstr(" \xee\x9c\xa5  "); /* U+E725 branch */
 		addstr(gitbranch);
-		addch(' ');
 		attroff(COLOR_PAIR(C_GIT + 3 * k + 1) | A_BOLD);
 		attron(COLOR_PAIR(C_GIT + 3 * k + 2));
 		addstr(PILL_R);
