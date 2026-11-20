@@ -4315,7 +4315,7 @@ static void printfilterline(const char *ln, bool nomatch)
 	for (; *mode; ++mode)
 		addch(sens ? toupper((uchar_t)*mode) : *mode);
 	attron(A_DIM);
-	addstr(" /:");
+	addstr(" [/][:]");
 	attroff(A_DIM);
 	pill_close();
 	if (nomatch)
