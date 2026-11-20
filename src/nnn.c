@@ -836,7 +836,7 @@ static const char * const messages[] = {
 	"refresh if slow",
 	"app: ",
 	"['l's]/'o'pen/e'x'tract/'m'nt?",
-	"keys:",
+	"Keys:",
 	"invalid regex",
 	"'a'u/'d'u/'e'xt/'r'ev/'s'z/'t'm/'v'er/'c'lr/'^T'?",
 	"unmount failed! try lazy?",
@@ -7211,6 +7211,28 @@ static void printkv(kv *kvarr, FILE *f, uchar_t max, uchar_t id)
 		fprintf(f, " %c: %s\n", (char)kvarr[i].key, val + kvarr[i].off);
 }
 
+/* Lists the plugin keys and their plugins (as in the help screen) in a floating window */
+static void show_plugkeys(void)
+{
+	char *buf = NULL;
+	size_t len = 0;
+	FILE *f = open_memstream(&buf, &len);
+
+	if (!f)
+		return;
+
+	printkv(plug, f, maxplug, NNN_PLUG);
+	fprintf(f, "\n Tab: this list\n ?: available plugins (online catalog)\n");
+	fclose(f);
+
+	if (len) {
+		fw_title = "Plugin keys";
+		show_content_in_floating_window(buf, len, NULL, FALSE);
+		fw_title = NULL;
+	}
+	free(buf);
+}
+
 static bool lazy_parse_plug(void)
 {
 	if (!g_state.plugparsed) {
@@ -11051,9 +11073,13 @@ nochange:
 			}
 
 			lazy_parse_plug();
-			if (!pkey)
-				r = get_kv_input(plug, " ?", maxplug);
-			else {
+			if (!pkey) {
+				r = get_kv_input(plug, " Tab", maxplug);
+				while (r == '\t' && plug) { /* Tab lists the plugin keys */
+					show_plugkeys();
+					r = get_kv_input(plug, " Tab", maxplug);
+				}
+			} else {
 				r = pkey;
 				pkey = '\0';
 			}

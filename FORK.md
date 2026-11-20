@@ -103,6 +103,7 @@ What the fork changes for a user is listed in the manual's **CHANGES** section (
 | `y` | Display | Cycle the detail timestamp format: ISO, eza (`-y`), US (`-Y`), eza + today (`-Z`), back to ISO |
 | `I` | Display | Toggle directory sizes in detail mode (same as the `-I` option) |
 | `C` / `Ctrl+B` | Files | Copy file name(s) / full path(s) of the selection, else the hovered entry, to the system clipboard, newline separated. `Ctrl+G` in any prompt (e.g. `n`) pastes the first copied entry. |
+| `;` then `Tab` | Files | List the plugin keys and their plugins in a popup, then return to the prompt (`?` still opens upstream's online plugin catalog) |
 | `;;` | Files | macOS Quick Look of the hovered file (`qlmanage -p`), raised in front of the terminal. First use may prompt for Automation permission (System Events). |
 
 #### Changed behavior of existing keys

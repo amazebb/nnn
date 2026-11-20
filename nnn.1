@@ -192,6 +192,7 @@ is inserted.
  Key    | Function
 _______ + ___________________________________________
  ;      | Run a plugin by its key; ;; is Quick Look
+ ; Tab  | List the plugin keys and their plugins
  Alt+;  | Select a plugin from a menu
  =      | Launch a GUI application
  ! , ^] | Spawn a shell in the current directory
@@ -210,6 +211,12 @@ _______ + ___________________________________________
 On macOS, \fB;;\fR (the plugin key twice) opens the hovered file in Quick Look (\fBqlmanage\~-p\fR) and
 brings its window to the front. The first use may ask for Automation permission
 to control System Events.
+.Pp
+At the plugin prompt (\fB;\fR), \fBTab\fR opens a floating window that lists each plugin key
+with its plugin, as in the \fBPLUGIN KEYS\fR block of the help screen, then returns to the prompt.
+The prompt shows the keys after \fBTab\fR; \fB?\fR is not listed there because it is not one of
+your keys: it lists the plugins available online (upstream\(aqs \fB.pluglist\fR, which fetches the
+catalog from GitHub), and the popup says so.
 .Sh OPTIONS
 .Pp
 .Nm
@@ -478,7 +485,7 @@ ____ + ________________________
  ,   | Mark CWD
  -   | Go to last visited dir
  .   | Show hidden files
- ;   | Run a plugin by its key
+ ;   | Run a plugin by its key; Tab lists them
  =   | Launch a GUI application
  >   | Export file list
  @   | Visit start dir
@@ -774,6 +781,7 @@ _______________ + ________________________________ + _________________
  Status line    | Pills, order set by NNN_STATUS   | \fBAPPEARANCE\fR
  Filter prompt  | One pill: mode and case          | \fBFILTERS\fR
  Choice prompts | Pills, Left/Right to select      | \fBCHOICE PROMPTS\fR
+ Plugin prompt  | Tab lists the plugin keys        | \fBKEYBINDS\fR
  Popups         | Rounded help, stats, confirms    | \fBFLOATING WINDOWS\fR
  Git            | Built-in column, branch segment  | \fBGIT STATUS\fR
  Timestamps     | Compact styles, young entries    | \fBAPPEARANCE\fR
@@ -857,6 +865,8 @@ To run a plugin directly, press \fB;\fR followed by the key.
 Alternatively, combine with \fBAlt\fR (i.e. \fBAlt+key\fR).
 .It
 To pick and run an unassigned plugin, press \fBEnter\fR at the plugin prompt.
+.It
+To list the keys and their plugins, press \fBTab\fR at the plugin prompt.
 .It
 To run a plugin at startup, use the option\~\fB-P\fR followed by the plugin key.
 .El
