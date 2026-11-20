@@ -846,7 +846,7 @@ static const char * const messages[] = {
 	"unchanged",
 	"dir changed, range sel off",
 	"name: ",
-	"add files with relative path?",
+	"add files with relative path? [y/n]",
 	"command not found",
 };
 
@@ -1956,6 +1956,19 @@ static int get_input(const char *prompt)
 			return lastkey = (sel >= 0 && sel < n && keys[sel]) ? (uchar_t)keys[sel] : CONTROL('[');
 		return lastkey = (int)*ch;
 	}
+}
+
+/* Ask until y, n or Esc is pressed; returns 'y', 'n' or ESC. Other keys, Enter included, are ignored */
+static int get_yn(const char *prompt)
+{
+	int r;
+
+	do {
+		r = get_input(prompt); /* Read once: TOLOWER() evaluates its argument several times */
+		r = TOLOWER(r);
+	} while (r != 'y' && r != 'n' && r != ESC);
+
+	return r;
 }
 
 static bool isselfileempty(void)
@@ -3492,7 +3505,7 @@ static bool sel_paths_in_dir(const char *dir)
 	return TRUE;
 }
 
-static void archive_selection(const char *cmd, const char *archive, const char *path)
+static void archive_selection(const char *cmd, const char *archive, const char *path, bool relative)
 {
 	size_t archive_esc_size = 0;
 	size_t selpath_esc_size = 0;
@@ -3502,8 +3515,6 @@ static void archive_selection(const char *cmd, const char *archive, const char *
 	char *path_esc = NULL;
 	size_t len;
 	char *buf = NULL;
-	bool relative = sel_paths_in_dir(path)
-			&& xconfirm(get_input(messages[MSG_ARCHIVE_RLTV]));
 	int fd = -1;
 
 	if (relative) {
@@ -10952,9 +10963,14 @@ nochange:
 					goto statusbar_nochange;
 				}
 
-				(r == 's') ? archive_selection(get_archive_cmd(tmp), tmp, path)
-					   : spawn(get_archive_cmd(tmp), tmp, pdents[cur].name,
-						   NULL, F_CLI | F_CONFIRM);
+				if (r == 's') {
+					int rel = sel_paths_in_dir(path) ? get_yn(messages[MSG_ARCHIVE_RLTV]) : 'n';
+
+					if (rel == ESC) /* Cancel: nothing is created */
+						goto statusbar_nochange;
+					archive_selection(get_archive_cmd(tmp), tmp, path, rel == 'y');
+				} else
+					spawn(get_archive_cmd(tmp), tmp, pdents[cur].name, NULL, F_CLI | F_CONFIRM);
 
 				if (tmp && (access(tmp, F_OK) == 0)) { /* File created */
 					if (r == 's')
