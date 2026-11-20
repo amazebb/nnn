@@ -1,0 +1,51 @@
+#!/usr/bin/env sh
+
+# Description: Pick a Rex host, then list its sessions to switch to, kill or create
+#
+# Hosts come from "rex hosts --json". Choose one with fzf (or by number without fzf), then
+# its sessions are listed: Enter switches to one, ctrl-x kills it, ctrl-n creates one.
+
+command -v rex >/dev/null || { printf 'rex is not installed. Press Enter ' >&2; read -r _; exit 1; }
+command -v jq >/dev/null || { printf 'jq is not installed. Press Enter ' >&2; read -r _; exit 1; }
+
+hosts=$(rex hosts --json | jq -r '.hosts[].host | [.label, .endpoints[0]] | @tsv')
+[ -n "$hosts" ] || { printf 'No Rex hosts. Press Enter ' >&2; read -r _; exit 1; }
+
+if command -v fzf >/dev/null; then
+	pick=$(printf '%s\n' "$hosts" | fzf --prompt='Rex host> ' --with-nth=1 --delimiter='\t' \
+		--preview='rex --timeout 3s -S {1} session ls 2>&1' --preview-window=right,60%) || exit 0
+else
+	printf '%s\n' "$hosts" | cut -f1 | nl >&2
+	printf 'Host number: ' >&2
+	read -r n
+	pick=$(printf '%s\n' "$hosts" | sed -n "${n}p")
+fi
+[ -n "$pick" ] || exit 0
+label=${pick%%	*}
+
+# Sessions of the host as a second fzf list: Enter switches to it, ctrl-x kills it,
+# ctrl-n creates one. Esc goes back out.
+manage() {
+	command -v fzf >/dev/null || { printf 'Manage needs fzf. Press Enter ' >&2; read -r _; return; }
+	list="rex --timeout 3s -S '$label' session ls --json | jq -r '.sessions[] | [.label, .session_id] | @tsv'"
+	while :; do
+		out=$(sh -c "$list" | fzf --prompt="$label sessions> " --with-nth=1 --delimiter='\t' \
+			--header='Enter: switch  ctrl-x: kill  ctrl-n: new' --expect=ctrl-n \
+			--bind "ctrl-x:execute-silent(rex -S '$label' session kill {2})+reload($list)" \
+			--preview="rex --timeout 3s -S '$label' block ls -s {2} 2>&1" --preview-window=right,60%)
+		[ -n "$out" ] || return
+		if [ "$(printf '%s\n' "$out" | sed -n 1p)" = ctrl-n ]; then
+			printf 'New session name: ' >&2
+			read -r name
+			[ -n "$name" ] && rex -S "$label" session new "$name" >/dev/null
+			continue
+		fi
+		sid=$(printf '%s\n' "$out" | sed -n 2p | cut -f2)
+		[ -n "$sid" ] || continue
+		app=$(rex -S "$label" client ls --json | jq -r '[.clients[] | select(.info.kind == "app")][0].client_id // empty')
+		rex -S "$label" ${app:+-C "$app"} do session.select session_id="$sid"
+		return
+	done
+}
+
+manage
