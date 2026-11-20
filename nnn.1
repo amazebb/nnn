@@ -720,10 +720,13 @@ Prompts with options (new file/dir/symlink/hardlink, copy/move as, current/selec
 GUI/CLI, session, remote and archive open) show one pill per option. The default
 option, the one \fBEnter\fR picks, is the filled message pill and the others use the context color.
 The key to press is capitalised and underlined (\f(BIF\fBile\fR, \f(BID\fBir\fR, \fBe\f(BIX\fBtract\fR).
-A final \fBEsc\fR pill shows that any other key cancels.
+A final \fBEsc\fR pill shows that \fBEsc\fR cancels.
 .Pp
 \fBLeft\fR and \fBRight\fR move the filled pill along the options and the \fBEsc\fR pill (wrapping around);
 \fBEnter\fR picks the filled one, and typing an option's key still works.
+.Pp
+\fBEsc\fR cancels a prompt without a message, here and at the plugin (\fB;\fR), bookmark, sort
+and time type prompts. Any other key that is not an option or an assigned key shows \fBinvalid key\fR.
 .Pp
 Needs the rounded pills; on a narrow screen the options that do not fit are left off.
 Without pills (\fBNNN_PILL=0\fR) the plain \fB'f'ile/'d'ir\fR text is shown.
@@ -781,6 +784,7 @@ _______________ + ________________________________ + _________________
  Status line    | Pills, order set by NNN_STATUS   | \fBAPPEARANCE\fR
  Filter prompt  | One pill: mode and case          | \fBFILTERS\fR
  Choice prompts | Pills, Left/Right to select      | \fBCHOICE PROMPTS\fR
+ Prompts        | Esc cancels, no invalid key      | \fBCHOICE PROMPTS\fR
  Plugin prompt  | Tab lists the plugin keys        | \fBKEYBINDS\fR
  Popups         | Rounded help, stats, confirms    | \fBFLOATING WINDOWS\fR
  Git            | Built-in column, branch segment  | \fBGIT STATUS\fR

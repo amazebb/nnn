@@ -1719,8 +1719,15 @@ static void attroff_curctx(void)
 	attroff(COLOR_PAIR(cfg.curctx + 1));
 }
 
+static int lastkey; /* Last key a prompt returned: Esc cancels without an invalid key message */
+
 static void printmsg(const char *msg)
 {
+	if (lastkey == CONTROL('[') && msg == messages[MSG_INVALID_KEY]) {
+		statusbar("."); /* The prompt was cancelled: no message */
+		return;
+	}
+
 	attron_curctx();
 	if (pill && msg[0] && !g_state.oldcolor) {
 		/* Rounded pill in the context color; the trailing space keeps prompt input off the cap */
@@ -1946,8 +1953,8 @@ static int get_input(const char *prompt)
 
 		settimeout();
 		if (pills && *ch == '\r' && sel != def) /* Enter picks the selected pill: its key, or cancel on Esc */
-			return (sel >= 0 && sel < n && keys[sel]) ? (uchar_t)keys[sel] : CONTROL('[');
-		return (int)*ch;
+			return lastkey = (sel >= 0 && sel < n && keys[sel]) ? (uchar_t)keys[sel] : CONTROL('[');
+		return lastkey = (int)*ch;
 	}
 }
 
@@ -10032,6 +10039,7 @@ nochange:
 			return EXIT_FAILURE;
 
 		sel = nextsel(presel);
+		lastkey = 0;
 		if (presel)
 			presel = 0;
 
