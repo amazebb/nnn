@@ -17,7 +17,7 @@ Small touches that make the listing easier to scan. The hover highlight, customi
 
 ### [Choice prompts](man.html#choice-prompts)
 
-Prompts with options show one pill per choice. The default is filled, the key to press is capitalised and underlined, and a final `Esc` pill shows that any other key cancels.
+Prompts with options show one pill per choice. The default is filled, the key to press is capitalised and underlined, and a final `Esc` pill shows that `Esc` cancels.
 
 ### [Floating windows](man.html#floating-windows) {.wide}
 
