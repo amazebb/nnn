@@ -42,3 +42,6 @@ header h1 em:hover .flip { transform: rotateY(180deg); }
 /* license line at the bottom of every page, as wide as <main> */
 .site-foot { max-width: 860px; margin: 0 auto; padding: 0 20px 48px; font-size: 14px; color: var(--muted); }
 .site-foot a { color: inherit; }
+
+/* the screenshot fills the column on a phone and stops at 560px on a wide screen */
+.shot img { width: 100%; max-width: 560px; }
