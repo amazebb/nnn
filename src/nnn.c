@@ -9708,13 +9708,13 @@ static void redraw(char *path)
 		if (!g_ctx[i].c_cfg.ctxactive)
 			addch(i + '1');
 		else if (ctxpill && cfg.curctx == i) {
-			attron(COLOR_PAIR(i + 1) | A_BOLD);
+			attron(COLOR_PAIR(i + 1));
 			addstr(PILL_L);
 			attron(A_REVERSE);
 			addch(i + '1');
 			attroff(A_REVERSE);
 			addstr(PILL_R);
-			attroff(COLOR_PAIR(i + 1) | A_BOLD);
+			attroff(COLOR_PAIR(i + 1));
 		} else
 			addch((i + '1') | (COLOR_PAIR(i + 1) | A_BOLD
 				/* active: underline, current: reverse */
@@ -9726,7 +9726,7 @@ static void redraw(char *path)
 	attron(COLOR_PAIR(cfg.curctx + 1));
 	if (ctxpill)
 		addstr(PILL_L);
-	attron(ctxpill ? (A_REVERSE | A_BOLD) : A_UNDERLINE);
+	attron(ctxpill ? A_REVERSE : A_UNDERLINE);
 
 	/* Print path */
 	bool in_home = set_tilde_in_path(path);
