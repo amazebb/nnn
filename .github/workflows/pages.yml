@@ -1,4 +1,4 @@
-# Build the web pages (docs/index.html, docs/changes.html and docs/install.html from their .md, docs/man.html from nnn.1) with the
+# Build the web pages (docs/index.html, docs/changes.html, docs/install.html and docs/features.html from their .md, docs/man.html from nnn.1) with the
 # sitegen tools and publish them to GitHub Pages. The generated files are not tracked.
 name: Pages
 
@@ -39,7 +39,7 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir _site
-          cp docs/index.html docs/changes.html docs/install.html docs/man.html docs/style.css docs/site.css docs/script.js _site/
+          cp docs/index.html docs/changes.html docs/install.html docs/features.html docs/man.html docs/style.css docs/site.css docs/script.js _site/
           cp -R docs/img _site/
           cp -R docs/fonts _site/
       - uses: actions/upload-pages-artifact@v3

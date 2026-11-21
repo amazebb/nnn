@@ -16,6 +16,10 @@
     <div class="man">
 @MAN@    </div>
   </section>
+  <script>
+    // man2html opens NAME and SYNOPSIS; start with every section collapsed
+    document.querySelectorAll(".man details[open]").forEach(function (d) { d.removeAttribute("open"); });
+  </script>
 
 
 </main>

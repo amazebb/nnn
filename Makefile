@@ -272,7 +272,7 @@ install: $(INSTALL_DEPS)
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(ZSHCOMPDIR)
 	$(INSTALL) -m 0644 misc/auto-completion/zsh/_nnn $(DESTDIR)$(ZSHCOMPDIR)/_nnn
 
-# Regenerate the web pages (docs/man.html from nnn.1, docs/index.html from docs/index.md, docs/changes.html and docs/install.html from their .md) with the
+# Regenerate the web pages (docs/man.html from nnn.1, docs/index.html from docs/index.md, docs/changes.html, docs/install.html and docs/features.html from their .md) with the
 # sitegen tools, and refresh docs/style.css, script.js and img/icons.svg from its theme
 SITEGEN ?=
 docs:
@@ -283,6 +283,7 @@ docs:
 	$(SITEGEN)/bin/md2html -T docs/index.template.html -a docs/man.html -o docs/index.html docs/index.md
 	$(SITEGEN)/bin/md2html -T docs/page.template.html -a docs/man.html -o docs/changes.html docs/changes.md
 	$(SITEGEN)/bin/md2html -T docs/page.template.html -a docs/man.html -o docs/install.html docs/install.md
+	$(SITEGEN)/bin/md2html -T docs/page.template.html -a docs/man.html -o docs/features.html docs/features.md
 
 # Personal install: ~/.local/bin, man page, zsh completion (nerd fonts)
 deploy:

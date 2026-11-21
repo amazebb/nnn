@@ -38,3 +38,7 @@ header h1 em:hover .flip { transform: rotateY(180deg); }
   font-display: swap;
 }
 .man-body td { font-family: "NnnGitSymbols", var(--ui); }
+
+/* license line at the bottom of every page, as wide as <main> */
+.site-foot { max-width: 860px; margin: 0 auto; padding: 0 20px 48px; font-size: 14px; color: var(--muted); }
+.site-foot a { color: inherit; }

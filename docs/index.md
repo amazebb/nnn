@@ -9,7 +9,7 @@ requirements tables come from FORK.md. Build with `make docs` (see AGENTS.md). -
 
 ## What's new {#features .cards}
 
-Every change is optional. See all the [keys and options](changes.html) or the [full list](man.html#changes).
+See all the [keys and options](changes.html), the [full list](man.html#changes), or what [nnn already does](features.html).
 
 ### [A modern look](man.html#appearance)
 

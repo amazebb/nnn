@@ -1,7 +1,7 @@
 ---
 title: What's new in n3
 description: Every key, changed key and option the n3 fork of nnn adds.
-intro: The keys and options this fork adds or changes. Everything else works as upstream.
+intro: An updated [visual style](man.html#appearance), plus the keys and options this fork adds or changes. Everything else works as upstream.
 ---
 
 <!-- Keys and options tables come from FORK.md. Build with `make docs` (see AGENTS.md). -->
