@@ -10079,7 +10079,7 @@ begin:
 	}
 
 #ifdef LINUX_INOTIFY
-	if (presel != FILTER && inotify_wd == -1)
+	if (presel != FILTER && inotify_wd == -1 && inotify_fd >= 0)
 		inotify_wd = inotify_add_watch(inotify_fd, path, INOTIFY_MASK);
 #elif defined(BSD_KQUEUE)
 	if (presel != FILTER && event_fd == -1) {
