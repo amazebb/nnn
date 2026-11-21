@@ -102,6 +102,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stddef.h>
+#include <ctype.h>
 #include <wctype.h>
 #include <stdalign.h>
 #include <stdbool.h>
@@ -5892,8 +5893,8 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		attrs = g_state.oldcolor ? (resetdircolor(ent->flags), A_DIM)
 					 : (fcolors[C_MIS] ? COLOR_PAIR(C_MIS) : 0);
 		/* Time and size colors fall back to the details color */
-		int tattrs = (!g_state.oldcolor && fcolors[C_TIM]) ? COLOR_PAIR(C_TIM) : attrs;
-		int sattrs = (!g_state.oldcolor && fcolors[C_SIZ]) ? COLOR_PAIR(C_SIZ) : attrs;
+		int tattrs = (!g_state.oldcolor && fcolors[C_TIM]) ? (int)COLOR_PAIR(C_TIM) : attrs;
+		int sattrs = (!g_state.oldcolor && fcolors[C_SIZ]) ? (int)COLOR_PAIR(C_SIZ) : attrs;
 
 		/* Print details */
 		if (tattrs)
@@ -12432,11 +12433,8 @@ int main(int argc, char *argv[])
 
 #ifdef LINUX_INOTIFY
 	/* Initialize inotify */
+	/* Not fatal: kernels without inotify (e.g. iSH) just lose live directory updates */
 	inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
-	if (inotify_fd < 0) {
-		xerror();
-		return EXIT_FAILURE;
-	}
 #elif defined(BSD_KQUEUE)
 	kq = kqueue();
 	if (kq < 0) {
