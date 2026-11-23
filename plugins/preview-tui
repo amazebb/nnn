@@ -674,6 +674,14 @@ image_preview() {
         fi
     elif exists "${NNN_PREVIEWIMGPROG%% *}"; then # can include command flags; only check first word
         $NNN_PREVIEWIMGPROG "$3" &
+    elif exists chafa || exists viu; then
+        # tmux/other terminals (e.g. iSH): chafa picks symbols, sixel or kitty itself
+        exif_caption "$EXIFSRC"
+        if [ "$NNN_IMGVIEWER" = "viu" ] && exists viu || ! exists chafa; then
+            img_viu "$3"
+        else
+            img_chafa "$3"
+        fi
     else
         fifo_pager print_bin_info "$3" && return
     fi
