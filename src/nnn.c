@@ -9329,6 +9329,7 @@ static inline void markhovered(void)
 #define PREVIEW_COL        (PREVIEW_BORDER_COL + 2)
 #define PREVIEW_WIDTH      (xcols - PREVIEW_COL - 1)
 #define MIN_PREVIEW_COLS   40
+#define PREVIEW_FITS       (PREVIEW_WIDTH >= MIN_PREVIEW_COLS)
 #define PREVIEW_MAX_LINE   4096
 
 /* Check if a file is likely text by reading initial bytes */
@@ -9405,7 +9406,7 @@ static void preview_pane(const char *path)
 	int previewcol = PREVIEW_BORDER_COL;
 	int previewwidth = PREVIEW_WIDTH;
 
-	if (previewwidth < MIN_PREVIEW_COLS)
+	if (!PREVIEW_FITS)
 		return;
 
 	/* Draw vertical border */
@@ -9655,7 +9656,7 @@ static void redraw(char *path)
 
 	int ncols = (xcols <= PATH_MAX) ? xcols : PATH_MAX;
 	/* Limit listing width when preview pane is active */
-	if (cfg.preview && xcols >= ((MIN_PREVIEW_COLS * 2) + 1)) {
+	if (cfg.preview && PREVIEW_FITS) {
 		int listcols = PREVIEW_BORDER_COL;
 		if (ncols > listcols)
 			ncols = listcols;
@@ -10667,6 +10668,14 @@ nochange:
 				continue;
 			case SEL_PREVIEW:
 				cfg.preview ^= 1;
+				if (cfg.preview && !PREVIEW_FITS) {
+					static char narrowmsg[48];
+
+					snprintf(narrowmsg, sizeof(narrowmsg),
+						 "Preview needs %d columns (now %d)",
+						 MIN_PREVIEW_COLS * 2 + 5, xcols);
+					gitstat_notice = narrowmsg;
+				}
 				continue;
 			default: /* SEL_SORT */
 				build_sortprompt();

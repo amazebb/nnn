@@ -41,6 +41,7 @@ Behavior is documented in `nnn.1` (CHANGES) and `src/nnn.c`; only the non-obviou
 - Choice prompts opt in through the `is_choice_prompt()` list in `nnn.c`: add a message id there to render it as pills. Prompts built at run time (sort: `build_sortprompt()` into `sortprompt`; time type: `timeprompt`) are static buffers matched by pointer in the same function, with the current choice in `[...]` as the default pill; `'^T'` in a spec is Ctrl+T.
 - Pills are tight: `pill_open()`/`pill_close()` add no padding inside the caps, only one gap cell after the closing cap; width checks count the caps and that gap (`+ 3`), not padding. Trim a message's own trailing space before drawing it in a pill.
 - Ghostty preview leaves id files under `$TMPDIR/nnn-preview-tui-ghosttyid.*`.
+- Built-in preview pane (`P`) needs `PREVIEW_FITS` (width ≥ `MIN_PREVIEW_COLS`, so 85 columns); `redraw()` and `preview_pane()` share it, and `P` says so when too narrow.
 - zoxide: plugin `bb-z` (`;z`, bound in `n3`); the chosen dir is recorded with `zoxide add` and sent as `0c<dir>` to `NNN_PIPE`.
 
 ## Commits
