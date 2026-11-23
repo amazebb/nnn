@@ -608,6 +608,19 @@ EOF
     [ "$gl" -ge 1 ] || gl=1
     if [ "$NNN_TERMINAL" = "rex" ]; then
         chafa -f kitty -s "${gc}x${gl}" "$1" &
+    elif [ "$NNN_TERMINAL" = "tmux" ] && [ "${NNN_TMUXKITTY:-0}" = 1 ]; then
+        # experimental: kitty graphics through tmux; needs tmux >= 3.3 and a kitty-graphics
+        # terminal (untested: Ghostty, kitty, WezTerm; shows nothing in Rex; never Terminal.app).
+        # Images may be misplaced or not cleared on redraw.
+        tmux set -p allow-passthrough on 2>/dev/null
+        chafa -f kitty --passthrough=tmux -s "${gc}x${gl}" "$1" &
+    elif [ "$NNN_TERMINAL" = "tmux" ]; then
+        # tmux hides the outer terminal: all symbol sets, truecolor only if COLORTERM says so
+        # (iSH sets none, so it gets 256 colours with ordered dithering)
+        case "$COLORTERM" in
+        truecolor | 24bit) chafa -f symbols --colors=full --symbols=all -s "${gc}x${gl}" "$1" & ;;
+        *) chafa -f symbols --colors=256 --dither=ordered --symbols=all -s "${gc}x${gl}" "$1" & ;;
+        esac
     else
         chafa -s "${gc}x${gl}" "$1" &
     fi
