@@ -287,6 +287,7 @@ docs:
 
 # Personal install: ~/.local/bin, man page, zsh completion (nerd fonts)
 deploy:
+	$(MAKE) clean
 	$(MAKE) PREFIX=$(DEPLOY_PREFIX) O_NERD=1 install
 
 uninstall:
