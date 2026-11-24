@@ -523,7 +523,7 @@ static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 static bool gitpairs, gitrgb;
 static char gitbranch[128];
 static bool gittrack; /* Folder is tracked by the bare ~/.dotfiles repo */
-static char sshid[96]; /* "user@host " before the top line path in an ssh session; NNN_SSHID=0 disables */
+static char sshid[96]; /* "user@host" before the top line path in an ssh session; NNN_SSHID=0 disables */
 #define C_SSH (C_GIT + 6) /* +0 text (white on purple), +1 cap out (set per redraw), +2 cap in; NNN_SSHCOLOR sets the purple */
 static bool sshpairs;
 static int sshbg = 98;
@@ -9661,7 +9661,7 @@ static void draw_line(int ncols)
 
 static bool sshid_done;
 
-/* "user@host " (short host, as zsh %n@%m) when running over ssh */
+/* "user@host" (short host, as zsh %n@%m) when running over ssh */
 static void sshid_init(void)
 {
 	char host[_POSIX_HOST_NAME_MAX + 1];
@@ -9678,7 +9678,7 @@ static void sshid_init(void)
 
 	host[sizeof(host) - 1] = '\0';
 	host[strcspn(host, ".")] = '\0';
-	snprintf(sshid, sizeof(sshid), "%s@%s ", user, host);
+	snprintf(sshid, sizeof(sshid), "%s@%s", user, host);
 }
 
 static void redraw(char *path)
@@ -9731,7 +9731,7 @@ static void redraw(char *path)
 		sshid_init();
 	}
 	if (sshid[0]) {
-		sshcols = (int)xstrlen(sshid);
+		sshcols = (int)xstrlen(sshid) + 1; /* + the space before the path */
 		if (mincol + sshcols + 10 > ncols)
 			sshcols = 0;
 		else
@@ -9795,8 +9795,11 @@ static void redraw(char *path)
 		addstr(PILL_L);
 	attron(ctxpill ? A_REVERSE : A_UNDERLINE);
 
-	if (sshcols && !sshpill)
-		addstr(sshid);
+	if (sshcols) {
+		if (!sshpill)
+			addstr(sshid);
+		addch(' ');
+	}
 
 	/* Print path */
 	bool in_home = set_tilde_in_path(path);
