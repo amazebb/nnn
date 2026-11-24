@@ -524,6 +524,9 @@ static bool gitpairs, gitrgb;
 static char gitbranch[128];
 static bool gittrack; /* Folder is tracked by the bare ~/.dotfiles repo */
 static char sshid[96]; /* "user@host " before the top line path in an ssh session; NNN_SSHID=0 disables */
+#define C_SSH (C_GIT + 6) /* +0 text (white on purple), +1 cap out (set per redraw), +2 cap in; NNN_SSHCOLOR sets the purple */
+static bool sshpairs;
+static int sshbg = 98;
 
 /* Dim git ignored entries (default); NNN_GITIGNORE=mark marks them !! in the git column instead */
 static bool gitdim = TRUE;
@@ -2913,6 +2916,21 @@ static bool initcurses(void *oldmask)
 			init_pair(C_GIT + (3 * k) + 2, bg, -1);
 		}
 		gitpairs = TRUE;
+	}
+
+	/* Purple pill for the ssh user@host segment */
+	if (!g_state.oldcolor && COLORS >= COLOR_256 && COLOR_PAIRS > C_SSH + 2) {
+		const char *env = getenv("NNN_SSHCOLOR");
+		int sc = (env && *env) ? atoi(env) : 98;
+
+		sshbg = (sc >= 0 && sc < COLOR_256) ? sc : 98;
+		if (!(env && *env) && can_change_color()) { /* the prompt's #6f42c1 */
+			init_color(235, 435, 259, 757);
+			sshbg = 235;
+		}
+		init_pair(C_SSH, 15, sshbg);
+		init_pair(C_SSH + 2, sshbg, -1);
+		sshpairs = TRUE;
 	}
 
 	settimeout(); /* One second */
@@ -9729,6 +9747,11 @@ static void redraw(char *path)
 		else
 			mincol += sshcols;
 	}
+	/* Own pill: its two caps replace the path's opening cap, so one more column */
+	bool sshpill = sshcols && sshpairs && ctxpill;
+
+	if (sshpill)
+		++mincol;
 
 	/* Git segment as in zsh-prompt: cap into it, " <git><branch>  <summary> ", closing cap; only if the path still has room */
 	if (ctxpill && gitbranch[0]) {
@@ -9760,12 +9783,29 @@ static void redraw(char *path)
 		addch(' ');
 	}
 
+	if (sshpill) {
+		short cf, cb;
+
+		attron(COLOR_PAIR(C_SSH + 2));
+		addstr(PILL_L);
+		attroff(COLOR_PAIR(C_SSH + 2));
+		attron(COLOR_PAIR(C_SSH) | A_BOLD);
+		addstr(sshid);
+		attroff(COLOR_PAIR(C_SSH) | A_BOLD);
+		/* seamless: purple on the path colour */
+		pair_content(cfg.curctx + 1, &cf, &cb);
+		init_pair(C_SSH + 1, sshbg, cf);
+		attron(COLOR_PAIR(C_SSH + 1));
+		addstr(PILL_R);
+		attroff(COLOR_PAIR(C_SSH + 1));
+	}
+
 	attron(COLOR_PAIR(cfg.curctx + 1));
-	if (ctxpill)
+	if (ctxpill && !sshpill)
 		addstr(PILL_L);
 	attron(ctxpill ? A_REVERSE : A_UNDERLINE);
 
-	if (sshcols)
+	if (sshcols && !sshpill)
 		addstr(sshid);
 
 	/* Print path */

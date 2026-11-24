@@ -1169,6 +1169,11 @@ status line, top line and prompts (on by default; needs a nerd font build, \fBO_
     export NNN_SSHID=0
 .Ed
 .Pp
+\fBNNN_SSHCOLOR:\fR 256-color number of the purple pill behind \fBuser@host\fR (default the zsh-prompt purple \fB#6f42c1\fR when the terminal can redefine colors, else \fB98\fR).
+.Bd -literal
+    export NNN_SSHCOLOR=91
+.Ed
+.Pp
 \fBNNN_STATUS:\fR segments of the status line after the file counter and selection, as letters from left to right.
 A segment left out is hidden. With pills, the segment that no longer fits and all after it are dropped on a
 narrow screen, so the order is the priority. Default \fBftspon\fR.
