@@ -1836,8 +1836,6 @@ static void printchoices(const char *spec, int sel)
 		if (def) {
 			if (msgcolor)
 				attron(COLOR_PAIR(C_MSG));
-			else
-				attron(A_BOLD);
 		} else
 			attron_curctx();
 
@@ -1856,8 +1854,6 @@ static void printchoices(const char *spec, int sel)
 		if (def) {
 			if (msgcolor)
 				attroff(COLOR_PAIR(C_MSG));
-			else
-				attroff(A_BOLD);
 		} else
 			attroff_curctx();
 
@@ -1871,18 +1867,14 @@ static void printchoices(const char *spec, int sel)
 	if (getcurx(stdscr) + 3 + PILL_EXTRA < xcols) {
 		if (idx == sel && msgcolor)
 			attron(COLOR_PAIR(C_MSG));
-		else if (idx == sel)
-			attron(A_BOLD);
-		else
+		else if (idx != sel)
 			attron_curctx();
 		pill_open();
 		addstr("Esc");
 		pill_close();
 		if (idx == sel && msgcolor)
 			attroff(COLOR_PAIR(C_MSG));
-		else if (idx == sel)
-			attroff(A_BOLD);
-		else
+		else if (idx != sel)
 			attroff_curctx();
 	}
 
@@ -2928,7 +2920,13 @@ static bool initcurses(void *oldmask)
 			init_color(235, 435, 259, 757);
 			sshbg = 235;
 		}
-		init_pair(C_SSH, 15, sshbg);
+		int white = 15;
+
+		if (can_change_color()) { /* themes remap color 15, which dims the text */
+			init_color(236, 1000, 1000, 1000);
+			white = 236;
+		}
+		init_pair(C_SSH, white, sshbg);
 		init_pair(C_SSH + 2, sshbg, -1);
 		sshpairs = TRUE;
 	}
@@ -5605,9 +5603,9 @@ static void print_icon(const struct entry *ent, const int attrs, bool sel)
 		attroff(attrs);
 	if (sel && pill) { /* Leading cap replaces the last padding cell, in the highlight's color */
 		addnstr(ICON_PADDING_RIGHT, ICON_PADDING_RIGHT_LEN - 1);
-		attron(attrs | A_BOLD);
+		attron(attrs);
 		addstr(PILL_L);
-		attroff(attrs | A_BOLD);
+		attroff(attrs);
 	} else
 		addstr(ICON_PADDING_RIGHT);
 }
@@ -5969,7 +5967,7 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 		printw("%*s%s%s", (cfg.normalgit && !cfg.showdetail) ? 1 : 0, "",
 				ent->git_status[0], ent->git_status[1]);
 
-	addch((ent->flags & FILE_SELECTED) ? '+' | A_REVERSE | A_BOLD : ' ');
+	addch((ent->flags & FILE_SELECTED) ? '+' | A_REVERSE : ' ');
 
 	if (g_state.oldcolor)
 		resetdircolor(ent->flags);
@@ -5984,7 +5982,7 @@ static void printent(int pdents_index, uint_t namecols, bool sel)
 	}
 
 	if (sel)
-		attrs |= A_REVERSE | A_BOLD;
+		attrs |= A_REVERSE;
 	if (attrs)
 		attron(attrs);
 	if (!ind)
@@ -6482,9 +6480,7 @@ static void fw_pill(WINDOW *win, const char *key, const char *label, bool def)
 	if (fw_caps())
 		waddstr(win, PILL_L);
 	wattron(win, A_REVERSE);
-	wattron(win, A_BOLD);
 	waddstr(win, key);
-	wattroff(win, A_BOLD);
 	waddch(win, ' ');
 	waddstr(win, label);
 	wattroff(win, A_REVERSE);
@@ -6596,9 +6592,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 
 		if (!perfile && fw_title) {
 			mvwaddch(win, 0, 2, ' ');
-			wattron(win, A_BOLD);
 			waddnstr(win, fw_title, max_display_width - 4);
-			wattroff(win, A_BOLD);
 			waddch(win, ' ');
 		}
 
@@ -6610,9 +6604,7 @@ static bool show_content_in_floating_window(char *content, size_t content_len, e
 			waddstr(win, xitoa(ndents));
 			waddch(win, ' ');
 			getyx(win, ret, x); // ret is used as a dummy
-			wattron(win, A_BOLD);
 			waddnstr(win, pdents[cur].name, max_display_width - x - 1);
-			wattroff(win, A_BOLD);
 			waddch(win, ' ');
 		}
 
@@ -9330,16 +9322,14 @@ static inline void markhovered(void)
 		if (hovermark == HOVER_OFF)
 			return;
 		if (hovermark == HOVER_TRIANGLE) {
-			attron(A_BOLD);
 			addstr(TRIANGLE_ICON);
-			attroff(A_BOLD);
 			return;
 		}
 		/* Bold forward arrowhead */
 #if defined(NOBRAILLE) && defined(ICONS_ENABLED)
 		addstr("▌");
 #else
-		addch('>' | A_BOLD);
+		addch('>');
 #endif
 	}
 }
@@ -9776,7 +9766,7 @@ static void redraw(char *path)
 			addstr(PILL_R);
 			attroff(COLOR_PAIR(i + 1));
 		} else
-			addch((i + '1') | (COLOR_PAIR(i + 1) | A_BOLD
+			addch((i + '1') | (COLOR_PAIR(i + 1)
 				/* active: underline, current: reverse */
 				| ((cfg.curctx != i) ? A_UNDERLINE : A_REVERSE)));
 
@@ -9789,9 +9779,9 @@ static void redraw(char *path)
 		attron(COLOR_PAIR(C_SSH + 2));
 		addstr(PILL_L);
 		attroff(COLOR_PAIR(C_SSH + 2));
-		attron(COLOR_PAIR(C_SSH) | A_BOLD);
+		attron(COLOR_PAIR(C_SSH));
 		addstr(sshid);
-		attroff(COLOR_PAIR(C_SSH) | A_BOLD);
+		attroff(COLOR_PAIR(C_SSH));
 		/* seamless: purple on the path colour */
 		pair_content(cfg.curctx + 1, &cf, &cb);
 		init_pair(C_SSH + 1, sshbg, cf);
@@ -9848,7 +9838,7 @@ static void redraw(char *path)
 	if (in_home)
 		reset_tilde_in_path(path);
 
-	attroff(A_REVERSE | A_BOLD | A_UNDERLINE);
+	attroff(A_REVERSE | A_UNDERLINE);
 	if (brcols) {
 		/* Changes: a " +", " ~" or " ?" entry in the summary (same test as zsh-prompt) */
 		int k = (strstr(gitbranch, " +") || strstr(gitbranch, " ~") || strstr(gitbranch, " ?")) ? 1 : 0;
@@ -9860,11 +9850,11 @@ static void redraw(char *path)
 		attron(COLOR_PAIR(C_GIT + (3 * k)));
 		addstr(PILL_R); /* seamless: path colour on the segment colour */
 		attroff(COLOR_PAIR(C_GIT + (3 * k)));
-		attron(COLOR_PAIR(C_GIT + (3 * k) + 1) | A_BOLD);
+		attron(COLOR_PAIR(C_GIT + (3 * k) + 1));
 		addstr(gittrack ? " \xee\x97\xbb" : " \xee\x99\x9d"); /* U+E5FB dotfiles / U+E65D git */
 		addstr(" \xee\x9c\xa5  "); /* U+E725 branch */
 		addstr(gitbranch);
-		attroff(COLOR_PAIR(C_GIT + (3 * k) + 1) | A_BOLD);
+		attroff(COLOR_PAIR(C_GIT + (3 * k) + 1));
 		attron(COLOR_PAIR(C_GIT + (3 * k) + 2));
 		addstr(PILL_R);
 		attroff(COLOR_PAIR(C_GIT + (3 * k) + 2));
