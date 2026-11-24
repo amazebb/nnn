@@ -523,6 +523,7 @@ static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 static bool gitpairs, gitrgb;
 static char gitbranch[128];
 static bool gittrack; /* Folder is tracked by the bare ~/.dotfiles repo */
+static char sshid[96]; /* "user@host " before the top line path in an ssh session; NNN_SSHID=0 disables */
 
 /* Dim git ignored entries (default); NNN_GITIGNORE=mark marks them !! in the git column instead */
 static bool gitdim = TRUE;
@@ -9650,6 +9651,28 @@ static void draw_line(int ncols)
 	markhovered();
 }
 
+static bool sshid_done;
+
+/* "user@host " (short host, as zsh %n@%m) when running over ssh */
+static void sshid_init(void)
+{
+	char host[_POSIX_HOST_NAME_MAX + 1];
+	const char *user;
+	struct passwd *pw;
+
+	if (xgetenv("NNN_SSHID", "1")[0] == '0' || !(getenv("SSH_CONNECTION") || getenv("SSH_TTY")))
+		return;
+
+	pw = getpwuid(geteuid());
+	user = pw ? pw->pw_name : getenv("USER");
+	if (!user || gethostname(host, sizeof(host)) < 0)
+		return;
+
+	host[sizeof(host) - 1] = '\0';
+	host[strcspn(host, ".")] = '\0';
+	snprintf(sshid, sizeof(sshid), "%s@%s ", user, host);
+}
+
 static void redraw(char *path)
 {
 	getmaxyx(stdscr, xlines, xcols);
@@ -9693,6 +9716,19 @@ static void redraw(char *path)
 	bool ctxpill = pill && !g_state.oldcolor;
 	int mincol = MIN_DISPLAY_COL + (ctxpill ? 4 : 0);
 	int brcols = 0;
+	int sshcols = 0;
+
+	if (!sshid_done) {
+		sshid_done = TRUE;
+		sshid_init();
+	}
+	if (sshid[0]) {
+		sshcols = (int)xstrlen(sshid);
+		if (mincol + sshcols + 10 > ncols)
+			sshcols = 0;
+		else
+			mincol += sshcols;
+	}
 
 	/* Git segment as in zsh-prompt: cap into it, " <git><branch>  <summary> ", closing cap; only if the path still has room */
 	if (ctxpill && gitbranch[0]) {
@@ -9728,6 +9764,9 @@ static void redraw(char *path)
 	if (ctxpill)
 		addstr(PILL_L);
 	attron(ctxpill ? A_REVERSE : A_UNDERLINE);
+
+	if (sshcols)
+		addstr(sshid);
 
 	/* Print path */
 	bool in_home = set_tilde_in_path(path);

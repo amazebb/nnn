@@ -814,6 +814,7 @@ _______________ + ________________________________ + _________________
  Bookmarks      | Esc goes back                    | \fBBOOKMARKS\fR
  Clipboard      | C, ^B copy; ;; Quick Look        | \fBKEYBINDS\fR
  Help (?)       | Archive, filter keys, regex      | \fBKEYBINDS\fR
+ SSH            | user@host before the top path    | \fBENVIRONMENT\fR
 _______________ + ________________________________ + _________________
 .Ed
 .Pp
@@ -1161,6 +1162,11 @@ NOTE: Only the first character is considered if not a \fBCtrl+key\fR combo.
 status line, top line and prompts (on by default; needs a nerd font build, \fBO_NERD\fR).
 .Bd -literal
     export NNN_PILL=0
+.Ed
+.Pp
+\fBNNN_SSHID:\fR set to \fB0\fR to hide the \fBuser@host\fR shown before the top line path in an ssh session.
+.Bd -literal
+    export NNN_SSHID=0
 .Ed
 .Pp
 \fBNNN_STATUS:\fR segments of the status line after the file counter and selection, as letters from left to right.
