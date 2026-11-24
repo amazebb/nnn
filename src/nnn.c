@@ -9678,7 +9678,11 @@ static void sshid_init(void)
 
 	host[sizeof(host) - 1] = '\0';
 	host[strcspn(host, ".")] = '\0';
+	#ifdef NERD
+	snprintf(sshid, sizeof(sshid), "\xee\xa2\xb1 %s@%s", user, host); /* U+E8B1, the zsh-prompt ssh glyph */
+#else
 	snprintf(sshid, sizeof(sshid), "%s@%s", user, host);
+#endif
 }
 
 static void redraw(char *path)
@@ -9731,7 +9735,9 @@ static void redraw(char *path)
 		sshid_init();
 	}
 	if (sshid[0]) {
-		sshcols = (int)xstrlen(sshid) + 1; /* + the space before the path */
+		sshcols = 1; /* the space before the path */
+		for (char *c = sshid; *c; ++c) /* display columns: skip UTF-8 continuation bytes */
+			sshcols += ((*c & 0xC0) != 0x80);
 		if (mincol + sshcols + 10 > ncols)
 			sshcols = 0;
 		else
