@@ -523,7 +523,7 @@ static bool msgcolor; /* Message pill color pair is set up (256 colors) */
 static bool gitpairs, gitrgb;
 static char gitbranch[128];
 static bool gittrack; /* Folder is tracked by the bare ~/.dotfiles repo */
-static char sshid[96]; /* "user@host" before the top line path in an ssh session; NNN_SSHID=0 disables */
+static char sshid[384]; /* "user@host" before the top line path in an ssh session; NNN_SSHID=0 disables */
 #define C_SSH (C_GIT + 6) /* +0 text (white on purple), +1 cap out (set per redraw), +2 cap in; NNN_SSHCOLOR sets the purple */
 static bool sshpairs;
 static int sshbg = 98;
@@ -2410,7 +2410,7 @@ static void invertselbuf(const int pathlen)
 		 *         moving back.
 		 */
 		found = marked[i].startpos;
-		endpos = (i + 1 == nmarked ? selbufpos : marked[i + 1].startpos - pselbuf);
+		endpos = (i + 1 == nmarked ? selbufpos : (size_t)(marked[i + 1].startpos - pselbuf));
 		len = marked[i].len;
 
 		/* Move back only selected entries. No selected memory is moved twice */
@@ -9084,7 +9084,7 @@ static bool set_time_type(int *presel)
 	int r = get_input_in(timeprompt, "acm\r");
 
 	if (r == '\r') /* Enter picks the current one */
-		r = curkey;
+		r = (uchar_t)curkey;
 
 	if (r == ESC) {
 		cancelled();
@@ -9679,9 +9679,9 @@ static void sshid_init(void)
 	host[sizeof(host) - 1] = '\0';
 	host[strcspn(host, ".")] = '\0';
 	#ifdef NERD
-	snprintf(sshid, sizeof(sshid), "\xee\xa2\xb1 %s@%s", user, host); /* U+E8B1, the zsh-prompt ssh glyph */
+	snprintf(sshid, sizeof(sshid), "\xee\xa2\xb1 %.64s@%.255s", user, host); /* U+E8B1, the zsh-prompt ssh glyph */
 #else
-	snprintf(sshid, sizeof(sshid), "%s@%s", user, host);
+	snprintf(sshid, sizeof(sshid), "%.64s@%.255s", user, host);
 #endif
 }
 
@@ -10751,7 +10751,7 @@ nochange:
 
 					snprintf(narrowmsg, sizeof(narrowmsg),
 						 "Preview needs %d columns (now %d)",
-						 MIN_PREVIEW_COLS * 2 + 5, xcols);
+						 (MIN_PREVIEW_COLS * 2) + 5, xcols);
 					gitstat_notice = narrowmsg;
 				}
 				continue;
